@@ -19,7 +19,8 @@ namespace Assets.ObjectFactory
 
         public void UnloadResource()
         {
-            Addressables.Release(_handle);
+            if (_handle.IsValid())
+                Addressables.Release(_handle);
         }
 
         private GameObject LoadResourceSync<T>() where T : Behaviour
