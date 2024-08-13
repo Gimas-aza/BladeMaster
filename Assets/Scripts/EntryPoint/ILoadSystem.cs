@@ -1,6 +1,9 @@
-using UnityEngine;
+using Assets.DataStorageSystem;
 
-public class ILoadSystem
+namespace Assets.EntryPoint
 {
-    
+    public interface ILoadSystem 
+    {
+        DataStorage Load();
+    }
 }

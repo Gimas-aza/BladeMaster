@@ -1,6 +1,9 @@
-using UnityEngine;
+using Assets.DataStorageSystem;
 
-public class ISaveSystem
+namespace Assets.EntryPoint
 {
-    
+    public interface ISaveSystem 
+    {
+        void Save();
+    }
 }
