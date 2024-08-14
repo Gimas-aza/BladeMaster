@@ -14,6 +14,10 @@ namespace Assets.EntryPoint
         {
             _loadSystem = _dataStorageSystem;
             _saveSystem = _dataStorageSystem;
+
+            Debug.Log(Time.deltaTime);
+            await _objectFactory.CreateObjectAsync<Camera>();
+            Debug.Log(Time.deltaTime);
         }
     }
 }

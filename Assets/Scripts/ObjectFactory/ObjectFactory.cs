@@ -1,5 +1,6 @@
 using UnityEngine; 
 using Assets.EntryPoint;
+using Cysharp.Threading.Tasks;
 
 namespace Assets.ObjectFactory
 {
@@ -12,6 +13,15 @@ namespace Assets.ObjectFactory
             _objectProvider = new AddressablesProvider();
         }
         
+        public async UniTask<T> CreateObjectAsync<T>() where T : Behaviour
+        {
+            var newObject = GameObject.Instantiate(await _objectProvider.LoadResourceAsync<T>());
+            TestingIsComponent<T>(newObject.TryGetComponent(out T result));
+            _objectProvider.UnloadResource();
+
+            return result;
+        }
+
         public T CreateObject<T>() where T : Behaviour
         {
             var newObject = GameObject.Instantiate(_objectProvider.LoadResource<T>());

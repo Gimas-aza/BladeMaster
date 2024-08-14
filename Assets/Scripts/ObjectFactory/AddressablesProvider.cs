@@ -12,19 +12,6 @@ namespace Assets.ObjectFactory
 
         public GameObject LoadResource<T>() where T : Behaviour
         {
-            var newObject = LoadResourceSync<T>();
-            
-            return newObject;
-        }
-
-        public void UnloadResource()
-        {
-            if (_handle.IsValid())
-                Addressables.Release(_handle);
-        }
-
-        private GameObject LoadResourceSync<T>() where T : Behaviour
-        {
             var handle = Addressables.LoadAssetAsync<GameObject>(_assetsPath + typeof(T).Name);
             _handle = handle;
             handle.WaitForCompletion();
@@ -33,7 +20,7 @@ namespace Assets.ObjectFactory
             return handle.Result;
         }
 
-        private async UniTask<GameObject> LoadResourceAsync<T>() where T : Behaviour
+        public async UniTask<GameObject> LoadResourceAsync<T>() where T : Behaviour
         {
             var handle = Addressables.LoadAssetAsync<GameObject>(_assetsPath + typeof(T).Name);
             _handle = handle;
@@ -41,6 +28,12 @@ namespace Assets.ObjectFactory
 
             TestingLoadResource<T>(handle);
             return handle.Result;
+        }
+
+        public void UnloadResource()
+        {
+            if (_handle.IsValid())
+                Addressables.Release(_handle);
         }
 
         private void TestingLoadResource<T>(AsyncOperationHandle<GameObject> handle)
