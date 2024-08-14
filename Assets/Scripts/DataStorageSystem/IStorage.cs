@@ -1,8 +1,10 @@
+using Cysharp.Threading.Tasks;
+
 namespace Assets.DataStorageSystem
 {
     public interface IStorage
     {
-        DataStorage Load();
-        void Save();
+        UniTask<DataStorage> LoadAsync();
+        void SaveAsync();
     }
 }

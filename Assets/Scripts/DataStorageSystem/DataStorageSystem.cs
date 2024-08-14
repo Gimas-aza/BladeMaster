@@ -1,17 +1,25 @@
 using Assets.EntryPoint;
+using Cysharp.Threading.Tasks;
 
 namespace Assets.DataStorageSystem
 {
-    public class DataStorageSystem : ILoadSystem, ISaveSystem
+    public class DataStorageSystem : IDataStorageSystem
     {
-        public DataStorage Load()
+        private IStorage _storage;
+
+        public DataStorageSystem(IStorage storage)
         {
-            throw new System.NotImplementedException();
+            _storage = storage;
         }
 
-        public void Save()
+        public async UniTask<DataStorage> LoadAsync()
         {
-            throw new System.NotImplementedException();
+            return await _storage.LoadAsync();
+        }
+
+        public void SaveAsync()
+        {
+            _storage.SaveAsync();
         }
     }
 }

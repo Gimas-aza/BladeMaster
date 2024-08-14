@@ -4,6 +4,6 @@ namespace Assets.EntryPoint
 {
     public interface ISaveSystem 
     {
-        void Save();
+        void SaveAsync();
     }
 }

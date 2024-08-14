@@ -1,9 +1,10 @@
 using Assets.DataStorageSystem;
+using Cysharp.Threading.Tasks;
 
 namespace Assets.EntryPoint
 {
     public interface ILoadSystem 
     {
-        DataStorage Load();
+        UniTask<DataStorage> LoadAsync();
     }
 }
