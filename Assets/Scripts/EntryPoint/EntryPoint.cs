@@ -1,23 +1,29 @@
+using Assets.LevelManager;
+using Assets.MVP.Model;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.EntryPoint
 {
     public class EntryPoint : MonoBehaviour
     {
-        private readonly IObject _objectFactory = new ObjectFactory.ObjectFactory();
-        private readonly IDataStorageSystem _dataStorageSystem =
-            new DataStorageSystem.DataStorageSystem(new DataStorageSystem.StorageXML());
-        private ILoadSystem _loadSystem;
+        private IObject _objectFactory;
+        private ILoadSystem _loadSystem; 
         private ISaveSystem _saveSystem;
+        private ILevelManager _levelManager;
+        private IModel _modelLevelManager;
 
-        private async void Awake()
+        private void Awake()
         {
-            _loadSystem = _dataStorageSystem;
-            _saveSystem = _dataStorageSystem;
+            DontDestroyOnLoad(this);
 
-            Debug.Log(Time.deltaTime);
-            await _objectFactory.CreateObjectAsync<Camera>();
-            Debug.Log(Time.deltaTime);
+            _objectFactory = new ObjectFactory.ObjectFactory();
+            _saveSystem = new DataStorageSystem.DataStorageSystem(new DataStorageSystem.StorageXML());
+            _saveSystem = _loadSystem as ISaveSystem;
+            _levelManager = new GameSceneManager();
+            _modelLevelManager = _levelManager as IModel;
+
+            _modelLevelManager.LoadLevel(0);
         }
     }
 }

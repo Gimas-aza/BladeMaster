@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Assets.DataStorageSystem
 {
-    public class DataStorageSystem : IDataStorageSystem
+    public class DataStorageSystem : ILoadSystem, ISaveSystem
     {
         private IStorage _storage;
 
