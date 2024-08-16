@@ -14,12 +14,14 @@ namespace Assets.LevelManager
         protected int PreviousLevelIndex { get => (CurrentLevelIndex - 1 >= 0) ? CurrentLevelIndex - 1 : CurrentLevelIndex; }
         protected abstract int MaxLevelIndex { get; set; }
 
-        public UnityAction OnLevelLoaded { get; set; }
+        public event UnityAction LevelStartedToLoad;
+        public event UnityAction LevelLoaded;
 
         public abstract void LoadLevel(int sceneIndex);
         public abstract void LoadNextLevel();
         public abstract void LoadPreviousLevel();
 
-        
+        protected void OnLevelLoaded() => LevelLoaded?.Invoke();
+        protected void OnLevelStartedToLoad() => LevelStartedToLoad?.Invoke();
     }
 }

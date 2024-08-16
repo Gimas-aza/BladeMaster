@@ -11,7 +11,6 @@ namespace Assets.EntryPoint
         private ILoadSystem _loadSystem; 
         private ISaveSystem _saveSystem;
         private ILevelManager _levelManager;
-        private IModel _modelLevelManager;
 
         private void Awake()
         {
@@ -21,9 +20,8 @@ namespace Assets.EntryPoint
             _saveSystem = new DataStorageSystem.DataStorageSystem(new DataStorageSystem.StorageXML());
             _saveSystem = _loadSystem as ISaveSystem;
             _levelManager = new GameSceneManager();
-            _modelLevelManager = _levelManager as IModel;
 
-            _modelLevelManager.LoadLevel(0);
+            _levelManager.LoadLevel(0);
         }
     }
 }

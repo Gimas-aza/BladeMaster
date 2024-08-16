@@ -12,31 +12,40 @@ namespace Assets.LevelManager
             MaxLevelIndex = SceneManager.sceneCountInBuildSettings - 2;
         }
 
-        public override void LoadNextLevel()
+        public override async void LoadNextLevel()
         {
             if (CurrentLevelIndex == MaxLevelIndex) return;
 
-            SceneManager.LoadScene(NextLevelIndex);
+            OnLevelStartedToLoad();
+
             CurrentLevelIndex = NextLevelIndex;
-            OnLevelLoaded?.Invoke();
+            await SceneManager.LoadSceneAsync(NextLevelIndex);
+
+            OnLevelLoaded();
         }
 
-        public override void LoadPreviousLevel()
+        public override async void LoadPreviousLevel()
         {
             if (CurrentLevelIndex == PreviousLevelIndex) return;
 
-            SceneManager.LoadScene(PreviousLevelIndex);
+            OnLevelStartedToLoad();
+
             CurrentLevelIndex = PreviousLevelIndex;
-            OnLevelLoaded?.Invoke();
+            await SceneManager.LoadSceneAsync(PreviousLevelIndex);
+
+            OnLevelLoaded();
         }
 
-        public override void LoadLevel(int sceneIndex)
+        public override async void LoadLevel(int sceneIndex)
         {
             if (CurrentLevelIndex == sceneIndex) return;
 
-            SceneManager.LoadScene(sceneIndex);
+            OnLevelStartedToLoad();
+
             CurrentLevelIndex = sceneIndex;
-            OnLevelLoaded?.Invoke();
+            await SceneManager.LoadSceneAsync(sceneIndex);
+
+            OnLevelLoaded();
         }
     }
 }

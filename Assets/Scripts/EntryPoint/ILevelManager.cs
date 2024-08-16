@@ -5,6 +5,8 @@ namespace Assets.EntryPoint
 {
     public interface ILevelManager
     {
-        UnityAction OnLevelLoaded { get; set; }
+        event UnityAction LevelStartedToLoad;
+        event UnityAction LevelLoaded;
+        void LoadLevel(int sceneIndex);
     }
 }
