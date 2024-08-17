@@ -21,7 +21,7 @@ namespace Assets.EntryPoint
             _saveSystem = _loadSystem as ISaveSystem;
             _levelManager = new GameSceneManager();
 
-            _levelManager.LoadLevel(0);
+            _levelManager.LoadLevel(1);
         }
     }
 }

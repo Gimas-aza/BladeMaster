@@ -38,7 +38,7 @@ namespace Assets.LevelManager
 
         public override async void LoadLevel(int sceneIndex)
         {
-            if (CurrentLevelIndex == sceneIndex) return;
+            if (CurrentLevelIndex == sceneIndex || sceneIndex == MainSceneIndex) return;
 
             OnLevelStartedToLoad();
 

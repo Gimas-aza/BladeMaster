@@ -1,0 +1,61 @@
+.MainMenu__Button {
+    opacity: 1;
+    right: auto;
+    left: auto;
+    top: auto;
+    margin-bottom: 40px;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+    padding-bottom: 17px;
+    padding-top: 17px;
+    font-size: 30px;
+    -unity-background-image-tint-color: rgb(255, 187, 92);
+    background-color: rgb(228, 0, 58);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    color: rgb(248, 237, 237);
+    transition-property: rotate, scale;
+    transition-duration: 0.1s, 0.1s;
+    transition-timing-function: ease-in-cubic, linear;
+    transition-delay: 0s, 0s;
+}
+
+.MainMenu__ElementRight {
+    border-bottom-right-radius: 70px;
+    border-right-width: 10px;
+    border-right-color: rgb(248, 237, 237);
+    border-bottom-color: rgb(248, 237, 237);
+    border-bottom-width: 6px;
+    rotate: 5deg;
+}
+
+.MainMenu__ElementLeft {
+    border-bottom-left-radius: 50px;
+    border-left-width: 10px;
+    border-left-color: rgb(248, 237, 237);
+    border-bottom-color: rgb(248, 237, 237);
+    border-bottom-width: 6px;
+    rotate: -5deg;
+}
+
+.MainMenu__Button2 {
+    rotate: -5deg;
+}
+
+.MainMenu__Button3 {
+    rotate: 4deg;
+}
+
+.MainMenu__Button4 {
+    rotate: -3deg;
+}
+
+.MainMenu__Button:active {
+    rotate: 0;
+    scale: 0.85 0.85;
+}

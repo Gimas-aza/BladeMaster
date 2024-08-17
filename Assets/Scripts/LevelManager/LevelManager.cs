@@ -7,11 +7,10 @@ namespace Assets.LevelManager
 {
     public abstract class LevelManager : ILevelManager, IModel
     {
-        private static readonly int _mainSceneIndex = -1;
-
-        protected int CurrentLevelIndex { get; set; } = _mainSceneIndex;
+        protected static readonly int MainSceneIndex = 0;
+        protected int CurrentLevelIndex { get; set; } = MainSceneIndex;
         protected int NextLevelIndex { get => (CurrentLevelIndex + 1 <= MaxLevelIndex) ? CurrentLevelIndex + 1 : CurrentLevelIndex; }
-        protected int PreviousLevelIndex { get => (CurrentLevelIndex - 1 >= 0) ? CurrentLevelIndex - 1 : CurrentLevelIndex; }
+        protected int PreviousLevelIndex { get => (CurrentLevelIndex - 1 >= 1) ? CurrentLevelIndex - 1 : CurrentLevelIndex; }
         protected abstract int MaxLevelIndex { get; set; }
 
         public event UnityAction LevelStartedToLoad;
