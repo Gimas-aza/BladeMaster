@@ -1,3 +1,4 @@
+using System;
 using Assets.EntryPoint;
 using Assets.MVP.Model;
 using UnityEngine;
@@ -22,5 +23,11 @@ namespace Assets.LevelManager
 
         protected void OnLevelLoaded() => LevelLoaded?.Invoke();
         protected void OnLevelStartedToLoad() => LevelStartedToLoad?.Invoke();
+
+        public void SubscribeToEvents(ref Func<int> levelAmountRequestedForDisplay, ref UnityAction<int> pressingTheSelectedLevel)
+        {
+            levelAmountRequestedForDisplay += () => MaxLevelIndex;
+            pressingTheSelectedLevel += LoadLevel;
+        }
     }
 }

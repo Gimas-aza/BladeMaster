@@ -6,10 +6,10 @@
             <engine:Label text="master" emoji-fallback-support="false" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 15px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: flex-end; align-self: center; height: 100%; width: auto; font-size: 50px; align-items: center; -unity-text-align: middle-center; -unity-font-definition: url(&quot;project://database/Assets/UI/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&amp;guid=d16619b0568630a2ab22e160d230e101&amp;type=3#NotInter-Regular&quot;); -unity-font-style: bold; flex-shrink: 0; flex-grow: 0; flex-direction: row; color: rgb(15, 0, 4);" />
         </engine:VisualElement>
         <engine:GroupBox style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; width: 100%; justify-content: flex-start; height: 70%; align-self: auto; align-content: flex-start; flex-shrink: 1;">
-            <engine:Button text="Играть" class="MainMenu__Button MainMenu__Button1 MainMenu__ElementRight" />
-            <engine:Button text="Магазин" class="MainMenu__Button MainMenu__Button2 MainMenu__ElementLeft" />
-            <engine:Button text="Настройки" class="MainMenu__Button MainMenu__Button3 MainMenu__ElementRight" />
-            <engine:Button text="Выйти" class="MainMenu__Button MainMenu__Button4 MainMenu__ElementLeft" />
+            <engine:Button text="Играть" name="ButtonPlay" class="MainMenu__Button MainMenu__Button1 MainMenu__ElementRight" />
+            <engine:Button text="Магазин" name="ButtonShop" class="MainMenu__Button MainMenu__Button2 MainMenu__ElementLeft" />
+            <engine:Button text="Настройки" name="ButtonSettings" class="MainMenu__Button MainMenu__Button3 MainMenu__ElementRight" />
+            <engine:Button text="Выйти" name="ButtonExit" class="MainMenu__Button MainMenu__Button4 MainMenu__ElementLeft" />
         </engine:GroupBox>
     </engine:VisualElement>
     <engine:VisualElement name="LevelsMenu" style="flex-grow: 1; background-color: rgb(255, 255, 255); -unity-background-scale-mode: stretch-to-fill; -unity-background-image-tint-color: rgb(255, 255, 255); background-image: url(&quot;project://database/Assets/UI/Sprites/BackgroundMainMenu.jpg?fileID=2800000&amp;guid=7131e5d6d29d5148f9b752de33ee2dfa&amp;type=3#BackgroundMainMenu&quot;); justify-content: space-between; align-items: center; align-content: stretch; padding-top: 60px; align-self: auto; padding-left: 15px; padding-right: 15px; flex-direction: column; flex-wrap: nowrap; display: none; padding-bottom: 50px;">
@@ -17,23 +17,11 @@
             <engine:Label text="Выбор" emoji-fallback-support="false" name="Titele1" style="margin-top: 0; margin-right: 15px; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: flex-start; align-self: center; height: 100%; width: auto; font-size: 45%; align-items: center; -unity-text-align: middle-center; -unity-font-definition: url(&quot;project://database/Assets/UI/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&amp;guid=d16619b0568630a2ab22e160d230e101&amp;type=3#NotInter-Regular&quot;); -unity-font-style: bold; flex-shrink: 0; flex-grow: 0; flex-direction: row; color: rgb(182, 0, 113); text-overflow: clip; white-space: pre;" />
             <engine:Label text="уровня" emoji-fallback-support="false" name="Titele2" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 15px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: flex-end; align-self: center; height: 100%; width: auto; font-size: 45%; align-items: center; -unity-text-align: middle-center; -unity-font-definition: url(&quot;project://database/Assets/UI/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&amp;guid=d16619b0568630a2ab22e160d230e101&amp;type=3#NotInter-Regular&quot;); -unity-font-style: bold; flex-shrink: 0; flex-grow: 0; flex-direction: row; color: rgb(15, 0, 4);" />
         </engine:VisualElement>
-        <engine:ScrollView horizontal-scroller-visibility="Hidden" language-direction="Inherit" nested-interaction-kind="Default" enabled="true" class="LevelsMenu__List">
-            <engine:Button text="Уровень 1" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
-            <engine:Button text="Уровень 2" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
-            <engine:Button text="Уровень 3" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
-            <engine:Button text="Уровень 4" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
-            <engine:Button text="Уровень 5" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
-            <engine:Button text="Уровень 6" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
-            <engine:Button text="Уровень 7" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
-            <engine:Button text="Уровень 8" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
-            <engine:Button text="Уровень 9" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
-            <engine:Button text="Уровень 10" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
-            <engine:Button text="Уровень 11" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
-            <engine:Button text="Уровень 12" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
-            <engine:Button text="Уровень 13" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
+        <engine:ScrollView name="ContainerButtonsStartLevel" horizontal-scroller-visibility="Hidden" language-direction="Inherit" nested-interaction-kind="Default" enabled="true" class="LevelsMenu__List">
+            <engine:Button name="ButtonStartLevel" text="Уровень 1" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
         </engine:ScrollView>
         <engine:VisualElement style="flex-grow: 1; flex-direction: row; margin-top: 15px; width: 100%; justify-content: space-between; align-self: center; align-content: flex-start; align-items: center;">
-            <engine:Button text="Назад" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonLeft" />
+            <engine:Button name="ButtonBack" text="Назад" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonLeft" />
         </engine:VisualElement>
     </engine:VisualElement>
     <engine:VisualElement name="ShopMenu" style="flex-grow: 1; background-color: rgb(255, 255, 255); -unity-background-scale-mode: stretch-to-fill; -unity-background-image-tint-color: rgb(255, 255, 255); background-image: url(&quot;project://database/Assets/UI/Sprites/BackgroundMainMenu.jpg?fileID=2800000&amp;guid=7131e5d6d29d5148f9b752de33ee2dfa&amp;type=3#BackgroundMainMenu&quot;); justify-content: space-between; align-items: center; align-content: stretch; padding-top: 60px; align-self: auto; padding-left: 15px; padding-right: 15px; flex-direction: column; flex-wrap: nowrap; display: none; padding-bottom: 40px;">
@@ -53,7 +41,7 @@
             <engine:Button class="ShopMenu__Item" style="background-image: url(&quot;project://database/Assets/UI/Sprites/KnifeIcon/8c25e4cd156d4472a3563ff4a4eee117-transformed.png?fileID=21300000&amp;guid=e2cf8e6e6aa5919b58ad4a04c000ff0f&amp;type=3#8c25e4cd156d4472a3563ff4a4eee117-transformed&quot;);" />
         </engine:ScrollView>
         <engine:VisualElement style="flex-grow: 1; flex-direction: row; margin-top: 15px; width: 100%; justify-content: space-between; align-self: center; align-content: flex-start; align-items: center;">
-            <engine:Button text="Назад" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonLeft" />
+            <engine:Button name="ButtonBack" text="Назад" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonLeft" />
             <engine:Button text="Купить - 100" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonRight" />
         </engine:VisualElement>
     </engine:VisualElement>
@@ -67,7 +55,7 @@
             <engine:Toggle label="Выбрация:" value="false" toggle-on-label-click="true" class="SettingsMenu__Checkbox" />
         </engine:VisualElement>
         <engine:VisualElement style="flex-grow: 0; flex-direction: row; margin-top: 15px; width: 100%; justify-content: flex-start; align-self: flex-end; align-content: auto; align-items: flex-end; height: auto;">
-            <engine:Button text="Назад" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonLeft" />
+            <engine:Button name="ButtonBack" text="Назад" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonLeft" />
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

@@ -1,9 +1,10 @@
+using System;
+using UnityEngine.Events;
+
 namespace Assets.MVP.Model
 {
     public interface IModel
     {
-        void LoadLevel(int sceneIndex);
-        void LoadNextLevel();
-        void LoadPreviousLevel();
+        void SubscribeToEvents(ref Func<int> levelAmountRequestedForDisplay, ref UnityAction<int> pressingTheSelectedLevel) {}
     }
 }
