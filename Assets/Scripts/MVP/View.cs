@@ -10,6 +10,9 @@ namespace Assets.MVP
     [RequireComponent(typeof(UIDocument))]
     public class View : MonoBehaviour, IInitializer
     {
+        [SerializeField] private VisualTreeAsset _templateButtonStartLevel;
+
+        private StateView _currentState;
         private Presenter _presenter;
         private VisualElement _root;
         // ==========================================
@@ -24,21 +27,38 @@ namespace Assets.MVP
         private Button _buttonSettings;
         private Button _buttonExit;
         private List<Button> _buttonBack;
-        private List<Button> _buttonStartLevel;
+        private List<Button> _buttonsStartLevel;
 
         public event Func<int> LevelAmountRequestedForDisplay;
         public event UnityAction<int> PressingTheSelectedLevel;
 
-        public void Init(Presenter presenter)
+        public void Init(Presenter presenter, StateView currentState)
         {
             _presenter = presenter;
             _presenter.RegisterEventsForView(ref LevelAmountRequestedForDisplay, ref PressingTheSelectedLevel);
+            _currentState = currentState;
         }
 
         private void Awake()
         {
             _root = GetComponent<UIDocument>().rootVisualElement;
+        }
 
+        private void Start()
+        {
+            switch (_currentState)
+            {
+                case StateView.MainMenu:
+                    StartMainMenu();
+                    break;
+                case StateView.GameMenu:
+                    StartGameMenu();
+                    break;
+            }
+        }
+
+        private void StartMainMenu()
+        {
             _mainMenu = _root.Q<VisualElement>("MainMenu");
             _levelsMenu = _root.Q<VisualElement>("LevelsMenu");
             _shopMenu = _root.Q<VisualElement>("ShopMenu");
@@ -50,11 +70,8 @@ namespace Assets.MVP
             _buttonSettings = _root.Q<Button>("ButtonSettings");
             _buttonExit = _root.Q<Button>("ButtonExit");
             _buttonBack = _root.Query<Button>("ButtonBack").ToList();
-            _buttonStartLevel = _root.Query<Button>("ButtonStartLevel").ToList();
-        }
+            _buttonsStartLevel = new List<Button>();
 
-        private void Start()
-        {
             _buttonPlay.clicked += OnButtonPlayClick;
             _buttonShop.clicked += OnButtonShopClick;
             _buttonSettings.clicked += OnButtonSettingsClick;
@@ -63,6 +80,27 @@ namespace Assets.MVP
             foreach (var button in _buttonBack)
             {
                 button.clicked += OnButtonBackClick;
+            }
+
+            _mainMenu.style.display = DisplayStyle.Flex;
+            AddButtonsStartLevel();
+        }
+
+        private void StartGameMenu()
+        {
+
+        }
+
+        private void AddButtonsStartLevel()
+        {
+            var levelAmount = LevelAmountRequestedForDisplay?.Invoke() ?? 0;
+            if (levelAmount == 0) return; 
+
+            CreateButtonsStartLevel(levelAmount);
+            for (var i = 0; i < levelAmount; i++)
+            {
+                _buttonsStartLevel[i].style.display = DisplayStyle.Flex;
+                _buttonsStartLevel[i].clicked += () => PressingTheSelectedLevel?.Invoke(i + 1);
             }
         }
 
@@ -81,7 +119,20 @@ namespace Assets.MVP
             _shopMenu.style.display = DisplayStyle.None;
             _settingsMenu.style.display = DisplayStyle.None;
 
-            Debug.Log(LevelAmountRequestedForDisplay?.Invoke());
+            
+        }
+
+        private void CreateButtonsStartLevel(int levelAmount)
+        {
+            for (var i = 0; i < levelAmount; i++)
+            {
+                var newTemplateButtonStartLevel = _templateButtonStartLevel.CloneTree();
+                var newButtonStartLevel = newTemplateButtonStartLevel.Q<Button>("ButtonStartLevel");
+                newButtonStartLevel.text = $"Уровень {i + 1}";
+
+                _containerButtonsStartLevel.Add(newButtonStartLevel);
+                _buttonsStartLevel.Add(newButtonStartLevel);
+            }
         }
 
         private void OnButtonShopClick()

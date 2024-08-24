@@ -15,13 +15,13 @@ namespace Assets.LevelManager
         protected abstract int MaxLevelIndex { get; set; }
 
         public event UnityAction LevelStartedToLoad;
-        public event UnityAction LevelLoaded;
+        public event UnityAction<int> LevelLoaded;
 
         public abstract void LoadLevel(int sceneIndex);
         public abstract void LoadNextLevel();
         public abstract void LoadPreviousLevel();
 
-        protected void OnLevelLoaded() => LevelLoaded?.Invoke();
+        protected void OnLevelLoaded() => LevelLoaded?.Invoke(CurrentLevelIndex);
         protected void OnLevelStartedToLoad() => LevelStartedToLoad?.Invoke();
 
         public void SubscribeToEvents(ref Func<int> levelAmountRequestedForDisplay, ref UnityAction<int> pressingTheSelectedLevel)

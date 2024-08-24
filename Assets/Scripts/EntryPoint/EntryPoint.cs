@@ -15,7 +15,6 @@ namespace Assets.EntryPoint
         private ILevelManager _levelManager;
         private IInitializer _presenter;
         private List<IModel> _models;
-        private IModel _modelLevelManager;
 
         private void Awake()
         {
@@ -34,11 +33,12 @@ namespace Assets.EntryPoint
             _levelManager.LevelLoaded += OnLevelLoaded;
         }
 
-        private void OnLevelLoaded()
+        private void OnLevelLoaded(int levelIndex)
         {
             var view = _objectFactory.CreateObject<View>() as IInitializer;
+            var currentState = (levelIndex == 1) ? StateView.MainMenu : StateView.GameMenu;
             _presenter.Init(_models);
-            view.Init(_presenter as Presenter);
+            view.Init(_presenter as Presenter, currentState);
         }
     }
 }

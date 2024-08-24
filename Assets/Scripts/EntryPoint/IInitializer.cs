@@ -9,6 +9,6 @@ namespace Assets.EntryPoint
         void Init() {}
         void Init(ISaveSystem saveSystem) {}
         void Init(List<IModel> model) {}
-        void Init(Presenter presenter) {}
+        void Init(Presenter presenter, StateView currentState) {}
     }
 }
