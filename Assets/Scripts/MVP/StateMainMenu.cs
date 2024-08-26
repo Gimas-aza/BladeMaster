@@ -6,9 +6,8 @@ using UnityEngine.UIElements;
 
 namespace Assets.MVP
 {
-    public class StateMainMenu
+    public class StateMainMenu : IStateView
     {
-
         private VisualTreeAsset _templateButtonStartLevel;
         private VisualElement _root;
         // ==========================================
@@ -33,10 +32,10 @@ namespace Assets.MVP
             _root = root;
             _templateButtonStartLevel = templateButtonStartLevel;
             presenter.RegisterEventsForView(ref LevelAmountRequestedForDisplay, ref PressingTheSelectedLevel);
-            StartMainMenu();
+            Start();
         }
 
-        private void StartMainMenu()
+        private void Start()
         {
             _mainMenu = _root.Q<VisualElement>("MainMenu");
             _levelsMenu = _root.Q<VisualElement>("LevelsMenu");

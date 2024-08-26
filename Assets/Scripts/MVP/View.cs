@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using Assets.EntryPoint;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UIElements;
 
 namespace Assets.MVP
@@ -15,7 +12,7 @@ namespace Assets.MVP
         private StateView _currentState;
         private Presenter _presenter;
         private VisualElement _root;
-        private StateMainMenu _stateMainMenu;
+        private IStateView _stateView;
 
         public void Init(Presenter presenter, StateView currentState)
         {
@@ -33,9 +30,10 @@ namespace Assets.MVP
             switch (_currentState)
             {
                 case StateView.MainMenu:
-                    _stateMainMenu = new StateMainMenu(_root, _templateButtonStartLevel, _presenter);
+                    _stateView = new StateMainMenu(_root, _templateButtonStartLevel, _presenter);
                     break;
                 case StateView.GameMenu:
+                    _stateView = new StateGameMenu(_root);
                     break;
             }
         }
