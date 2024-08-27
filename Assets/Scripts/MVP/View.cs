@@ -7,6 +7,7 @@ namespace Assets.MVP
     [RequireComponent(typeof(UIDocument))]
     public class View : MonoBehaviour, IInitializer
     {
+        [Header("Templates UI")]
         [SerializeField] private VisualTreeAsset _templateButtonStartLevel;
 
         private StateView _currentState;
@@ -33,7 +34,7 @@ namespace Assets.MVP
                     _stateView = new StateMainMenu(_root, _templateButtonStartLevel, _presenter);
                     break;
                 case StateView.GameMenu:
-                    _stateView = new StateGameMenu(_root);
+                    _stateView = new StateGameMenu(_root, _presenter);
                     break;
             }
         }

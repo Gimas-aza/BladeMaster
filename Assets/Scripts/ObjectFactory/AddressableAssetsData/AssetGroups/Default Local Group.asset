@@ -20,6 +20,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fe8f9d3eb55880e9bb441ff17916b412
+    m_Address: Assets/PlayerComponent
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 9c34e84416b9dc17680839270d204eab, type: 2}
   m_SchemaSet:
