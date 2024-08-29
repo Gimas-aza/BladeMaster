@@ -7,6 +7,6 @@ namespace Assets.MVP.Model
     public interface IModel
     {
         void SubscribeToEvents(ref Func<int> levelAmountRequestedForDisplay, ref UnityAction<int> pressingTheSelectedLevel) {}
-        void SubscribeToEvents(ref UnityAction<float> monitorInputRotation) {}
+        void SubscribeToEvents(ref UnityAction<float> monitorInputRotation, ref UnityAction monitorInputTouchBegin, ref UnityAction monitorInputTouchEnded) {}
     }
 }

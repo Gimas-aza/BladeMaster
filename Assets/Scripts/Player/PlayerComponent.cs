@@ -1,4 +1,5 @@
 using System;
+using Assets.EntryPoint;
 using Assets.MVP.Model;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,21 +7,35 @@ using UnityEngine.Events;
 namespace Assets.Player
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class PlayerComponent : MonoBehaviour, IModel
+    public class PlayerComponent : MonoBehaviour, IModel, IInitializer
     {
+        [Header("Player")]
         [SerializeField] private float _speed;
         [SerializeField] private float _radius;
+        [Header("Knife")]
+        [SerializeField] private KnivesPoolComponent _knivesPool;
+        [SerializeField] private int _amountOfKnives = 5;
+        [SerializeField] private float _minForce = 20;
+        [SerializeField] private float _maxForce = 50;
 
         private Rigidbody _rigidbody;
+        private float _time;
 
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
         }
 
-        public void SubscribeToEvents(ref UnityAction<float> monitorInputRotation)
+        public void Init(GameObject knife)
+        {
+            _knivesPool.CreateKnife(knife, _amountOfKnives);
+        }
+
+        public void SubscribeToEvents(ref UnityAction<float> monitorInputRotation, ref UnityAction monitorInputTouchBegin, ref UnityAction monitorInputTouchEnded)
         {
             monitorInputRotation += InputRotation;
+            monitorInputTouchBegin += InputTouchBegin;
+            monitorInputTouchEnded += InputTouchEnded;
         }
 
         private void InputRotation(float acceleration)
@@ -28,6 +43,18 @@ namespace Assets.Player
             var currentValue = Mathf.Clamp(_rigidbody.rotation.y + acceleration * 100, -_radius, _radius);
             var targetRotation = Quaternion.Euler(0, currentValue, 0);
             _rigidbody.MoveRotation(Quaternion.RotateTowards(_rigidbody.rotation, targetRotation, _speed * Time.fixedDeltaTime));
+        }
+
+        private void InputTouchBegin()
+        {
+            _time = Time.time;
+        }
+
+        private void InputTouchEnded()
+        {
+            var force = _minForce + (Time.time - _time) * (_maxForce - _minForce) / 5;
+            force = Mathf.Clamp(force, _minForce, _maxForce);
+            _knivesPool.ThrowKnife(force);
         }
     }
 }

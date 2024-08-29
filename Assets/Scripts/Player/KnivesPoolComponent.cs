@@ -8,15 +8,10 @@ namespace Assets.Player
     {
         private List<IKnife> _knives;
         private IKnife _templateKnife;
-        private float _force = 20;
 
         private void Awake()
         {
             _knives = new();
-        }
-
-        public void Init()
-        {
         }
 
         public void CreateKnife(GameObject templateKnife, int amount)
@@ -25,19 +20,31 @@ namespace Assets.Player
             {
                 var newObject = GameObject
                     .Instantiate(templateKnife, transform)
-                    .TryGetComponent<KnifeComponent>(out var newKnife);
+                    .TryGetComponent<IKnife>(out var newKnife);
                 if (!newObject)
                     Debug.LogError("KnifeComponent is null");
 
+                newKnife.SetTransform(transform);
+                newKnife.SetActive(false);
                 _knives.Add(newKnife);
             }
+
+            Destroy(templateKnife);
+            _knives[0].SetActive(true);
         }
 
-        private void ThrowKnife()
+        public void ThrowKnife(float force)
         {
+            if (_knives.Count == 0) Debug.LogError("Knives list is empty");; 
+
             foreach (var knife in _knives)
             {
-                knife.Throw(_force);
+                if (!knife.IsActive())
+                {
+                    knife.SetActive(true);
+                    knife.Throw(force);
+                    break;
+                }
             }
         }
     }

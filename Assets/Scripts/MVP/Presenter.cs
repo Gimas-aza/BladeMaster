@@ -24,11 +24,11 @@ namespace Assets.MVP
             }
         }
 
-        public void RegisterEventsForView(ref UnityAction<float> monitorInputRotation)
+        public void RegisterEventsForView(ref UnityAction<float> monitorInputRotation, ref UnityAction monitorInputTouchBegin, ref UnityAction monitorInputTouchEnded)
         {
             foreach (var model in _models)
             {
-                model.SubscribeToEvents(ref monitorInputRotation);
+                model.SubscribeToEvents(ref monitorInputRotation, ref monitorInputTouchBegin, ref monitorInputTouchEnded);
             }
         }
     }
