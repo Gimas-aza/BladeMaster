@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Assets.Knife;
 using Assets.LevelManager;
 using Assets.MVP;
 using Assets.MVP.Model;
@@ -30,8 +31,8 @@ namespace Assets.EntryPoint
 
             _models.Add(_levelManager as IModel);
 
-            _levelManager.LoadLevel(1);
             _levelManager.LevelLoaded += OnLevelLoaded;
+            _levelManager.LoadLevel(2);
         }
 
         private void OnLevelLoaded(int levelIndex)
@@ -52,6 +53,10 @@ namespace Assets.EntryPoint
             {
                 case StateView.GameMenu:
                     var player = _objectFactory.CreateObject<PlayerComponent>() as IModel;
+                    var playerInit = player as IInitializer;
+                    var knife = _objectFactory.CreateObject<KnifeComponent>();
+                    playerInit.Init(knife.gameObject);
+                    
                     _models.Add(player);
                     break;
             }

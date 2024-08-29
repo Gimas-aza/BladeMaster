@@ -9,32 +9,10 @@ namespace Assets.Knife
         [SerializeField] private List<Rigidbody> _rigidbodyList;
         [SerializeField] private TriggerHandler _triggerHandler;
 
-        private float _force = 20;
-
         private void Awake()
         {
             if (_triggerHandler == null) Debug.LogError("TriggerHandler is null"); 
             _triggerHandler.TriggerEntered += OnTriggerEnter;
-        }
-
-        private void Update()
-        {
-            if (Input.GetKey(KeyCode.Space))
-            {
-                if (_force < 50)
-                    _force += 0.1f;
-                Debug.Log("Force: " + _force);
-            }
-            if (Input.GetKeyUp(KeyCode.Space))
-            {
-                foreach (var rigidbody in _rigidbodyList)
-                {
-                    rigidbody.isKinematic = false;
-                    rigidbody.useGravity = true;
-                }
-
-                _rigidbodyList[0].AddForce(Vector3.forward * _force, ForceMode.Impulse);
-            }
         }
 
         private void OnTriggerEnter(Collider other)
@@ -52,6 +30,22 @@ namespace Assets.Knife
             this.transform.rotation = transform.rotation;
         }
 
+        public void SetActive(bool active)
+        {
+            gameObject.SetActive(active);
+
+            if (!active)
+            {
+                foreach (var rigidbody in _rigidbodyList)
+                {
+                    rigidbody.isKinematic = true;
+                    rigidbody.useGravity = false;
+                }
+            }
+        }
+
+        public bool IsActive() => gameObject.activeSelf;
+
         public void Throw(float force)
         {
             foreach (var rigidbody in _rigidbodyList)
@@ -61,6 +55,11 @@ namespace Assets.Knife
             }
 
             _rigidbodyList[0].AddForce(Vector3.forward * force, ForceMode.Impulse);
+        }
+
+        public void SwitchSkin()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -20,6 +20,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c44211a7a83123f2bb8920d09c97b38b
+    m_Address: Assets/KnifeComponent
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fe8f9d3eb55880e9bb441ff17916b412
     m_Address: Assets/PlayerComponent
     m_ReadOnly: 0
