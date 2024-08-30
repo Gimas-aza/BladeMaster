@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Knife;
 using UnityEngine;
 
@@ -8,10 +9,12 @@ namespace Assets.Player
     {
         private List<IKnife> _knives;
         private IKnife _templateKnife;
+        private int _knivesIndex;
 
         private void Awake()
         {
             _knives = new();
+            _knivesIndex = 0;
         }
 
         public void CreateKnife(GameObject templateKnife, int amount)
@@ -35,16 +38,20 @@ namespace Assets.Player
 
         public void ThrowKnife(float force)
         {
-            if (_knives.Count == 0) Debug.LogError("Knives list is empty");; 
+            if (_knives.Count == 0)
+                Debug.LogError("Knives list is empty");
 
-            foreach (var knife in _knives)
+            if (_knivesIndex < _knives.Count)
             {
-                if (!knife.IsActive() || knife == _knives[0])
-                {
-                    knife.SetActive(true);
-                    knife.Throw(force);
-                    break;
-                }
+                _knives[_knivesIndex].SetActive(true);
+                _knives[_knivesIndex].SetGlobalParent();
+                _knives[_knivesIndex].Throw(force);
+                _knivesIndex++;
+
+                var currentKnives = _knives
+                    .Where((knife, index) => index == _knivesIndex)
+                    .FirstOrDefault();
+                currentKnives?.SetActive(true);
             }
         }
     }

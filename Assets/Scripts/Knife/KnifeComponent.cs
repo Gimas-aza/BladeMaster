@@ -26,6 +26,7 @@ namespace Assets.Knife
 
         public void SetTransform(Transform transform)
         {
+            this.transform.SetParent(transform);
             this.transform.position = transform.position;
             this.transform.rotation = transform.rotation;
         }
@@ -44,6 +45,8 @@ namespace Assets.Knife
             }
         }
 
+        public void SetGlobalParent() => transform.SetParent(null);
+
         public bool IsActive() => gameObject.activeSelf;
 
         public void Throw(float force)
@@ -54,7 +57,7 @@ namespace Assets.Knife
                 rigidbody.useGravity = true;
             }
 
-            _rigidbodyList[0].AddForce(Vector3.forward * force, ForceMode.Impulse);
+            _rigidbodyList[0].AddForce(transform.forward * force, ForceMode.Impulse);
         }
 
         public void SwitchSkin()
