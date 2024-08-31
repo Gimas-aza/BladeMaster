@@ -12,5 +12,6 @@ namespace Assets.EntryPoint
         void Init(List<IModel> model) {}
         void Init(Presenter presenter, StateView currentState) {}
         void Init(GameObject gameObject) {}
+        void Init(int levelIndex) {}
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Assets.Enemy;
 using Assets.Knife;
 using Assets.LevelManager;
 using Assets.MVP;
@@ -32,22 +33,22 @@ namespace Assets.EntryPoint
             _models.Add(_levelManager as IModel);
 
             _levelManager.LevelLoaded += OnLevelLoaded;
-            _levelManager.LoadLevel(2);
+            _levelManager.LoadLevel(1);
         }
 
         private void OnLevelLoaded(int levelIndex)
         {
             var view = _objectFactory.CreateObject<View>() as IInitializer;
-            var currentState = (levelIndex == 1) ? StateView.MainMenu : StateView.GameMenu;
+            var currentState = (levelIndex == 0) ? StateView.MainMenu : StateView.GameMenu;
 
-            AddObjects(currentState);
+            AddObjects(currentState, levelIndex);
             ClearList(_models);
 
             _presenter.Init(_models);
             view.Init(_presenter as Presenter, currentState);
         }
 
-        private void AddObjects(StateView stateView)
+        private void AddObjects(StateView stateView, int levelIndex)
         {
             switch (stateView)
             {
@@ -55,7 +56,10 @@ namespace Assets.EntryPoint
                     var player = _objectFactory.CreateObject<PlayerComponent>() as IModel;
                     var playerInit = player as IInitializer;
                     var knife = _objectFactory.CreateObject<KnifeComponent>();
+                    var enemySpawner = _objectFactory.CreateObject<EnemySpawnerComponent>() as IInitializer;
+
                     playerInit.Init(knife.gameObject);
+                    enemySpawner.Init(levelIndex - 1);
                     
                     _models.Add(player);
                     break;

@@ -72,8 +72,9 @@ namespace Assets.MVP
             CreateButtonsStartLevel(levelAmount);
             for (var i = 0; i < levelAmount; i++)
             {
+                int index = i;
                 _buttonsStartLevel[i].style.display = DisplayStyle.Flex;
-                _buttonsStartLevel[i].clicked += () => PressingTheSelectedLevel?.Invoke(i + 1);
+                _buttonsStartLevel[i].clicked += () => PressingTheSelectedLevel?.Invoke(index + 1);
             }
         }
 

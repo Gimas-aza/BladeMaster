@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Assets.Player;
+using Assets.Target;
 using UnityEngine;
 
 namespace Assets.Knife
@@ -8,6 +9,8 @@ namespace Assets.Knife
     {
         [SerializeField] private List<Rigidbody> _rigidbodyList;
         [SerializeField] private TriggerHandler _triggerHandler;
+
+        private bool _isThrown = false;
 
         private void Awake()
         {
@@ -22,6 +25,11 @@ namespace Assets.Knife
                 rigidbody.isKinematic = true;
                 rigidbody.useGravity = false;
             }
+            if (other.TryGetComponent(out ITarget target) && !_isThrown)
+            {
+                Debug.Log("Target hit");
+            }
+            _isThrown = true;
         }
 
         public void SetTransform(Transform transform)

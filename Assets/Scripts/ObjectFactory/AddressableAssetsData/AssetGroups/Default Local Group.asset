@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 332be45668468bfb7b489da22a0bdaed
   m_SerializeEntries:
+  - m_GUID: 2287df1ac2c71afd28edfea3a287f7d8
+    m_Address: Assets/EnemySpawnerComponent
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6de03d4bf8b8cdb8cafbc7cead9b411b
     m_Address: Assets/View
     m_ReadOnly: 0
