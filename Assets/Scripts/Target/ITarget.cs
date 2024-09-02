@@ -1,4 +1,8 @@
 namespace Assets.Target
 {
-    public interface ITarget { }
+    public interface ITarget 
+    {
+        void SetHit(bool isHit);
+        bool IsHit();
+    }
 }

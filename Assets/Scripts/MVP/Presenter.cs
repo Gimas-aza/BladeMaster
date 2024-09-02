@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 namespace Assets.MVP
 {
-    public class Presenter : IInitializer 
+    public class Presenter : IInitializer
     {
         private List<IModel> _models;
 
@@ -16,19 +16,37 @@ namespace Assets.MVP
             _models = model;
         }
 
-        public void RegisterEventsForView(ref Func<int> levelAmountRequestedForDisplay, ref UnityAction<int> pressingTheSelectedLevel)
+        public void RegisterEventsForView(
+            ref Func<int> levelAmountRequestedForDisplay,
+            ref UnityAction<int> pressingTheSelectedLevel,
+            ref Func<int> unlockedLevels
+        )
         {
             foreach (var model in _models)
             {
-                model.SubscribeToEvents(ref levelAmountRequestedForDisplay, ref pressingTheSelectedLevel);
+                model.SubscribeToEvents(
+                    ref levelAmountRequestedForDisplay,
+                    ref pressingTheSelectedLevel
+                );
+                model.SubscribeToEvents(
+                    ref unlockedLevels
+                );
             }
         }
 
-        public void RegisterEventsForView(ref UnityAction<float> monitorInputRotation, ref UnityAction monitorInputTouchBegin, ref UnityAction monitorInputTouchEnded)
+        public void RegisterEventsForView(
+            ref UnityAction<float> monitorInputRotation,
+            ref UnityAction monitorInputTouchBegin,
+            ref UnityAction monitorInputTouchEnded
+        )
         {
             foreach (var model in _models)
             {
-                model.SubscribeToEvents(ref monitorInputRotation, ref monitorInputTouchBegin, ref monitorInputTouchEnded);
+                model.SubscribeToEvents(
+                    ref monitorInputRotation,
+                    ref monitorInputTouchBegin,
+                    ref monitorInputTouchEnded
+                );
             }
         }
     }

@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using Assets.EntryPoint;
+using Assets.GameProgression;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Assets.Enemy
 {
-    public class EnemySpawnerComponent : MonoBehaviour, IInitializer
+    public class EnemySpawnerComponent : MonoBehaviour, IInitializer, ISpawnerEnemies
     {
-        [SerializeField]
-        private List<EnemyLocatorList> _transformOfEnemiesOnLevels;
+        [SerializeField] private List<EnemyLocatorList> _transformOfEnemiesOnLevels;
 
         private int _currentLevel;
         private List<EnemyComponent> _enemies;
@@ -54,6 +54,11 @@ namespace Assets.Enemy
                 return false;
             }
             return true;
+        }
+
+        public List<EnemyComponent> GetEnemies()
+        {
+            return _enemies;
         }
     }
 }

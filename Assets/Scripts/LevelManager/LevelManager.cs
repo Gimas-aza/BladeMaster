@@ -29,5 +29,7 @@ namespace Assets.LevelManager
             levelAmountRequestedForDisplay += () => MaxLevelIndex;
             pressingTheSelectedLevel += LoadLevel;
         }
+
+        public int GetIndexOfLevel() => CurrentLevelIndex;
     }
 }

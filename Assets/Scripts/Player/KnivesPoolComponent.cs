@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
+using Assets.GameProgression;
 using Assets.Knife;
 using UnityEngine;
 
 namespace Assets.Player
 {
-    public class KnivesPoolComponent : MonoBehaviour
+    public class KnivesPoolComponent : MonoBehaviour 
     {
         private List<IKnife> _knives;
-        private IKnife _templateKnife;
         private int _knivesIndex;
 
         private void Awake()
@@ -53,6 +53,11 @@ namespace Assets.Player
                     .FirstOrDefault();
                 currentKnives?.SetActive(true);
             }
+        }
+
+        public List<IKnife> GetKnives()
+        {
+            return _knives;
         }
     }
 }

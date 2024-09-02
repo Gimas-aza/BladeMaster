@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Assets.Player;
 using Assets.Target;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Assets.Knife
 {
@@ -11,6 +12,9 @@ namespace Assets.Knife
         [SerializeField] private TriggerHandler _triggerHandler;
 
         private bool _isThrown = false;
+
+        public event UnityAction<ITarget> Hit;
+        public event UnityAction NoHit;
 
         private void Awake()
         {
@@ -25,9 +29,15 @@ namespace Assets.Knife
                 rigidbody.isKinematic = true;
                 rigidbody.useGravity = false;
             }
-            if (other.TryGetComponent(out ITarget target) && !_isThrown)
+
+            if (other.TryGetComponent(out ITarget target) && !target.IsHit() && !_isThrown)
             {
-                Debug.Log("Target hit");
+                target.SetHit(true);
+                Hit?.Invoke(target);
+            }
+            else if (!_isThrown)
+            {
+                NoHit?.Invoke();
             }
             _isThrown = true;
         }

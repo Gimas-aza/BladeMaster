@@ -26,12 +26,13 @@ namespace Assets.MVP
 
         public event Func<int> LevelAmountRequestedForDisplay;
         public event UnityAction<int> PressingTheSelectedLevel;
+        public event Func<int> UnlockedLevels;
 
         public StateMainMenu(VisualElement root, VisualTreeAsset templateButtonStartLevel, Presenter presenter)
         {
             _root = root;
             _templateButtonStartLevel = templateButtonStartLevel;
-            presenter.RegisterEventsForView(ref LevelAmountRequestedForDisplay, ref PressingTheSelectedLevel);
+            presenter.RegisterEventsForView(ref LevelAmountRequestedForDisplay, ref PressingTheSelectedLevel, ref UnlockedLevels);
             Start();
         }
 
@@ -67,6 +68,7 @@ namespace Assets.MVP
         private void AddButtonsStartLevel()
         {
             var levelAmount = LevelAmountRequestedForDisplay?.Invoke() ?? 0;
+            var unlockedLevels = UnlockedLevels?.Invoke() ?? 0;
             if (levelAmount == 0) return; 
 
             CreateButtonsStartLevel(levelAmount);
@@ -74,7 +76,12 @@ namespace Assets.MVP
             {
                 int index = i;
                 _buttonsStartLevel[i].style.display = DisplayStyle.Flex;
+                _buttonsStartLevel[i].enabledSelf = false;
                 _buttonsStartLevel[i].clicked += () => PressingTheSelectedLevel?.Invoke(index + 1);
+            }
+            for (var i = 0; i < unlockedLevels; i++)
+            {
+                _buttonsStartLevel[i].enabledSelf = true;
             }
         }
 

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Assets.Enemy;
+using Assets.GameProgression;
 using Assets.Knife;
 using Assets.LevelManager;
 using Assets.MVP;
@@ -17,6 +18,7 @@ namespace Assets.EntryPoint
         private ISaveSystem _saveSystem;
         private ILevelManager _levelManager;
         private IInitializer _presenter;
+        private IInitializer _playerProgression;
         private List<IModel> _models;
 
         private void Awake()
@@ -29,11 +31,13 @@ namespace Assets.EntryPoint
             _saveSystem = _loadSystem as ISaveSystem;
             _levelManager = new GameSceneManager();
             _presenter = new Presenter();
+            _playerProgression = new PlayerProgression();
 
             _models.Add(_levelManager as IModel);
+            _models.Add(_playerProgression as IModel);
 
             _levelManager.LevelLoaded += OnLevelLoaded;
-            _levelManager.LoadLevel(1);
+            _levelManager.LoadLevel(0);
         }
 
         private void OnLevelLoaded(int levelIndex)
@@ -60,6 +64,7 @@ namespace Assets.EntryPoint
 
                     playerInit.Init(knife.gameObject);
                     enemySpawner.Init(levelIndex - 1);
+                    _playerProgression.Init(enemySpawner as ISpawnerEnemies, player as IKnivesPool, _levelManager as ILevelManager);
                     
                     _models.Add(player);
                     break;

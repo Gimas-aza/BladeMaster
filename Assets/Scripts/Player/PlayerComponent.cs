@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Assets.EntryPoint;
+using Assets.GameProgression;
 using Assets.MVP.Model;
 using UnityEngine;
 using UnityEngine.Events;
@@ -7,7 +9,7 @@ using UnityEngine.Events;
 namespace Assets.Player
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class PlayerComponent : MonoBehaviour, IModel, IInitializer
+    public class PlayerComponent : MonoBehaviour, IModel, IInitializer, IKnivesPool
     {
         [Header("Player")]
         [SerializeField] private float _speed;
@@ -55,6 +57,11 @@ namespace Assets.Player
             var force = _minForce + (Time.time - _time) * (_maxForce - _minForce) / 5;
             force = Mathf.Clamp(force, _minForce, _maxForce);
             _knivesPool.ThrowKnife(force);
+        }
+
+        public List<IKnife> GetKnives()
+        {
+            return _knivesPool.GetKnives();
         }
     }
 }

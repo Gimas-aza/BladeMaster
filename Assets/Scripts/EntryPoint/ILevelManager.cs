@@ -8,5 +8,6 @@ namespace Assets.EntryPoint
         event UnityAction LevelStartedToLoad;
         event UnityAction<int> LevelLoaded;
         void LoadLevel(int sceneIndex);
+        int GetIndexOfLevel();
     }
 }
