@@ -6,6 +6,7 @@ using Assets.MVP.Model;
 using Assets.Player;
 using Assets.Target;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Assets.GameProgression
 {
@@ -23,6 +24,8 @@ namespace Assets.GameProgression
         private int _multiplier = 0;
         private List<EnemyComponent> _enemies;
         private List<IKnife> _knives;
+        private UnityAction<int> _monitorCounter;
+        private UnityAction<int> _monitorMoney;
 
         public void Init(ISpawnerEnemies spawnerEnemies, IKnivesPool knivesPool, ILevelManager levelManager)
         {
@@ -42,13 +45,20 @@ namespace Assets.GameProgression
             unlockedLevels += () => _unlockedLevels;
         }
 
+        public void SubscribeToEvents(ref UnityAction<int> monitorCounter, ref UnityAction<int> monitorMoney)
+        {
+            _monitorCounter = monitorCounter;
+            _monitorMoney = monitorMoney;
+        }
+
         private void StartActionForHit(ITarget target)
         {
             _amountHits++;
             _multiplier++;
             AddCounter(_multiplier);
             AddMoney();
-            Debug.Log("Counter: " + _counter + " Money: " + _money);
+            _monitorCounter?.Invoke(_counter);
+            _monitorMoney?.Invoke(_money);
 
             if (_amountHits == _enemies.Count && _currentLevel != _finishedLevels)
             {
@@ -60,7 +70,8 @@ namespace Assets.GameProgression
         {
             SubtractMoney();
             _multiplier = 0;
-            Debug.Log("NoHit. Counter: " + _counter + " Money: " + _money);
+            _monitorCounter?.Invoke(_counter);
+            _monitorMoney?.Invoke(_money);
         }
 
         private void AddCounter(int multiplier = 1)

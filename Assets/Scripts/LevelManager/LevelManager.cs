@@ -8,8 +8,9 @@ namespace Assets.LevelManager
 {
     public abstract class LevelManager : ILevelManager, IModel
     {
-        protected static readonly int MainSceneIndex = -1;
-        protected int CurrentLevelIndex { get; set; } = MainSceneIndex;
+        protected static readonly int EntryPointIndex = -1;
+        protected static readonly int MainMenuIndex = 0;
+        protected int CurrentLevelIndex { get; set; } = EntryPointIndex;
         protected int NextLevelIndex { get => (CurrentLevelIndex + 1 <= MaxLevelIndex) ? CurrentLevelIndex + 1 : CurrentLevelIndex; }
         protected int PreviousLevelIndex { get => (CurrentLevelIndex - 1 >= 0) ? CurrentLevelIndex - 1 : CurrentLevelIndex; }
         protected abstract int MaxLevelIndex { get; set; }
@@ -28,6 +29,11 @@ namespace Assets.LevelManager
         {
             levelAmountRequestedForDisplay += () => MaxLevelIndex;
             pressingTheSelectedLevel += LoadLevel;
+        }
+
+        public void SubscribeToEvents(ref UnityAction clickedButtonBackMainMenu)
+        {
+            clickedButtonBackMainMenu += () => LoadLevel(MainMenuIndex);
         }
 
         public int GetIndexOfLevel() => CurrentLevelIndex;

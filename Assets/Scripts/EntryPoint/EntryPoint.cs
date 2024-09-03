@@ -6,7 +6,6 @@ using Assets.LevelManager;
 using Assets.MVP;
 using Assets.MVP.Model;
 using Assets.Player;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.EntryPoint

@@ -37,7 +37,10 @@ namespace Assets.MVP
         public void RegisterEventsForView(
             ref UnityAction<float> monitorInputRotation,
             ref UnityAction monitorInputTouchBegin,
-            ref UnityAction monitorInputTouchEnded
+            ref UnityAction monitorInputTouchEnded,
+            ref UnityAction clickedButtonBackMainMenu,
+            ref UnityAction<int> monitorCounter,
+            ref UnityAction<int> monitorMoney
         )
         {
             foreach (var model in _models)
@@ -46,6 +49,13 @@ namespace Assets.MVP
                     ref monitorInputRotation,
                     ref monitorInputTouchBegin,
                     ref monitorInputTouchEnded
+                );
+                model.SubscribeToEvents(
+                    ref clickedButtonBackMainMenu
+                );
+                model.SubscribeToEvents(
+                    ref monitorCounter,
+                    ref monitorMoney
                 );
             }
         }

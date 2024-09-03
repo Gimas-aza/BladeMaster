@@ -326,3 +326,32 @@
     border-left-width: 1px;
     -unity-background-image-tint-color: rgb(23, 59, 69);
 }
+
+.GameMenu__PauseMenu {
+    position: absolute;
+    right: 10%;
+    bottom: 20%;
+    left: 10%;
+    top: 20%;
+    background-color: rgba(255, 187, 92, 0.5);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    border-left-color: rgb(255, 155, 80);
+    border-right-color: rgb(255, 155, 80);
+    border-top-color: rgb(255, 155, 80);
+    border-bottom-color: rgb(255, 155, 80);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+}
+
+.PauseMenu__Button {
+    margin-bottom: 30px;
+}

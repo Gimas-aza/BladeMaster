@@ -10,12 +10,14 @@ namespace Assets.MVP
     {
         private VisualTreeAsset _templateButtonStartLevel;
         private VisualElement _root;
+
         // ==========================================
         private VisualElement _mainMenu;
         private VisualElement _levelsMenu;
         private VisualElement _shopMenu;
         private VisualElement _settingsMenu;
         private VisualElement _containerButtonsStartLevel;
+
         // ==========================================
         private Button _buttonPlay;
         private Button _buttonShop;
@@ -28,11 +30,19 @@ namespace Assets.MVP
         public event UnityAction<int> PressingTheSelectedLevel;
         public event Func<int> UnlockedLevels;
 
-        public StateMainMenu(VisualElement root, VisualTreeAsset templateButtonStartLevel, Presenter presenter)
+        public StateMainMenu(
+            VisualElement root,
+            VisualTreeAsset templateButtonStartLevel,
+            Presenter presenter
+        )
         {
             _root = root;
             _templateButtonStartLevel = templateButtonStartLevel;
-            presenter.RegisterEventsForView(ref LevelAmountRequestedForDisplay, ref PressingTheSelectedLevel, ref UnlockedLevels);
+            presenter.RegisterEventsForView(
+                ref LevelAmountRequestedForDisplay,
+                ref PressingTheSelectedLevel,
+                ref UnlockedLevels
+            );
             Start();
         }
 
@@ -55,7 +65,7 @@ namespace Assets.MVP
             _buttonShop.clicked += OnButtonShopClick;
             _buttonSettings.clicked += OnButtonSettingsClick;
             _buttonExit.clicked += OnButtonExitClick;
-            
+
             foreach (var button in _buttonBack)
             {
                 button.clicked += OnButtonBackClick;
@@ -69,7 +79,8 @@ namespace Assets.MVP
         {
             var levelAmount = LevelAmountRequestedForDisplay?.Invoke() ?? 0;
             var unlockedLevels = UnlockedLevels?.Invoke() ?? 0;
-            if (levelAmount == 0) return; 
+            if (levelAmount == 0)
+                return;
 
             CreateButtonsStartLevel(levelAmount);
             for (var i = 0; i < levelAmount; i++)

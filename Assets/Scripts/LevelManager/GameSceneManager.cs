@@ -48,7 +48,7 @@ namespace Assets.LevelManager
             if (
                 CurrentLevelIndex == sceneIndex
                 || sceneIndex > MaxLevelIndex
-                || sceneIndex == MainSceneIndex
+                || sceneIndex == EntryPointIndex
             )
                 return;
 
