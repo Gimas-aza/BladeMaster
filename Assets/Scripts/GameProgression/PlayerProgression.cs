@@ -13,7 +13,7 @@ namespace Assets.GameProgression
     public class PlayerProgression : IInitializer, IModel
     {
         private int _counter;
-        private int _money;
+        private int _money = 100;
         private int _finishedLevels = 0;
         private int _currentLevel;
         private int _unlockedLevels = 1;
@@ -26,12 +26,17 @@ namespace Assets.GameProgression
         private List<IKnife> _knives;
         private UnityAction<int> _monitorCounter;
         private UnityAction<int> _monitorMoney;
+        private UnityAction<bool> _finishedLevel;
 
-        public void Init(ISpawnerEnemies spawnerEnemies, IKnivesPool knivesPool, ILevelManager levelManager)
+        public void Init(
+            ISpawnerEnemies spawnerEnemies,
+            IKnivesPool knivesPool,
+            ILevelManager levelManager
+        )
         {
             _enemies = spawnerEnemies.GetEnemies();
             _knives = knivesPool.GetKnives();
-            _currentLevel = levelManager.GetIndexOfLevel();
+            _currentLevel = levelManager.GetLevelIndex();
 
             foreach (var knife in _knives)
             {
@@ -45,10 +50,18 @@ namespace Assets.GameProgression
             unlockedLevels += () => _unlockedLevels;
         }
 
-        public void SubscribeToEvents(ref UnityAction<int> monitorCounter, ref UnityAction<int> monitorMoney)
+        public void SubscribeToEvents(
+            ref UnityAction<int> monitorCounter,
+            ref UnityAction<int> monitorMoney,
+            ref UnityAction<bool> finishedLevel
+        )
         {
             _monitorCounter = monitorCounter;
             _monitorMoney = monitorMoney;
+            _finishedLevel = finishedLevel;
+
+            _monitorCounter?.Invoke(_counter);
+            _monitorMoney?.Invoke(_money);
         }
 
         private void StartActionForHit(ITarget target)
@@ -60,18 +73,37 @@ namespace Assets.GameProgression
             _monitorCounter?.Invoke(_counter);
             _monitorMoney?.Invoke(_money);
 
-            if (_amountHits == _enemies.Count && _currentLevel != _finishedLevels)
-            {
-                FinishLevel();
-            }
+            EvaluateLevelCompletionStatus();
         }
 
         private void StartActionForNoHit()
         {
-            SubtractMoney();
+            SubtractCounter();
             _multiplier = 0;
             _monitorCounter?.Invoke(_counter);
             _monitorMoney?.Invoke(_money);
+
+            EvaluateLevelCompletionStatus();
+        }
+
+        private void EvaluateLevelCompletionStatus()
+        {
+            var firstWin = _currentLevel != _finishedLevels;
+
+            if (_amountHits == _enemies.Count)
+                CompletedLevel(firstWin);
+            else if (IsKnivesAllThrown() && _amountHits != _enemies.Count)
+                FailedLevel();
+        }
+
+        private bool IsKnivesAllThrown()
+        {
+            foreach (var knife in _knives)
+            {
+                if (!knife.IsThrow())
+                    return false;
+            }
+            return true;
         }
 
         private void AddCounter(int multiplier = 1)
@@ -84,16 +116,32 @@ namespace Assets.GameProgression
             _money += _moneyPerHit;
         }
 
+        private void SubtractCounter()
+        {
+            _counter -= _pointsPerStroke / 2;
+        }
+
         private void SubtractMoney()
         {
             _money -= _moneyPerNoHit;
         }
 
-        private void FinishLevel()
+        private void CompletedLevel(bool isFirstWin)
         {
-            _finishedLevels++;
-            _currentLevel++;
-            _unlockedLevels++;
+            if (isFirstWin)
+            {
+                _finishedLevels++;
+                _unlockedLevels++;
+            }
+
+            _amountHits = 0;
+            _finishedLevel?.Invoke(true);
+        }
+
+        private void FailedLevel()
+        {
+            _amountHits = 0;
+            _finishedLevel?.Invoke(false);
         }
     }
 }

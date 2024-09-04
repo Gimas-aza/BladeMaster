@@ -92,6 +92,8 @@ namespace Assets.MVP
             }
             for (var i = 0; i < unlockedLevels; i++)
             {
+                if (i >= levelAmount)
+                    break;
                 _buttonsStartLevel[i].enabledSelf = true;
             }
         }

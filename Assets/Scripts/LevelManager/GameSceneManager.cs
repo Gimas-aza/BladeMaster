@@ -59,5 +59,14 @@ namespace Assets.LevelManager
 
             OnLevelLoaded();
         }
+
+        public override async void ReloadingCurrentLevel()
+        {
+            OnLevelStartedToLoad();
+
+            await SceneManager.LoadSceneAsync(CurrentLevelIndex + _sceneIndexOffset);
+
+            OnLevelLoaded();
+        }
     }
 }

@@ -19,11 +19,13 @@ namespace Assets.MVP.Model
             ref UnityAction monitorInputTouchEnded
         ) { }
         void SubscribeToEvents(
-            ref UnityAction clickedButtonBackMainMenu
+            ref UnityAction clickedButtonBackMainMenu,
+            ref UnityAction clickedButtonAgainLevel
         ) { }
         void SubscribeToEvents(
-            ref UnityAction<int> MonitorCounter,
-            ref UnityAction<int> MonitorMoney
+            ref UnityAction<int> monitorCounter,
+            ref UnityAction<int> monitorMoney,
+            ref UnityAction<bool> finishedLevel
         ) { }
     }
 }

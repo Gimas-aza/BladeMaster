@@ -40,7 +40,9 @@ namespace Assets.MVP
             ref UnityAction monitorInputTouchEnded,
             ref UnityAction clickedButtonBackMainMenu,
             ref UnityAction<int> monitorCounter,
-            ref UnityAction<int> monitorMoney
+            ref UnityAction<int> monitorMoney,
+            ref UnityAction<bool> finishedLevel,
+            ref UnityAction clickedButtonAgainLevel
         )
         {
             foreach (var model in _models)
@@ -51,11 +53,13 @@ namespace Assets.MVP
                     ref monitorInputTouchEnded
                 );
                 model.SubscribeToEvents(
-                    ref clickedButtonBackMainMenu
+                    ref clickedButtonBackMainMenu,
+                    ref clickedButtonAgainLevel
                 );
                 model.SubscribeToEvents(
                     ref monitorCounter,
-                    ref monitorMoney
+                    ref monitorMoney,
+                    ref finishedLevel
                 );
             }
         }

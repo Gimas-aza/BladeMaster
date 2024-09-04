@@ -32,14 +32,15 @@ namespace Assets.Knife
 
             if (other.TryGetComponent(out ITarget target) && !target.IsHit() && !_isThrown)
             {
+                _isThrown = true;
                 target.SetHit(true);
                 Hit?.Invoke(target);
             }
             else if (!_isThrown)
             {
+                _isThrown = true;
                 NoHit?.Invoke();
             }
-            _isThrown = true;
         }
 
         public void SetTransform(Transform transform)
@@ -66,6 +67,7 @@ namespace Assets.Knife
         public void SetGlobalParent() => transform.SetParent(null);
 
         public bool IsActive() => gameObject.activeSelf;
+        public bool IsThrow() => _isThrown;
 
         public void Throw(float force)
         {
@@ -82,5 +84,6 @@ namespace Assets.Knife
         {
             throw new System.NotImplementedException();
         }
+
     }
 }

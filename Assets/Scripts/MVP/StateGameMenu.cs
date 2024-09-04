@@ -17,23 +17,28 @@ namespace Assets.MVP
         private VisualElement _gameMenuInfo;
         private VisualElement _gameMenuStatistic;
         private VisualElement _pauseMenu;
+        private VisualElement _finishedLevelMenu;
         private VisualElement _pauseMenuStatistic;
         private List<Label> _counter;
         private List<Label> _money;
-
+        private Label _win;
+        private Label _lose;
         // ==========================================================
         private Button _buttonPause;
         private Button _buttonContinue;
-        private Button _buttonSettings;
-        private Button _buttonBackMainMenu;
+        private List<Button> _buttonsSettings;
+        private List<Button> _buttonsBackMainMenu;
+        private Button _buttonButtonAgain;
 
         public event UnityAction<float> MonitorInputRotation;
         public event UnityAction MonitorInputTouchBegin;
         public event UnityAction MonitorInputTouchEnded;
         public event UnityAction ClickedButtonBackMainMenu;
+        public event UnityAction ClickedButtonAgainLevel;
         // ==========================================================
         public UnityAction<int> MonitorCounter;
         public UnityAction<int> MonitorMoney;
+        public UnityAction<bool> FinishedLevel;
 
         public StateGameMenu(VisualElement root, Presenter presenter)
         {
@@ -45,7 +50,9 @@ namespace Assets.MVP
                 ref MonitorInputTouchEnded,
                 ref ClickedButtonBackMainMenu,
                 ref MonitorCounter,
-                ref MonitorMoney
+                ref MonitorMoney,
+                ref FinishedLevel,
+                ref ClickedButtonAgainLevel
             );
             OnMonitorInputInFixedUpdate();
             OnMonitorInputInUpdate();
@@ -58,27 +65,41 @@ namespace Assets.MVP
             _gameMenuInfo = _root.Q<VisualElement>("GameMenu-Info");
             _gameMenuStatistic = _root.Q<VisualElement>("GameMenu__Statistic");
             _pauseMenu = _root.Q<VisualElement>("PauseMenu");
+            _finishedLevelMenu = _root.Q<VisualElement>("FinishedLevelMenu");
             _pauseMenuStatistic = _root.Q<VisualElement>("PauseMenu__Statistic");
             _counter = _root.Query<Label>("Counter").ToList();
             _money = _root.Query<Label>("Money").ToList();
             _buttonPause = _root.Q<Button>("ButtonPause");
             _buttonContinue = _root.Q<Button>("ButtonContinue");
-            _buttonSettings = _root.Q<Button>("ButtonSettings");
-            _buttonBackMainMenu = _root.Q<Button>("ButtonBackMainMenu");
+            _buttonsSettings = _root.Query<Button>("ButtonSettings").ToList();
+            _buttonsBackMainMenu = _root.Query<Button>("ButtonBackMainMenu").ToList();
+            _win = _root.Q<Label>("LabelWin");
+            _lose = _root.Q<Label>("LabelLose");
+            _buttonButtonAgain = _root.Q<Button>("ButtonAgain");
 
             _buttonPause.clicked += OnButtonPauseClick;
             _buttonContinue.clicked += OnButtonContinueClick;
-            _buttonSettings.clicked += OnButtonSettingsClick;
-            _buttonBackMainMenu.clicked += OnButtonBackMainMenuClick;
+            _buttonButtonAgain.clicked += OnButtonButtonAgainClick;
+
+            foreach (var buttonSettings in _buttonsSettings)
+                buttonSettings.clicked += OnButtonSettingsClick;
+            foreach (var buttonBackMainMenu in _buttonsBackMainMenu)
+                buttonBackMainMenu.clicked += OnButtonBackMainMenuClick;
 
             _gameMenu.style.display = DisplayStyle.Flex;
             AdjustLayout();
+        }
+
+        private void OnButtonButtonAgainClick()
+        {
+            ClickedButtonAgainLevel?.Invoke();
         }
 
         private void SubscribeToMonitorUpdate()
         {
             MonitorCounter += SetCount;
             MonitorMoney += SetMoney;
+            FinishedLevel += SetFinishedLevel;
         }
 
         private void OnButtonPauseClick()
@@ -151,15 +172,17 @@ namespace Assets.MVP
             }
         }
 
-        private void SetCount(int amount)
+        private async void SetCount(int amount)
         {
+            await UniTask.WaitForEndOfFrame();
             foreach (var counter in _counter)
                 counter.text = $"{amount}";
             AdjustLayout();
         }
 
-        private void SetMoney(int amount)
+        private async void SetMoney(int amount)
         {
+            await UniTask.WaitForEndOfFrame();
             foreach (var money in _money)
                 money.text = $"{amount}";
             AdjustLayout();
@@ -175,6 +198,25 @@ namespace Assets.MVP
                 _gameMenuStatistic.style.flexDirection =
                     totalLength > 7 ? FlexDirection.Column : FlexDirection.Row;
             }
+        }
+
+        private void SetFinishedLevel(bool isWin)
+        {
+            _finishedLevelMenu.style.display = DisplayStyle.Flex;
+            _pauseMenu.style.display = DisplayStyle.None;
+            _gameMenuInfo.style.display = DisplayStyle.None;
+
+            if (isWin)
+            {
+                _win.style.display = DisplayStyle.Flex;
+                _lose.style.display = DisplayStyle.None;
+            }
+            else
+            {
+                _win.style.display = DisplayStyle.None;
+                _lose.style.display = DisplayStyle.Flex;
+            }
+            _isGameActive = false;
         }
     }
 }

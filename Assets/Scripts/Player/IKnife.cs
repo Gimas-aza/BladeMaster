@@ -13,6 +13,7 @@ namespace Assets.Player
         void SetActive(bool active);
         void SetGlobalParent();
         bool IsActive();
+        bool IsThrow();
         void Throw(float force);
         void SwitchSkin();
     }

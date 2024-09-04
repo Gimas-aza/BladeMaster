@@ -21,6 +21,7 @@ namespace Assets.LevelManager
         public abstract void LoadLevel(int sceneIndex);
         public abstract void LoadNextLevel();
         public abstract void LoadPreviousLevel();
+        public abstract void ReloadingCurrentLevel();
 
         protected void OnLevelLoaded() => LevelLoaded?.Invoke(CurrentLevelIndex);
         protected void OnLevelStartedToLoad() => LevelStartedToLoad?.Invoke();
@@ -31,11 +32,12 @@ namespace Assets.LevelManager
             pressingTheSelectedLevel += LoadLevel;
         }
 
-        public void SubscribeToEvents(ref UnityAction clickedButtonBackMainMenu)
+        public void SubscribeToEvents(ref UnityAction clickedButtonBackMainMenu, ref UnityAction clickedButtonAgainLevel)
         {
             clickedButtonBackMainMenu += () => LoadLevel(MainMenuIndex);
+            clickedButtonAgainLevel += ReloadingCurrentLevel;
         }
 
-        public int GetIndexOfLevel() => CurrentLevelIndex;
+        public int GetLevelIndex() => CurrentLevelIndex;
     }
 }
