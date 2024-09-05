@@ -36,12 +36,13 @@ namespace Assets.MVP
 
         public void RegisterEventsForView(
             ref UnityAction<float> monitorInputRotation,
-            ref UnityAction monitorInputTouchBegin,
+            ref Func<IForceOfThrowingKnife> monitorInputTouchBegin,
             ref UnityAction monitorInputTouchEnded,
             ref UnityAction clickedButtonBackMainMenu,
             ref UnityAction<int> monitorCounter,
             ref UnityAction<int> monitorMoney,
             ref UnityAction<bool> finishedLevel,
+            ref UnityAction<IAmountOfKnives> displayAmountKnives,
             ref UnityAction clickedButtonAgainLevel
         )
         {
@@ -50,7 +51,8 @@ namespace Assets.MVP
                 model.SubscribeToEvents(
                     ref monitorInputRotation,
                     ref monitorInputTouchBegin,
-                    ref monitorInputTouchEnded
+                    ref monitorInputTouchEnded,
+                    ref displayAmountKnives
                 );
                 model.SubscribeToEvents(
                     ref clickedButtonBackMainMenu,

@@ -227,5 +227,7 @@ MonoBehaviour:
   _radius: 30
   _knivesPool: {fileID: 4113183521672044098}
   _amountOfKnives: 5
-  _minForce: 20
-  _maxForce: 50
+  _knifeSettings:
+    MinForce: 20
+    MaxForce: 50
+    ForceScalingFactor: 1

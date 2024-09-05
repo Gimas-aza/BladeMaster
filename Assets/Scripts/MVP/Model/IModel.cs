@@ -15,8 +15,9 @@ namespace Assets.MVP.Model
         ) { }
         void SubscribeToEvents(
             ref UnityAction<float> monitorInputRotation,
-            ref UnityAction monitorInputTouchBegin,
-            ref UnityAction monitorInputTouchEnded
+            ref Func<IForceOfThrowingKnife> monitorInputTouchBegin,
+            ref UnityAction monitorInputTouchEnded,
+            ref UnityAction<IAmountOfKnives> displayAmountKnives
         ) { }
         void SubscribeToEvents(
             ref UnityAction clickedButtonBackMainMenu,

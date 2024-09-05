@@ -1,15 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
-using Assets.GameProgression;
-using Assets.Knife;
+using Assets.MVP;
 using UnityEngine;
 
 namespace Assets.Player
 {
-    public class KnivesPoolComponent : MonoBehaviour 
+    public class KnivesPoolComponent : MonoBehaviour, IAmountOfKnives
     {
         private List<IKnife> _knives;
         private int _knivesIndex;
+
+        public int Amount => _knives.Count - _knivesIndex;
+        public int MaxAmount => _knives.Count;
 
         private void Awake()
         {

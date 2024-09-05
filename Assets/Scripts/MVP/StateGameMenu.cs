@@ -13,6 +13,7 @@ namespace Assets.MVP
         private Presenter _presenter;
         private bool _isClampingTouch = false;
         private bool _isGameActive = true;
+        private IForceOfThrowingKnife _forceOfThrowing;
         private VisualElement _gameMenu;
         private VisualElement _gameMenuInfo;
         private VisualElement _gameMenuStatistic;
@@ -23,6 +24,8 @@ namespace Assets.MVP
         private List<Label> _money;
         private Label _win;
         private Label _lose;
+        private Label _amountKnives;
+        private ProgressBar _pressureForce;
         // ==========================================================
         private Button _buttonPause;
         private Button _buttonContinue;
@@ -31,7 +34,7 @@ namespace Assets.MVP
         private Button _buttonButtonAgain;
 
         public event UnityAction<float> MonitorInputRotation;
-        public event UnityAction MonitorInputTouchBegin;
+        public event Func<IForceOfThrowingKnife> MonitorInputTouchBegin;
         public event UnityAction MonitorInputTouchEnded;
         public event UnityAction ClickedButtonBackMainMenu;
         public event UnityAction ClickedButtonAgainLevel;
@@ -39,6 +42,7 @@ namespace Assets.MVP
         public UnityAction<int> MonitorCounter;
         public UnityAction<int> MonitorMoney;
         public UnityAction<bool> FinishedLevel;
+        public UnityAction<IAmountOfKnives> DisplayAmountKnives;
 
         public StateGameMenu(VisualElement root, Presenter presenter)
         {
@@ -52,6 +56,7 @@ namespace Assets.MVP
                 ref MonitorCounter,
                 ref MonitorMoney,
                 ref FinishedLevel,
+                ref DisplayAmountKnives,
                 ref ClickedButtonAgainLevel
             );
             OnMonitorInputInFixedUpdate();
@@ -75,6 +80,8 @@ namespace Assets.MVP
             _buttonsBackMainMenu = _root.Query<Button>("ButtonBackMainMenu").ToList();
             _win = _root.Q<Label>("LabelWin");
             _lose = _root.Q<Label>("LabelLose");
+            _amountKnives = _root.Q<Label>("LabelAmountKnives");
+            _pressureForce = _root.Q<ProgressBar>("ProgressBarPressureForce");
             _buttonButtonAgain = _root.Q<Button>("ButtonAgain");
 
             _buttonPause.clicked += OnButtonPauseClick;
@@ -100,6 +107,7 @@ namespace Assets.MVP
             MonitorCounter += SetCount;
             MonitorMoney += SetMoney;
             FinishedLevel += SetFinishedLevel;
+            DisplayAmountKnives += SetAmountKnives;
         }
 
         private void OnButtonPauseClick()
@@ -119,7 +127,7 @@ namespace Assets.MVP
 
         private void OnButtonSettingsClick()
         {
-            throw new NotImplementedException();
+            Debug.Log("OnButtonSettingsClick");
         }
 
         private void OnButtonBackMainMenuClick()
@@ -148,28 +156,60 @@ namespace Assets.MVP
 
         private async void OnMonitorInputInUpdate()
         {
+            float time = 0;
             while (true)
             {
                 if (Input.touchCount > 0 && _isGameActive)
                 {
                     var touch = Input.GetTouch(0);
-                    if (touch.phase == TouchPhase.Began)
-                    {
-                        _isClampingTouch = true;
-                        MonitorInputTouchBegin?.Invoke();
-                    }
-                    else if (touch.phase == TouchPhase.Ended)
-                    {
-                        if (!_isClampingTouch)
-                            return;
-
-                        _isClampingTouch = false;
-                        MonitorInputTouchEnded?.Invoke();
-                    }
+                    HandleTouchPhase(touch, ref time);
                 }
 
                 await UniTask.WaitForEndOfFrame();
             }
+        }
+
+        private void HandleTouchPhase(Touch touch, ref float time)
+        {
+            switch (touch.phase)
+            {
+                case TouchPhase.Began:
+                    BeginTouchPhase(touch, ref time);
+                    break;
+                case TouchPhase.Moved:
+                case TouchPhase.Stationary:
+                    MovedOrStationaryPhase(touch, ref time);
+                    break;
+                case TouchPhase.Ended:
+                    EndedPhase(touch);
+                    break;
+            }
+        }
+
+        private void BeginTouchPhase(Touch touch, ref float time)
+        {
+            _isClampingTouch = true;
+            time = Time.time;
+            _forceOfThrowing = MonitorInputTouchBegin?.Invoke();
+        }
+
+        private void MovedOrStationaryPhase(Touch touch, ref float time)
+        {
+            if (!_isClampingTouch)
+                return;
+
+            var force = _forceOfThrowing.GetPercentOfForce(Time.time - time);
+            _pressureForce.value = force;
+        }
+
+        private void EndedPhase(Touch touch)
+        {
+            if (!_isClampingTouch)
+                return;
+
+            _isClampingTouch = false;
+            _pressureForce.value = 0;
+            MonitorInputTouchEnded?.Invoke();
         }
 
         private async void SetCount(int amount)
@@ -217,6 +257,12 @@ namespace Assets.MVP
                 _lose.style.display = DisplayStyle.Flex;
             }
             _isGameActive = false;
+        }
+
+        private async void SetAmountKnives(IAmountOfKnives amountOfKnives)
+        {
+            await UniTask.WaitForEndOfFrame();
+            _amountKnives.text = $"{amountOfKnives.Amount}/{amountOfKnives.MaxAmount}";
         }
     }
 }

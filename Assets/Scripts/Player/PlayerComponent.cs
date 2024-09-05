@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Assets.EntryPoint;
 using Assets.GameProgression;
+using Assets.MVP;
 using Assets.MVP.Model;
 using UnityEngine;
 using UnityEngine.Events;
@@ -17,11 +18,11 @@ namespace Assets.Player
         [Header("Knife")]
         [SerializeField] private KnivesPoolComponent _knivesPool;
         [SerializeField] private int _amountOfKnives = 5;
-        [SerializeField] private float _minForce = 20;
-        [SerializeField] private float _maxForce = 50;
+        [SerializeField] private ThrowingForceSettings _knifeSettings;
 
         private Rigidbody _rigidbody;
         private float _time;
+        private UnityAction<IAmountOfKnives> _displayAmountKnives;
 
         private void Awake()
         {
@@ -33,30 +34,49 @@ namespace Assets.Player
             _knivesPool.CreateKnife(knife, _amountOfKnives);
         }
 
-        public void SubscribeToEvents(ref UnityAction<float> monitorInputRotation, ref UnityAction monitorInputTouchBegin, ref UnityAction monitorInputTouchEnded)
+        public void SubscribeToEvents(
+            ref UnityAction<float> monitorInputRotation,
+            ref Func<IForceOfThrowingKnife> monitorInputTouchBegin,
+            ref UnityAction monitorInputTouchEnded,
+            ref UnityAction<IAmountOfKnives> displayAmountKnives
+        )
         {
             monitorInputRotation += InputRotation;
             monitorInputTouchBegin += InputTouchBegin;
             monitorInputTouchEnded += InputTouchEnded;
+
+            _displayAmountKnives = displayAmountKnives;
+            _displayAmountKnives?.Invoke(_knivesPool);
         }
 
         private void InputRotation(float acceleration)
         {
-            var currentValue = Mathf.Clamp(_rigidbody.rotation.y + acceleration * 100, -_radius, _radius);
+            var currentValue = Mathf.Clamp(
+                _rigidbody.rotation.y + acceleration * 100,
+                -_radius,
+                _radius
+            );
             var targetRotation = Quaternion.Euler(0, currentValue, 0);
-            _rigidbody.MoveRotation(Quaternion.RotateTowards(_rigidbody.rotation, targetRotation, _speed * Time.fixedDeltaTime));
+            _rigidbody.MoveRotation(
+                Quaternion.RotateTowards(
+                    _rigidbody.rotation,
+                    targetRotation,
+                    _speed * Time.fixedDeltaTime
+                )
+            );
         }
 
-        private void InputTouchBegin()
+        private ThrowingForceSettings InputTouchBegin()
         {
             _time = Time.time;
+            return _knifeSettings;
         }
 
         private void InputTouchEnded()
         {
-            var force = _minForce + (Time.time - _time) * (_maxForce - _minForce) / 5;
-            force = Mathf.Clamp(force, _minForce, _maxForce);
+            var force = _knifeSettings.GetForce(Time.time - _time);
             _knivesPool.ThrowKnife(force);
+            _displayAmountKnives?.Invoke(_knivesPool);
         }
 
         public List<IKnife> GetKnives()

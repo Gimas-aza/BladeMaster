@@ -453,3 +453,49 @@
 .PauseMenu__Button {
     margin-bottom: 30px;
 }
+
+.GameMenu__ProgressBar .unity-progress-bar__background {
+    height: auto;
+    padding-bottom: 35px;
+    background-color: rgb(248, 237, 237);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-left-color: rgb(23, 59, 69);
+    border-right-color: rgb(23, 59, 69);
+    border-top-color: rgb(23, 59, 69);
+    border-bottom-color: rgb(23, 59, 69);
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.GameMenu__ProgressBar {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: 220px;
+    rotate: -90deg;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    translate: 0 0;
+    transform-origin: left top;
+}
+
+.GameMenu__ProgressBar .unity-progress-bar__progress {
+    background-color: rgb(255, 130, 37);
+    margin-top: 2px;
+    margin-right: 0;
+    margin-bottom: 2px;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+
+.GameMenu__ProgressBar .unity-progress-bar__container {
+    max-height: 24px;
+    min-height: 24px;
+}
