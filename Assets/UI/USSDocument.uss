@@ -202,7 +202,7 @@
 
 .ShopMenu__Item {
     width: 14.5%;
-    height: 65%;
+    height: 60%;
     -unity-background-scale-mode: scale-and-crop;
     margin-top: 0;
     margin-right: 2.2%;
@@ -226,8 +226,8 @@
     border-bottom-left-radius: 5px;
     background-color: rgb(255, 130, 37);
     transition-duration: 0.2s;
-    min-height: 50px;
-    min-width: 50px;
+    min-height: 70px;
+    min-width: 70px;
 }
 
 .ShopMenu__Item:focus {

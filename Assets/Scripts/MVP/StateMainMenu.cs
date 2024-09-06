@@ -9,15 +9,16 @@ namespace Assets.MVP
     public class StateMainMenu : IStateView
     {
         private VisualTreeAsset _templateButtonStartLevel;
+        private VisualTreeAsset _templateItemShop;
         private VisualElement _root;
-
         // ==========================================
         private VisualElement _mainMenu;
         private VisualElement _levelsMenu;
         private VisualElement _shopMenu;
         private VisualElement _settingsMenu;
         private VisualElement _containerButtonsStartLevel;
-
+        private VisualElement _viewItem;
+        private VisualElement _containerItemsShop;
         // ==========================================
         private Button _buttonPlay;
         private Button _buttonShop;
@@ -33,11 +34,13 @@ namespace Assets.MVP
         public StateMainMenu(
             VisualElement root,
             VisualTreeAsset templateButtonStartLevel,
+            VisualTreeAsset templateItemShop,
             Presenter presenter
         )
         {
             _root = root;
             _templateButtonStartLevel = templateButtonStartLevel;
+            _templateItemShop = templateItemShop;
             presenter.RegisterEventsForView(
                 ref LevelAmountRequestedForDisplay,
                 ref PressingTheSelectedLevel,
@@ -53,6 +56,10 @@ namespace Assets.MVP
             _shopMenu = _root.Q<VisualElement>("ShopMenu");
             _settingsMenu = _root.Q<VisualElement>("SettingsMenu");
             _containerButtonsStartLevel = _root.Q<VisualElement>("ContainerButtonsStartLevel");
+
+            _viewItem = _root.Q<VisualElement>("ViewItem");
+            var containerItemShop = _root.Q<VisualElement>("ContainerItemShop");
+            _containerItemsShop = containerItemShop.Q<VisualElement>("GroupBoxItemShop");
 
             _buttonPlay = _root.Q<Button>("ButtonPlay");
             _buttonShop = _root.Q<Button>("ButtonShop");
@@ -73,6 +80,7 @@ namespace Assets.MVP
 
             _mainMenu.style.display = DisplayStyle.Flex;
             AddButtonsStartLevel();
+            AddButtonsItemsShop();
         }
 
         private void AddButtonsStartLevel()
@@ -98,6 +106,16 @@ namespace Assets.MVP
             }
         }
 
+        private void AddButtonsItemsShop()
+        {
+            for (var i = 0; i < 10; i++)
+            {
+                var newTemplateButtonItemShop = _templateItemShop.CloneTree();
+                var newButtonItem = newTemplateButtonItemShop.Q<Button>("ButtonItem");
+                _containerItemsShop.Add(newButtonItem);
+            }
+        }
+
         private void OnButtonBackClick()
         {
             _mainMenu.style.display = DisplayStyle.Flex;
@@ -112,19 +130,6 @@ namespace Assets.MVP
             _levelsMenu.style.display = DisplayStyle.Flex;
             _shopMenu.style.display = DisplayStyle.None;
             _settingsMenu.style.display = DisplayStyle.None;
-        }
-
-        private void CreateButtonsStartLevel(int levelAmount)
-        {
-            for (var i = 0; i < levelAmount; i++)
-            {
-                var newTemplateButtonStartLevel = _templateButtonStartLevel.CloneTree();
-                var newButtonStartLevel = newTemplateButtonStartLevel.Q<Button>("ButtonStartLevel");
-                newButtonStartLevel.text = $"Уровень {i + 1}";
-
-                _containerButtonsStartLevel.Add(newButtonStartLevel);
-                _buttonsStartLevel.Add(newButtonStartLevel);
-            }
         }
 
         private void OnButtonShopClick()
@@ -146,6 +151,19 @@ namespace Assets.MVP
         private void OnButtonExitClick()
         {
             Debug.Log("Exit");
+        }
+
+        private void CreateButtonsStartLevel(int levelAmount)
+        {
+            for (var i = 0; i < levelAmount; i++)
+            {
+                var newTemplateButtonStartLevel = _templateButtonStartLevel.CloneTree();
+                var newButtonStartLevel = newTemplateButtonStartLevel.Q<Button>("ButtonStartLevel");
+                newButtonStartLevel.text = $"Уровень {i + 1}";
+
+                _containerButtonsStartLevel.Add(newButtonStartLevel);
+                _buttonsStartLevel.Add(newButtonStartLevel);
+            }
         }
     }
 }

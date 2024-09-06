@@ -65,5 +65,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _templateButtonStartLevel: {fileID: 9197481963319205126, guid: 9863c9d711017c48d8123522f15a1b53, type: 3}
-  _speed: 30
-  _radius: 30
+  _templateItemShop: {fileID: 9197481963319205126, guid: c45927c675793a72784e7aaa2dfaae4b, type: 3}

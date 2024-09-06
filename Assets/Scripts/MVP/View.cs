@@ -9,6 +9,7 @@ namespace Assets.MVP
     {
         [Header("Templates UI")]
         [SerializeField] private VisualTreeAsset _templateButtonStartLevel;
+        [SerializeField] private VisualTreeAsset _templateItemShop;
 
         private StateView _currentState;
         private Presenter _presenter;
@@ -31,7 +32,7 @@ namespace Assets.MVP
             switch (_currentState)
             {
                 case StateView.MainMenu:
-                    _stateView = new StateMainMenu(_root, _templateButtonStartLevel, _presenter);
+                    _stateView = new StateMainMenu(_root, _templateButtonStartLevel, _templateItemShop, _presenter);
                     break;
                 case StateView.GameMenu:
                     _stateView = new StateGameMenu(_root, _presenter);
