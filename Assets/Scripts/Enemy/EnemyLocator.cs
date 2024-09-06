@@ -7,8 +7,8 @@ namespace Assets.Enemy
     [Serializable]
     public class EnemyLocator
     {
-        public EnemyComponent enemyPrefab; 
-        public Vector3 position;
-        public Quaternion rotation;
+        public EnemyComponent EnemyPrefab; 
+        public Vector3 Position;
+        public Quaternion Rotation;
     }
 }

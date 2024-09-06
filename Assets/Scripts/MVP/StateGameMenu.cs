@@ -16,10 +16,13 @@ namespace Assets.MVP
         private IForceOfThrowingKnife _forceOfThrowing;
         private VisualElement _gameMenu;
         private VisualElement _gameMenuInfo;
-        private VisualElement _gameMenuStatistic;
+        private List<VisualElement> _gameStatistic;
         private VisualElement _pauseMenu;
         private VisualElement _finishedLevelMenu;
         private VisualElement _pauseMenuStatistic;
+        private List<VisualElement> _ratingScoreEmpty;
+        private List<VisualElement> _ratingScoreFull;
+        // ==========================================================
         private List<Label> _counter;
         private List<Label> _money;
         private Label _win;
@@ -43,6 +46,7 @@ namespace Assets.MVP
         public UnityAction<int> MonitorMoney;
         public UnityAction<bool> FinishedLevel;
         public UnityAction<IAmountOfKnives> DisplayAmountKnives;
+        public UnityAction<int> DisplayRatingScore;
 
         public StateGameMenu(VisualElement root, Presenter presenter)
         {
@@ -57,7 +61,8 @@ namespace Assets.MVP
                 ref MonitorMoney,
                 ref FinishedLevel,
                 ref DisplayAmountKnives,
-                ref ClickedButtonAgainLevel
+                ref ClickedButtonAgainLevel,
+                ref DisplayRatingScore
             );
             OnMonitorInputInFixedUpdate();
             OnMonitorInputInUpdate();
@@ -68,10 +73,11 @@ namespace Assets.MVP
         {
             _gameMenu = _root.Q<VisualElement>("GameMenu");
             _gameMenuInfo = _root.Q<VisualElement>("GameMenu-Info");
-            _gameMenuStatistic = _root.Q<VisualElement>("GameMenu__Statistic");
+            _gameStatistic = _root.Query<VisualElement>("Statistic").ToList();
             _pauseMenu = _root.Q<VisualElement>("PauseMenu");
             _finishedLevelMenu = _root.Q<VisualElement>("FinishedLevelMenu");
-            _pauseMenuStatistic = _root.Q<VisualElement>("PauseMenu__Statistic");
+            _ratingScoreEmpty = _root.Query<VisualElement>("RatingScoreEmpty").ToList();
+            _ratingScoreFull = _root.Query<VisualElement>("RatingScoreFull").ToList();
             _counter = _root.Query<Label>("Counter").ToList();
             _money = _root.Query<Label>("Money").ToList();
             _buttonPause = _root.Q<Button>("ButtonPause");
@@ -108,6 +114,7 @@ namespace Assets.MVP
             MonitorMoney += SetMoney;
             FinishedLevel += SetFinishedLevel;
             DisplayAmountKnives += SetAmountKnives;
+            DisplayRatingScore += SetRating;
         }
 
         private void OnButtonPauseClick()
@@ -230,13 +237,11 @@ namespace Assets.MVP
 
         private void AdjustLayout()
         {
-            for (int i = 0; i < _counter.Count; i++)
+            for (int i = 0; i < _gameStatistic.Count; i++)
             {
                 int totalLength = _counter[i].text.Length + _money[i].text.Length;
-                _pauseMenuStatistic.style.flexDirection =
+                _gameStatistic[i].style.flexDirection =
                     totalLength > 6 ? FlexDirection.Column : FlexDirection.Row;
-                _gameMenuStatistic.style.flexDirection =
-                    totalLength > 7 ? FlexDirection.Column : FlexDirection.Row;
             }
         }
 
@@ -263,6 +268,18 @@ namespace Assets.MVP
         {
             await UniTask.WaitForEndOfFrame();
             _amountKnives.text = $"{amountOfKnives.Amount}/{amountOfKnives.MaxAmount}";
+        }
+
+        private void SetRating(int score)
+        {
+            for (int i = 0; i < _ratingScoreEmpty.Count; i++)
+            {
+                if (i < score)
+                {
+                    _ratingScoreFull[i].style.display = DisplayStyle.Flex;
+                    _ratingScoreEmpty[i].style.display = DisplayStyle.None;
+                }
+            }
         }
     }
 }

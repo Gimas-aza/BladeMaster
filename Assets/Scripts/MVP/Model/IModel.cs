@@ -26,7 +26,8 @@ namespace Assets.MVP.Model
         void SubscribeToEvents(
             ref UnityAction<int> monitorCounter,
             ref UnityAction<int> monitorMoney,
-            ref UnityAction<bool> finishedLevel
+            ref UnityAction<bool> finishedLevel,
+            ref UnityAction<int> displayRatingScore
         ) { }
     }
 }

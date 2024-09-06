@@ -4,5 +4,6 @@ namespace Assets.Target
     {
         void SetHit(bool isHit);
         bool IsHit();
+        int GetPointsPerStroke();
     }
 }

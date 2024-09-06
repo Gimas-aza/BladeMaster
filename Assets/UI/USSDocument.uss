@@ -425,6 +425,7 @@
     font-size: 35px;
     color: rgb(248, 237, 237);
     display: none;
+    height: 50px;
 }
 
 .GameMenu__LabelLose {
@@ -443,6 +444,7 @@
     -unity-text-outline-color: rgb(23, 59, 69);
     -unity-text-outline-width: 1px;
     display: none;
+    height: 50px;
 }
 
 .GameMenu__LabelH2 {
@@ -498,4 +500,27 @@
 .GameMenu__ProgressBar .unity-progress-bar__container {
     max-height: 24px;
     min-height: 24px;
+}
+
+.GameMenu__ScoresIcons {
+    background-image: url("project://database/Assets/UI/Sprites/KnifeScoreDefult.png?fileID=21300000&guid=d4238f3aa9c1f0b219cd45832fd99432&type=3#KnifeScoreDefult");
+    width: 60px;
+    height: 60px;
+    border-top-width: 5px;
+    border-right-width: 5px;
+    border-bottom-width: 5px;
+    border-left-width: 5px;
+    border-left-color: rgb(23, 59, 69);
+    border-right-color: rgb(23, 59, 69);
+    border-top-color: rgb(23, 59, 69);
+    border-bottom-color: rgb(23, 59, 69);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.GameMenu__LabelLevelFinish {
+    height: 55px;
+    flex-grow: 1;
 }

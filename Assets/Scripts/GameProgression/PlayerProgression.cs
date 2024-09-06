@@ -13,20 +13,22 @@ namespace Assets.GameProgression
     public class PlayerProgression : IInitializer, IModel
     {
         private int _counter;
-        private int _money = 100;
+        private int _maxCounter;
+        private int _money;
         private int _finishedLevels = 0;
         private int _currentLevel;
         private int _unlockedLevels = 1;
-        private int _pointsPerStroke = 50;
+        private int _pointsPerStroke;
         private int _moneyPerHit = 10;
         private int _moneyPerNoHit = 5;
         private int _amountHits;
-        private int _multiplier = 0;
-        private List<EnemyComponent> _enemies;
+        private int _multiplier;
+        private List<ITarget> _enemies;
         private List<IKnife> _knives;
         private UnityAction<int> _monitorCounter;
         private UnityAction<int> _monitorMoney;
         private UnityAction<bool> _finishedLevel;
+        private UnityAction<int> _displayRatingScore;
 
         public void Init(
             ISpawnerEnemies spawnerEnemies,
@@ -37,6 +39,15 @@ namespace Assets.GameProgression
             _enemies = spawnerEnemies.GetEnemies();
             _knives = knivesPool.GetKnives();
             _currentLevel = levelManager.GetLevelIndex();
+            _counter = 0;
+            _pointsPerStroke = 20;
+            _multiplier = 0;
+            _maxCounter = 0;
+
+            foreach (var enemy in _enemies)
+            {
+                _maxCounter += enemy.GetPointsPerStroke() * 2;
+            }
 
             foreach (var knife in _knives)
             {
@@ -53,12 +64,14 @@ namespace Assets.GameProgression
         public void SubscribeToEvents(
             ref UnityAction<int> monitorCounter,
             ref UnityAction<int> monitorMoney,
-            ref UnityAction<bool> finishedLevel
+            ref UnityAction<bool> finishedLevel,
+            ref UnityAction<int> displayRatingScore
         )
         {
             _monitorCounter = monitorCounter;
             _monitorMoney = monitorMoney;
             _finishedLevel = finishedLevel;
+            _displayRatingScore = displayRatingScore;
 
             _monitorCounter?.Invoke(_counter);
             _monitorMoney?.Invoke(_money);
@@ -68,7 +81,7 @@ namespace Assets.GameProgression
         {
             _amountHits++;
             _multiplier++;
-            AddCounter(_multiplier);
+            AddCounter(target.GetPointsPerStroke(), _multiplier);
             AddMoney();
             _monitorCounter?.Invoke(_counter);
             _monitorMoney?.Invoke(_money);
@@ -106,9 +119,10 @@ namespace Assets.GameProgression
             return true;
         }
 
-        private void AddCounter(int multiplier = 1)
+        private void AddCounter(int points, int multiplier = 1)
         {
-            _counter += _pointsPerStroke * multiplier;
+            _pointsPerStroke = points;
+            _counter += points * multiplier;
         }
 
         private void AddMoney()
@@ -134,6 +148,7 @@ namespace Assets.GameProgression
                 _unlockedLevels++;
             }
 
+            _displayRatingScore?.Invoke(CalculateRatingScore());
             _amountHits = 0;
             _finishedLevel?.Invoke(true);
         }
@@ -142,6 +157,14 @@ namespace Assets.GameProgression
         {
             _amountHits = 0;
             _finishedLevel?.Invoke(false);
+        }
+
+        private int CalculateRatingScore()
+        {
+            var percent = (float)_counter / _maxCounter * 100;
+            var sector = 100 / 3;
+            var result = (int)Math.Ceiling(percent / sector);
+            return Math.Clamp(result, 0, 3);
         }
     }
 }

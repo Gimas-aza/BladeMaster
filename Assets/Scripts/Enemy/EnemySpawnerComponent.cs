@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Assets.EntryPoint;
 using Assets.GameProgression;
+using Assets.Target;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -30,9 +31,9 @@ namespace Assets.Enemy
             {
                 _enemies.Add(
                     Instantiate(
-                        enemyLocator.enemyPrefab,
-                        enemyLocator.position,
-                        enemyLocator.rotation,
+                        enemyLocator.EnemyPrefab,
+                        enemyLocator.Position,
+                        enemyLocator.Rotation,
                         transform
                     )
                 );
@@ -56,9 +57,14 @@ namespace Assets.Enemy
             return true;
         }
 
-        public List<EnemyComponent> GetEnemies()
+        public List<ITarget> GetEnemies()
         {
-            return _enemies;
+            var enemies = new List<ITarget>();
+            foreach (var enemy in _enemies)
+            {
+                enemies.Add(enemy);
+            }
+            return enemies;
         }
     }
 }

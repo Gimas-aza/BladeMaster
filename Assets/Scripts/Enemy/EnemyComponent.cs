@@ -6,10 +6,12 @@ namespace Assets.Enemy
     [RequireComponent(typeof(Collider))]
     public class EnemyComponent : MonoBehaviour, ITarget
     {
-        [SerializeField] private Vector3 _targetPosition = Vector3.zero;
         [SerializeField] private float _speed;
+        [SerializeField] private int _pointsPerStroke;
 
-        public bool _isHit;
+        private Vector3 _targetPosition = Vector3.zero;
+
+        [HideInInspector] public bool _isHit;
 
         private void Update()
         {
@@ -20,5 +22,7 @@ namespace Assets.Enemy
         public void SetHit(bool isHit) => _isHit = isHit;
 
         public bool IsHit() => _isHit;
+
+        public int GetPointsPerStroke() => _pointsPerStroke;
     }
 }

@@ -43,7 +43,8 @@ namespace Assets.MVP
             ref UnityAction<int> monitorMoney,
             ref UnityAction<bool> finishedLevel,
             ref UnityAction<IAmountOfKnives> displayAmountKnives,
-            ref UnityAction clickedButtonAgainLevel
+            ref UnityAction clickedButtonAgainLevel,
+            ref UnityAction<int> displayRatingScore
         )
         {
             foreach (var model in _models)
@@ -61,7 +62,8 @@ namespace Assets.MVP
                 model.SubscribeToEvents(
                     ref monitorCounter,
                     ref monitorMoney,
-                    ref finishedLevel
+                    ref finishedLevel,
+                    ref displayRatingScore
                 );
             }
         }

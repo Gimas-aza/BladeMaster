@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: Level1
   m_EditorClassIdentifier: 
   enemyLocators:
-  - enemyPrefab: {fileID: 4687582668331399286, guid: 2aa480e98a9e25f8aa0790f48c06374b, type: 3}
-    position: {x: -0.04, y: 1.0075154, z: 1.1400003}
-    rotation: {x: 0, y: 0, z: 0, w: 0}
+  - EnemyPrefab: {fileID: 4687582668331399286, guid: 2aa480e98a9e25f8aa0790f48c06374b, type: 3}
+    Position: {x: -0.16209045, y: 0.68, z: -1}
+    Rotation: {x: 0, y: 0, z: 0, w: 0}
+  - EnemyPrefab: {fileID: 7061344207283654247, guid: 445a3bd8e17f3d2ffaec36a59f90d1ff, type: 3}
+    Position: {x: -1.76, y: 1.995, z: -1}
+    Rotation: {x: 0, y: 0, z: 0, w: 0}
