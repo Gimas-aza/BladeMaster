@@ -201,17 +201,9 @@
 }
 
 .ShopMenu__Item {
-    width: 14.5%;
-    height: 60%;
+    width: auto;
+    height: auto;
     -unity-background-scale-mode: scale-and-crop;
-    margin-top: 0;
-    margin-right: 2.2%;
-    margin-bottom: 2.2%;
-    margin-left: 0;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
     border-left-color: rgb(23, 59, 69);
     border-right-color: rgb(23, 59, 69);
     border-top-color: rgb(23, 59, 69);
@@ -228,6 +220,13 @@
     transition-duration: 0.2s;
     min-height: 70px;
     min-width: 70px;
+    max-height: 80px;
+    max-width: 80px;
+    align-self: stretch;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    flex-grow: 1;
+    flex-shrink: 0;
 }
 
 .ShopMenu__Item:focus {
