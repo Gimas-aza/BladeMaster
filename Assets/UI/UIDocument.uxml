@@ -33,7 +33,7 @@
         </engine:ScrollView>
         <engine:VisualElement style="flex-grow: 1; flex-direction: row; margin-top: 15px; width: 100%; justify-content: space-between; align-self: center; align-content: flex-start; align-items: center;">
             <engine:Button name="ButtonBack" text="Назад" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonLeft" />
-            <engine:Button text="Купить - 100" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonRight" />
+            <engine:Button name="ButtonBuy" text="Купить" enabled="false" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonRight" />
         </engine:VisualElement>
     </engine:VisualElement>
     <engine:VisualElement name="SettingsMenu" style="flex-grow: 1; background-color: rgb(255, 255, 255); -unity-background-scale-mode: stretch-to-fill; -unity-background-image-tint-color: rgb(255, 255, 255); background-image: url(&quot;project://database/Assets/UI/Sprites/BackgroundMainMenu.jpg?fileID=2800000&amp;guid=7131e5d6d29d5148f9b752de33ee2dfa&amp;type=3#BackgroundMainMenu&quot;); justify-content: space-between; align-items: center; align-content: stretch; padding-top: 60px; align-self: stretch; padding-left: 15px; padding-right: 15px; flex-direction: column; flex-wrap: nowrap; display: none; padding-bottom: 40px;">

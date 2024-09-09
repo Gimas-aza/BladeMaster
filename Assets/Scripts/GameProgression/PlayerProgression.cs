@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Assets.Enemy;
 using Assets.EntryPoint;
+using Assets.Knife;
 using Assets.MVP.Model;
 using Assets.Player;
 using Assets.Target;
@@ -14,7 +15,7 @@ namespace Assets.GameProgression
     {
         private int _counter;
         private int _maxCounter;
-        private int _money;
+        private int _money = 100;
         private int _finishedLevels = 0;
         private int _currentLevel;
         private int _unlockedLevels = 1;
@@ -25,6 +26,7 @@ namespace Assets.GameProgression
         private int _multiplier;
         private List<ITarget> _enemies;
         private List<IKnife> _knives;
+        private IItemSkin _currentSkin;
         private UnityAction<int> _monitorCounter;
         private UnityAction<int> _monitorMoney;
         private UnityAction<bool> _finishedLevel;
@@ -53,7 +55,26 @@ namespace Assets.GameProgression
             {
                 knife.Hit += StartActionForHit;
                 knife.NoHit += StartActionForNoHit;
+                
+                if (_currentSkin != null)
+                    knife.SwitchSkin(_currentSkin.GetSkin());
             }
+        }
+
+        public void Init(IShop shop)
+        {
+            shop.RequestToBuy += TrySpentMoney;
+            shop.BoughtSkin += (item) => _currentSkin = item as IItemSkin;
+        }
+
+        private bool TrySpentMoney(int price)
+        {
+            if (_money >= price)
+            {
+                _money -= price;
+                return true;
+            }
+            return false;
         }
 
         public void SubscribeToEvents(ref Func<int> unlockedLevels)

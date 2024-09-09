@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Assets.EntryPoint;
 using Assets.MVP.Model;
+using Assets.ShopManagement;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,7 +20,9 @@ namespace Assets.MVP
         public void RegisterEventsForView(
             ref Func<int> levelAmountRequestedForDisplay,
             ref UnityAction<int> pressingTheSelectedLevel,
-            ref Func<int> unlockedLevels
+            ref Func<int> unlockedLevels,
+            ref Func<List<IItem>> itemsRequestedForDisplay,
+            ref UnityAction<IItem> itemRequestedForBuy
         )
         {
             foreach (var model in _models)
@@ -30,6 +33,10 @@ namespace Assets.MVP
                 );
                 model.SubscribeToEvents(
                     ref unlockedLevels
+                );
+                model.SubscribeToEvents(
+                    ref itemsRequestedForDisplay,
+                    ref itemRequestedForBuy
                 );
             }
         }

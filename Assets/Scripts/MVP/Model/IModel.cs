@@ -1,5 +1,6 @@
 using System;
-using UnityEngine;
+using System.Collections.Generic;
+using Assets.ShopManagement;
 using UnityEngine.Events;
 
 namespace Assets.MVP.Model
@@ -12,6 +13,10 @@ namespace Assets.MVP.Model
         ) { }
         void SubscribeToEvents(
             ref Func<int> unlockedLevels
+        ) { }
+        void SubscribeToEvents(
+            ref Func<List<IItem>> itemsRequestedForDisplay,
+            ref UnityAction<IItem> itemRequestedForBuy
         ) { }
         void SubscribeToEvents(
             ref UnityAction<float> monitorInputRotation,

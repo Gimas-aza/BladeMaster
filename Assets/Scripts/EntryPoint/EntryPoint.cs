@@ -6,6 +6,7 @@ using Assets.LevelManager;
 using Assets.MVP;
 using Assets.MVP.Model;
 using Assets.Player;
+using Assets.ShopManagement;
 using UnityEngine;
 
 namespace Assets.EntryPoint
@@ -55,6 +56,13 @@ namespace Assets.EntryPoint
         {
             switch (stateView)
             {
+                case StateView.MainMenu:
+                    var shop = _objectFactory.CreateObject<ShopComponent>() as IModel;
+
+                    _playerProgression.Init(shop as IShop);
+
+                    _models.Add(shop);
+                    break;
                 case StateView.GameMenu:
                     var player = _objectFactory.CreateObject<PlayerComponent>() as IModel;
                     var playerInit = player as IInitializer;

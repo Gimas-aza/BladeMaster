@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Assets.ShopManagement;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UIElements;
@@ -11,6 +12,7 @@ namespace Assets.MVP
         private VisualTreeAsset _templateButtonStartLevel;
         private VisualTreeAsset _templateItemShop;
         private VisualElement _root;
+
         // ==========================================
         private VisualElement _mainMenu;
         private VisualElement _levelsMenu;
@@ -19,6 +21,7 @@ namespace Assets.MVP
         private VisualElement _containerButtonsStartLevel;
         private VisualElement _viewItem;
         private VisualElement _containerItemsShop;
+
         // ==========================================
         private Button _buttonPlay;
         private Button _buttonShop;
@@ -26,10 +29,14 @@ namespace Assets.MVP
         private Button _buttonExit;
         private List<Button> _buttonBack;
         private List<Button> _buttonsStartLevel;
+        private Button _buttonBuyItem;
+        private Action _preventButtonBuyItem;
 
         public event Func<int> LevelAmountRequestedForDisplay;
         public event UnityAction<int> PressingTheSelectedLevel;
         public event Func<int> UnlockedLevels;
+        public event Func<List<IItem>> ItemsRequestedForDisplay;
+        public event UnityAction<IItem> ItemRequestedForBuy;
 
         public StateMainMenu(
             VisualElement root,
@@ -44,7 +51,9 @@ namespace Assets.MVP
             presenter.RegisterEventsForView(
                 ref LevelAmountRequestedForDisplay,
                 ref PressingTheSelectedLevel,
-                ref UnlockedLevels
+                ref UnlockedLevels,
+                ref ItemsRequestedForDisplay,
+                ref ItemRequestedForBuy
             );
             Start();
         }
@@ -58,8 +67,7 @@ namespace Assets.MVP
             _containerButtonsStartLevel = _root.Q<VisualElement>("ContainerButtonsStartLevel");
 
             _viewItem = _root.Q<VisualElement>("ViewItem");
-            var containerItemShop = _root.Q<VisualElement>("ContainerItemShop");
-            _containerItemsShop = containerItemShop.Q<VisualElement>("GroupBoxItemShop");
+            _containerItemsShop = _root.Q<VisualElement>("GroupBoxItemShop");
 
             _buttonPlay = _root.Q<Button>("ButtonPlay");
             _buttonShop = _root.Q<Button>("ButtonShop");
@@ -67,6 +75,7 @@ namespace Assets.MVP
             _buttonExit = _root.Q<Button>("ButtonExit");
             _buttonBack = _root.Query<Button>("ButtonBack").ToList();
             _buttonsStartLevel = new List<Button>();
+            _buttonBuyItem = _root.Q<Button>("ButtonBuy");
 
             _buttonPlay.clicked += OnButtonPlayClick;
             _buttonShop.clicked += OnButtonShopClick;
@@ -108,10 +117,17 @@ namespace Assets.MVP
 
         private void AddButtonsItemsShop()
         {
-            for (var i = 0; i < 10; i++)
+            var items = ItemsRequestedForDisplay?.Invoke() ?? new List<IItem>();
+
+            for (var i = 0; i < items.Count; i++)
             {
+                var index = i;
                 var newTemplateButtonItemShop = _templateItemShop.CloneTree();
                 var newButtonItem = newTemplateButtonItemShop.Q<Button>("ButtonItem");
+
+                newButtonItem.style.backgroundImage = new StyleBackground(items[index].Icon);
+                newButtonItem.clicked += () => SetButtonBuyItem(items[index]);
+
                 _containerItemsShop.Add(newButtonItem);
             }
         }
@@ -165,5 +181,21 @@ namespace Assets.MVP
                 _buttonsStartLevel.Add(newButtonStartLevel);
             }
         }
+
+        private void SetButtonBuyItem(IItem item)
+        {
+            _viewItem.style.backgroundImage = new StyleBackground(item.Icon);
+            _buttonBuyItem.text = $"Купить за {item.Price}";
+
+            if (_preventButtonBuyItem != null)
+                UnsetButtonBuyItem();
+
+            _preventButtonBuyItem = () => ItemRequestedForBuy?.Invoke(item);
+
+            _buttonBuyItem.clicked += _preventButtonBuyItem;
+            _buttonBuyItem.enabledSelf = true;
+        }
+
+        private void UnsetButtonBuyItem() => _buttonBuyItem.clicked -= _preventButtonBuyItem;
     }
 }

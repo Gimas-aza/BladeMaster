@@ -12,6 +12,7 @@ namespace Assets.Knife
         [SerializeField] private TriggerHandler _triggerHandler;
 
         private bool _isThrown = false;
+        private GameObject _skin;
 
         public event UnityAction<ITarget> Hit;
         public event UnityAction NoHit;
@@ -80,10 +81,9 @@ namespace Assets.Knife
             _rigidbodyList[0].AddForce(transform.forward * force, ForceMode.Impulse);
         }
 
-        public void SwitchSkin()
+        public void SwitchSkin(GameObject skin)
         {
-            throw new System.NotImplementedException();
+            _skin = Instantiate(skin, _rigidbodyList[0].transform);
         }
-
     }
 }

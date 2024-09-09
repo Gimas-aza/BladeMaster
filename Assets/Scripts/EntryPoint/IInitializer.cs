@@ -15,5 +15,6 @@ namespace Assets.EntryPoint
         void Init(Presenter presenter, StateView currentState) {}
         void Init(GameObject gameObject) {}
         void Init(int levelIndex) {}
+        void Init(IShop shop) {}
     }
 }

@@ -15,6 +15,6 @@ namespace Assets.Player
         bool IsActive();
         bool IsThrow();
         void Throw(float force);
-        void SwitchSkin();
+        void SwitchSkin(GameObject skin);
     }
 }

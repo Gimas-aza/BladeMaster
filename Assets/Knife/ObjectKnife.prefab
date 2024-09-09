@@ -116,6 +116,7 @@ MonoBehaviour:
   - {fileID: 9059741403918058437}
   - {fileID: 2590441876068004698}
   _triggerHandler: {fileID: 7451560949877760261}
+  Skin: {fileID: 0}
 --- !u!1 &2380231107514480980
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,7 +132,7 @@ GameObject:
   - component: {fileID: 9059741403918058437}
   - component: {fileID: 1059051723520507759}
   m_Layer: 6
-  m_Name: Cube
+  m_Name: OneRigidbody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -168,7 +169,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2380231107514480980}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -284,7 +285,7 @@ GameObject:
   - component: {fileID: 1820851441455128786}
   - component: {fileID: 2590441876068004698}
   m_Layer: 6
-  m_Name: Cube (1)
+  m_Name: TwoRigidbody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

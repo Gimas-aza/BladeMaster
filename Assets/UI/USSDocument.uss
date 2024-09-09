@@ -234,6 +234,10 @@
     border-width: 4px;
 }
 
+.ShopMenu__Item-Bought {
+    background-color: rgb(23, 59, 69);
+}
+
 .SettingsMenu__Slider {
     font-size: 24px;
     color: rgb(23, 59, 69);
