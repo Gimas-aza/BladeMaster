@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Assets.ShopManagement;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UIElements;
@@ -13,16 +14,12 @@ namespace Assets.MVP
         private VisualTreeAsset _templateItemShop;
         private VisualElement _root;
 
-        // ==========================================
-        private VisualElement _mainMenu;
-        private VisualElement _levelsMenu;
-        private VisualElement _shopMenu;
-        private VisualElement _settingsMenu;
+        private Dictionary<string, VisualElement> _menus;
         private VisualElement _containerButtonsStartLevel;
         private VisualElement _viewItem;
         private VisualElement _containerItemsShop;
+        private List<Label> _money;
 
-        // ==========================================
         private Button _buttonPlay;
         private Button _buttonShop;
         private Button _buttonSettings;
@@ -30,6 +27,7 @@ namespace Assets.MVP
         private List<Button> _buttonBack;
         private List<Button> _buttonsStartLevel;
         private Button _buttonBuyItem;
+        private Button _currentButtonItem;
         private Action _preventButtonBuyItem;
 
         public event Func<int> LevelAmountRequestedForDisplay;
@@ -37,6 +35,9 @@ namespace Assets.MVP
         public event Func<int> UnlockedLevels;
         public event Func<List<IItem>> ItemsRequestedForDisplay;
         public event UnityAction<IItem> ItemRequestedForBuy;
+        public event UnityAction<IItem> EquipItem;
+        public UnityAction<IItem> ItemIsBought;
+        public UnityAction<int> MonitorMoney;
 
         public StateMainMenu(
             VisualElement root,
@@ -48,26 +49,35 @@ namespace Assets.MVP
             _root = root;
             _templateButtonStartLevel = templateButtonStartLevel;
             _templateItemShop = templateItemShop;
+            ItemIsBought += SetButtonItem;
+            MonitorMoney += SetMoney;
             presenter.RegisterEventsForView(
                 ref LevelAmountRequestedForDisplay,
                 ref PressingTheSelectedLevel,
                 ref UnlockedLevels,
                 ref ItemsRequestedForDisplay,
-                ref ItemRequestedForBuy
+                ref ItemRequestedForBuy,
+                ref EquipItem,
+                ref ItemIsBought,
+                ref MonitorMoney
             );
             Start();
         }
 
         private void Start()
         {
-            _mainMenu = _root.Q<VisualElement>("MainMenu");
-            _levelsMenu = _root.Q<VisualElement>("LevelsMenu");
-            _shopMenu = _root.Q<VisualElement>("ShopMenu");
-            _settingsMenu = _root.Q<VisualElement>("SettingsMenu");
-            _containerButtonsStartLevel = _root.Q<VisualElement>("ContainerButtonsStartLevel");
+            _menus = new Dictionary<string, VisualElement>
+            {
+                { "MainMenu", _root.Q<VisualElement>("MainMenu") },
+                { "LevelsMenu", _root.Q<VisualElement>("LevelsMenu") },
+                { "ShopMenu", _root.Q<VisualElement>("ShopMenu") },
+                { "SettingsMenu", _root.Q<VisualElement>("SettingsMenu") }
+            };
 
+            _containerButtonsStartLevel = _root.Q<VisualElement>("ContainerButtonsStartLevel");
             _viewItem = _root.Q<VisualElement>("ViewItem");
             _containerItemsShop = _root.Q<VisualElement>("GroupBoxItemShop");
+            _money = _root.Query<Label>("Money").ToList();
 
             _buttonPlay = _root.Q<Button>("ButtonPlay");
             _buttonShop = _root.Q<Button>("ButtonShop");
@@ -77,19 +87,28 @@ namespace Assets.MVP
             _buttonsStartLevel = new List<Button>();
             _buttonBuyItem = _root.Q<Button>("ButtonBuy");
 
-            _buttonPlay.clicked += OnButtonPlayClick;
-            _buttonShop.clicked += OnButtonShopClick;
-            _buttonSettings.clicked += OnButtonSettingsClick;
-            _buttonExit.clicked += OnButtonExitClick;
+            _buttonPlay.clicked += () => ShowMenu("LevelsMenu");
+            _buttonShop.clicked += () => ShowMenu("ShopMenu");
+            _buttonSettings.clicked += () => ShowMenu("SettingsMenu");
+            _buttonExit.clicked += Application.Quit;
 
             foreach (var button in _buttonBack)
             {
-                button.clicked += OnButtonBackClick;
+                button.clicked += () => ShowMenu("MainMenu");
             }
 
-            _mainMenu.style.display = DisplayStyle.Flex;
+            ShowMenu("MainMenu");
             AddButtonsStartLevel();
             AddButtonsItemsShop();
+        }
+
+        private void ShowMenu(string menuName)
+        {
+            foreach (var menu in _menus)
+            {
+                menu.Value.style.display =
+                    menu.Key == menuName ? DisplayStyle.Flex : DisplayStyle.None;
+            }
         }
 
         private void AddButtonsStartLevel()
@@ -119,54 +138,48 @@ namespace Assets.MVP
         {
             var items = ItemsRequestedForDisplay?.Invoke() ?? new List<IItem>();
 
-            for (var i = 0; i < items.Count; i++)
+            foreach (var item in items)
             {
-                var index = i;
                 var newTemplateButtonItemShop = _templateItemShop.CloneTree();
                 var newButtonItem = newTemplateButtonItemShop.Q<Button>("ButtonItem");
 
-                newButtonItem.style.backgroundImage = new StyleBackground(items[index].Icon);
-                newButtonItem.clicked += () => SetButtonBuyItem(items[index]);
+                newButtonItem.style.backgroundImage = new StyleBackground(item.Icon);
+                newButtonItem.clicked += () => SetButtonItem(item);
+                _currentButtonItem = newButtonItem;
 
                 _containerItemsShop.Add(newButtonItem);
             }
         }
 
-        private void OnButtonBackClick()
+        private void SetButtonItem(IItem item)
         {
-            _mainMenu.style.display = DisplayStyle.Flex;
-            _levelsMenu.style.display = DisplayStyle.None;
-            _shopMenu.style.display = DisplayStyle.None;
-            _settingsMenu.style.display = DisplayStyle.None;
+            if (_preventButtonBuyItem != null)
+                UnsetButtonBuyItem();
+
+            _viewItem.style.backgroundImage = new StyleBackground(item.Icon);
+            if (!item.IsBought)
+                SetItemForBuy(item);
+            else
+                SetItemForEquip(item);
+
+            _buttonBuyItem.enabledSelf = true;
         }
 
-        private void OnButtonPlayClick()
+        private void UnsetButtonBuyItem() => _buttonBuyItem.clicked -= _preventButtonBuyItem;
+
+        private void SetItemForBuy(IItem item)
         {
-            _mainMenu.style.display = DisplayStyle.None;
-            _levelsMenu.style.display = DisplayStyle.Flex;
-            _shopMenu.style.display = DisplayStyle.None;
-            _settingsMenu.style.display = DisplayStyle.None;
+            _buttonBuyItem.text = $"Купить за {item.Price}";
+            _preventButtonBuyItem = () => ItemRequestedForBuy?.Invoke(item);
+            _buttonBuyItem.clicked += _preventButtonBuyItem;
         }
 
-        private void OnButtonShopClick()
+        private void SetItemForEquip(IItem item)
         {
-            _mainMenu.style.display = DisplayStyle.None;
-            _levelsMenu.style.display = DisplayStyle.None;
-            _shopMenu.style.display = DisplayStyle.Flex;
-            _settingsMenu.style.display = DisplayStyle.None;
-        }
-
-        private void OnButtonSettingsClick()
-        {
-            _mainMenu.style.display = DisplayStyle.None;
-            _levelsMenu.style.display = DisplayStyle.None;
-            _shopMenu.style.display = DisplayStyle.None;
-            _settingsMenu.style.display = DisplayStyle.Flex;
-        }
-
-        private void OnButtonExitClick()
-        {
-            Debug.Log("Exit");
+            _buttonBuyItem.text = "Экипировать";
+            _currentButtonItem.AddToClassList("ShopMenu__Item-Bought");
+            _preventButtonBuyItem = () => EquipItem?.Invoke(item);
+            _buttonBuyItem.clicked += _preventButtonBuyItem;
         }
 
         private void CreateButtonsStartLevel(int levelAmount)
@@ -182,20 +195,11 @@ namespace Assets.MVP
             }
         }
 
-        private void SetButtonBuyItem(IItem item)
+        private async void SetMoney(int amount)
         {
-            _viewItem.style.backgroundImage = new StyleBackground(item.Icon);
-            _buttonBuyItem.text = $"Купить за {item.Price}";
-
-            if (_preventButtonBuyItem != null)
-                UnsetButtonBuyItem();
-
-            _preventButtonBuyItem = () => ItemRequestedForBuy?.Invoke(item);
-
-            _buttonBuyItem.clicked += _preventButtonBuyItem;
-            _buttonBuyItem.enabledSelf = true;
+            await UniTask.WaitForEndOfFrame();
+            foreach (var money in _money)
+                money.text = $"{amount}";
         }
-
-        private void UnsetButtonBuyItem() => _buttonBuyItem.clicked -= _preventButtonBuyItem;
     }
 }

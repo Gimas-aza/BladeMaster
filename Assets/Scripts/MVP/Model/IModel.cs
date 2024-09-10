@@ -16,7 +16,9 @@ namespace Assets.MVP.Model
         ) { }
         void SubscribeToEvents(
             ref Func<List<IItem>> itemsRequestedForDisplay,
-            ref UnityAction<IItem> itemRequestedForBuy
+            ref UnityAction<IItem> itemRequestedForBuy,
+            ref UnityAction<IItem> equipItem,
+            ref UnityAction<IItem> itemIsBought
         ) { }
         void SubscribeToEvents(
             ref UnityAction<float> monitorInputRotation,
@@ -33,6 +35,9 @@ namespace Assets.MVP.Model
             ref UnityAction<int> monitorMoney,
             ref UnityAction<bool> finishedLevel,
             ref UnityAction<int> displayRatingScore
+        ) { }
+        void SubscribeToEvents(
+            ref UnityAction<int> monitorMoney
         ) { }
     }
 }

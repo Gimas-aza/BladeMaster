@@ -14,23 +14,47 @@ namespace Assets.ShopManagement
     {
         [SerializeField] private List<ItemComponent> _items;
 
+        private UnityAction<IItem> _itemIsBought;
+
         public event Func<int, bool> RequestToBuy;
         public event UnityAction<IItemSkin> BoughtSkin;
 
-        public void SubscribeToEvents(ref Func<List<IItem>> itemsRequestedForDisplay, ref UnityAction<IItem> itemRequestedForBuy)
+        private void Awake()
         {
-            itemRequestedForBuy += BuyItem;
-            itemsRequestedForDisplay += GetItems;
+            foreach (var item in _items)
+            {
+                item.IsBought = false;
+            }
         }
 
-        public List<IItem> GetItems() => _items.Cast<IItem>().ToList(); 
+        public void SubscribeToEvents(
+            ref Func<List<IItem>> itemsRequestedForDisplay,
+            ref UnityAction<IItem> itemRequestedForBuy,
+            ref UnityAction<IItem> equipItem,
+            ref UnityAction<IItem> itemIsBought
+        )
+        {
+            itemsRequestedForDisplay += GetItems;
+            itemRequestedForBuy += BuyItem;
+            equipItem += EquipItem;
+            _itemIsBought = itemIsBought;
+        }
+
+        public List<IItem> GetItems() => _items.Cast<IItem>().ToList();
 
         public void BuyItem(IItem item)
         {
-            if (RequestToBuy?.Invoke(item.Price) ?? false)
+            if (RequestToBuy?.Invoke(item.Price) ?? false && !item.IsBought)
             {
+                item.IsBought = true;
                 BoughtSkin?.Invoke(item as IItemSkin);
+                _itemIsBought?.Invoke(item);
             }
+        }
+
+        private void EquipItem(IItem item)
+        {
+            Debug.Log("EquipItem");
         }
     }
 }

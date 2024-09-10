@@ -22,7 +22,10 @@ namespace Assets.MVP
             ref UnityAction<int> pressingTheSelectedLevel,
             ref Func<int> unlockedLevels,
             ref Func<List<IItem>> itemsRequestedForDisplay,
-            ref UnityAction<IItem> itemRequestedForBuy
+            ref UnityAction<IItem> itemRequestedForBuy,
+            ref UnityAction<IItem> equipItem,
+            ref UnityAction<IItem> itemIsBought,
+            ref UnityAction<int> monitorMoney
         )
         {
             foreach (var model in _models)
@@ -36,7 +39,12 @@ namespace Assets.MVP
                 );
                 model.SubscribeToEvents(
                     ref itemsRequestedForDisplay,
-                    ref itemRequestedForBuy
+                    ref itemRequestedForBuy,
+                    ref equipItem,
+                    ref itemIsBought
+                );
+                model.SubscribeToEvents(
+                    ref monitorMoney
                 );
             }
         }

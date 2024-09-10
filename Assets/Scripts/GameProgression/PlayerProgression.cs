@@ -67,16 +67,6 @@ namespace Assets.GameProgression
             shop.BoughtSkin += (item) => _currentSkin = item as IItemSkin;
         }
 
-        private bool TrySpentMoney(int price)
-        {
-            if (_money >= price)
-            {
-                _money -= price;
-                return true;
-            }
-            return false;
-        }
-
         public void SubscribeToEvents(ref Func<int> unlockedLevels)
         {
             unlockedLevels += () => _unlockedLevels;
@@ -95,6 +85,12 @@ namespace Assets.GameProgression
             _displayRatingScore = displayRatingScore;
 
             _monitorCounter?.Invoke(_counter);
+            _monitorMoney?.Invoke(_money);
+        }
+
+        public void SubscribeToEvents(ref UnityAction<int> monitorMoney)
+        {
+            _monitorMoney = monitorMoney;
             _monitorMoney?.Invoke(_money);
         }
 
@@ -186,6 +182,17 @@ namespace Assets.GameProgression
             var sector = 100 / 3;
             var result = (int)Math.Ceiling(percent / sector);
             return Math.Clamp(result, 0, 3);
+        }
+
+        private bool TrySpentMoney(int price)
+        {
+            if (_money >= price)
+            {
+                _money -= price;
+                _monitorMoney?.Invoke(_money);
+                return true;
+            }
+            return false;
         }
     }
 }

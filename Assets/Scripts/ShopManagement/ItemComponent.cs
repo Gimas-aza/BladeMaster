@@ -12,6 +12,8 @@ namespace Assets.ShopManagement
         public int Price => _price;
         public Sprite Icon => _icon;
 
+        public bool IsBought { get; set; } = false;
+
         public GameObject GetSkin()
         {
             return _skin;
