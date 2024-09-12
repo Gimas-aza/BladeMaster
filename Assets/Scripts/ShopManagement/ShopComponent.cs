@@ -15,17 +15,18 @@ namespace Assets.ShopManagement
         [SerializeField] private List<ItemComponent> _items;
 
         private UnityAction<IItem> _itemIsBought;
+        private IItemSkin _equippedItem;
 
         public event Func<int, bool> RequestToBuy;
         public event UnityAction<IItemSkin> BoughtSkin;
 
-        private void Awake()
-        {
-            foreach (var item in _items)
-            {
-                item.IsBought = false;
-            }
-        }
+        // private void Awake()
+        // {
+        //     foreach (var item in _items)
+        //     {
+        //         item.IsBought = false;
+        //     }
+        // }
 
         public void SubscribeToEvents(
             ref Func<List<IItem>> itemsRequestedForDisplay,
@@ -42,11 +43,12 @@ namespace Assets.ShopManagement
 
         public List<IItem> GetItems() => _items.Cast<IItem>().ToList();
 
-        public void BuyItem(IItem item)
+        private void BuyItem(IItem item)
         {
             if (RequestToBuy?.Invoke(item.Price) ?? false && !item.IsBought)
             {
                 item.IsBought = true;
+                SetEquippedItem(item);
                 BoughtSkin?.Invoke(item as IItemSkin);
                 _itemIsBought?.Invoke(item);
             }
@@ -54,7 +56,20 @@ namespace Assets.ShopManagement
 
         private void EquipItem(IItem item)
         {
-            Debug.Log("EquipItem");
+            SetEquippedItem(item);
+            BoughtSkin?.Invoke(item as IItemSkin);
+        }
+
+        private void SetEquippedItem(IItem item)
+        {
+            _items.ForEach(x => x.IsEquipped = false);
+            _items.First(x => ReferenceEquals(x, item)).IsEquipped = true;
+        }
+
+        public IItemSkin GetEquippedItem()
+        {
+            _equippedItem = _items.First(x => x.IsEquipped);
+            return _equippedItem;
         }
     }
 }

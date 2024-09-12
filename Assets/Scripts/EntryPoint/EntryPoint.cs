@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Assets.DataStorageSystem;
 using Assets.Enemy;
 using Assets.GameProgression;
 using Assets.Knife;
@@ -14,24 +15,29 @@ namespace Assets.EntryPoint
     public class EntryPoint : MonoBehaviour
     {
         private IObject _objectFactory;
-        private ILoadSystem _loadSystem; 
+        private ILoadSystem _loadSystem;
         private ISaveSystem _saveSystem;
         private ILevelManager _levelManager;
         private IInitializer _presenter;
         private IInitializer _playerProgression;
         private List<IModel> _models;
+        private DataStorage _dataStorage;
 
-        private void Awake()
+        private async void Awake()
         {
             DontDestroyOnLoad(this);
 
             _models = new List<IModel>();
             _objectFactory = new ObjectFactory.ObjectFactory();
-            _saveSystem = new DataStorageSystem.DataStorageSystem(new DataStorageSystem.StorageXML());
+            _loadSystem = new DataStorageSystem.DataStorageSystem(
+                new DataStorageSystem.StorageXML()
+            );
             _saveSystem = _loadSystem as ISaveSystem;
             _levelManager = new GameSceneManager();
             _presenter = new Presenter();
             _playerProgression = new PlayerProgression();
+
+            _dataStorage = await _loadSystem.LoadAsync();
 
             _models.Add(_levelManager as IModel);
             _models.Add(_playerProgression as IModel);
@@ -54,12 +60,13 @@ namespace Assets.EntryPoint
 
         private void AddObjects(StateView stateView, int levelIndex)
         {
+            var dataStoragePlayer = _dataStorage as IPlayerProgressionData;
             switch (stateView)
             {
                 case StateView.MainMenu:
                     var shop = _objectFactory.CreateObject<ShopComponent>() as IModel;
 
-                    _playerProgression.Init(shop as IShop);
+                    _playerProgression.Init(shop as IShop, _saveSystem, ref dataStoragePlayer);
 
                     _models.Add(shop);
                     break;
@@ -67,12 +74,17 @@ namespace Assets.EntryPoint
                     var player = _objectFactory.CreateObject<PlayerComponent>() as IModel;
                     var playerInit = player as IInitializer;
                     var knife = _objectFactory.CreateObject<KnifeComponent>();
-                    var enemySpawner = _objectFactory.CreateObject<EnemySpawnerComponent>() as IInitializer;
+                    var enemySpawner =
+                        _objectFactory.CreateObject<EnemySpawnerComponent>() as IInitializer;
 
                     playerInit.Init(knife.gameObject);
                     enemySpawner.Init(levelIndex - 1);
-                    _playerProgression.Init(enemySpawner as ISpawnerEnemies, player as IKnivesPool, _levelManager as ILevelManager);
-                    
+                    _playerProgression.Init(
+                        enemySpawner as ISpawnerEnemies,
+                        player as IKnivesPool,
+                        _levelManager as ILevelManager
+                    );
+
                     _models.Add(player);
                     break;
             }

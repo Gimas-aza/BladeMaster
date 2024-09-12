@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <DataStorage xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Position>
-    <x>12</x>
-    <y>0</y>
-    <z>122</z>
-  </Position>
+  <Money>0</Money>
+  <Counter>0</Counter>
+  <FinishedLevels>0</FinishedLevels>
+  <UnlockedLevels>1</UnlockedLevels>
 </DataStorage>

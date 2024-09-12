@@ -49,7 +49,7 @@ namespace Assets.MVP
             _root = root;
             _templateButtonStartLevel = templateButtonStartLevel;
             _templateItemShop = templateItemShop;
-            ItemIsBought += SetButtonItem;
+            ItemIsBought += (item) => SetButtonItem(item);
             MonitorMoney += SetMoney;
             presenter.RegisterEventsForView(
                 ref LevelAmountRequestedForDisplay,
@@ -144,23 +144,26 @@ namespace Assets.MVP
                 var newButtonItem = newTemplateButtonItemShop.Q<Button>("ButtonItem");
 
                 newButtonItem.style.backgroundImage = new StyleBackground(item.Icon);
-                newButtonItem.clicked += () => SetButtonItem(item);
+                newButtonItem.clicked += () => SetButtonItem(item, newButtonItem);
                 _currentButtonItem = newButtonItem;
+                if (item.IsBought)
+                    _currentButtonItem.AddToClassList("ShopMenu__Item-Bought");
 
                 _containerItemsShop.Add(newButtonItem);
             }
         }
 
-        private void SetButtonItem(IItem item)
+        private void SetButtonItem(IItem item, Button buttonItem = null)
         {
             if (_preventButtonBuyItem != null)
                 UnsetButtonBuyItem();
 
+            buttonItem ??= _currentButtonItem;
             _viewItem.style.backgroundImage = new StyleBackground(item.Icon);
             if (!item.IsBought)
                 SetItemForBuy(item);
             else
-                SetItemForEquip(item);
+                SetItemForEquip(item, buttonItem);
 
             _buttonBuyItem.enabledSelf = true;
         }
@@ -174,10 +177,10 @@ namespace Assets.MVP
             _buttonBuyItem.clicked += _preventButtonBuyItem;
         }
 
-        private void SetItemForEquip(IItem item)
+        private void SetItemForEquip(IItem item, Button buttonItem)
         {
             _buttonBuyItem.text = "Экипировать";
-            _currentButtonItem.AddToClassList("ShopMenu__Item-Bought");
+            buttonItem.AddToClassList("ShopMenu__Item-Bought");
             _preventButtonBuyItem = () => EquipItem?.Invoke(item);
             _buttonBuyItem.clicked += _preventButtonBuyItem;
         }

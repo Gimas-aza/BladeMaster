@@ -7,5 +7,6 @@ namespace Assets.ShopManagement
         int Price { get; }
         Sprite Icon { get; }
         bool IsBought { get; set; }
+        bool IsEquipped { get; set; }
     }
 }

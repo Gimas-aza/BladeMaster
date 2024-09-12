@@ -13,6 +13,7 @@ namespace Assets.ShopManagement
         public Sprite Icon => _icon;
 
         public bool IsBought { get; set; } = false;
+        public bool IsEquipped { get; set; } = false;
 
         public GameObject GetSkin()
         {

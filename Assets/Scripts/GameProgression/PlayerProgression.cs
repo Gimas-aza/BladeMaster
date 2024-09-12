@@ -15,18 +15,19 @@ namespace Assets.GameProgression
     {
         private int _counter;
         private int _maxCounter;
-        private int _money = 100;
+        private int _money;
         private int _finishedLevels = 0;
         private int _currentLevel;
         private int _unlockedLevels = 1;
         private int _pointsPerStroke;
         private int _moneyPerHit = 10;
-        private int _moneyPerNoHit = 5;
         private int _amountHits;
         private int _multiplier;
         private List<ITarget> _enemies;
         private List<IKnife> _knives;
         private IItemSkin _currentSkin;
+        private ISaveSystem _saveSystem;
+        private IPlayerProgressionData _dataStorage;
         private UnityAction<int> _monitorCounter;
         private UnityAction<int> _monitorMoney;
         private UnityAction<bool> _finishedLevel;
@@ -61,10 +62,17 @@ namespace Assets.GameProgression
             }
         }
 
-        public void Init(IShop shop)
+        public void Init(IShop shop, ISaveSystem saveSystem, ref IPlayerProgressionData dataStorage)
         {
             shop.RequestToBuy += TrySpentMoney;
-            shop.BoughtSkin += (item) => _currentSkin = item as IItemSkin;
+            shop.BoughtSkin += (item) => _currentSkin = item;
+            _currentSkin = shop.GetEquippedItem();
+
+            _saveSystem = saveSystem;
+            _dataStorage = dataStorage;
+            _money = dataStorage.Money;
+            _finishedLevels = dataStorage.FinishedLevels;
+            _unlockedLevels = dataStorage.UnlockedLevels;
         }
 
         public void SubscribeToEvents(ref Func<int> unlockedLevels)
@@ -145,6 +153,8 @@ namespace Assets.GameProgression
         private void AddMoney()
         {
             _money += _moneyPerHit;
+            _dataStorage.Money = _money;
+            _saveSystem.SaveAsync();
         }
 
         private void SubtractCounter()
@@ -152,9 +162,11 @@ namespace Assets.GameProgression
             _counter -= _pointsPerStroke / 2;
         }
 
-        private void SubtractMoney()
+        private void SubtractMoney(int amount)
         {
-            _money -= _moneyPerNoHit;
+            _money -= amount;
+            _dataStorage.Money = _money;
+            _saveSystem.SaveAsync();
         }
 
         private void CompletedLevel(bool isFirstWin)
@@ -163,6 +175,9 @@ namespace Assets.GameProgression
             {
                 _finishedLevels++;
                 _unlockedLevels++;
+                _dataStorage.FinishedLevels = _finishedLevels;
+                _dataStorage.UnlockedLevels = _unlockedLevels;
+                _saveSystem.SaveAsync();
             }
 
             _displayRatingScore?.Invoke(CalculateRatingScore());
@@ -188,7 +203,7 @@ namespace Assets.GameProgression
         {
             if (_money >= price)
             {
-                _money -= price;
+                SubtractMoney(price);
                 _monitorMoney?.Invoke(_money);
                 return true;
             }

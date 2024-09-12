@@ -8,5 +8,7 @@ namespace Assets.GameProgression
     {
         event Func<int, bool> RequestToBuy;
         event UnityAction<IItemSkin> BoughtSkin;
+
+        IItemSkin GetEquippedItem();
     }
 }
