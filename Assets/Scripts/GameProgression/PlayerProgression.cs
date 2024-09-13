@@ -15,6 +15,7 @@ namespace Assets.GameProgression
     {
         private int _counter;
         private int _maxCounter;
+        private int _bestScore;
         private int _money;
         private int _finishedLevels = 0;
         private int _currentLevel;
@@ -71,6 +72,7 @@ namespace Assets.GameProgression
             _saveSystem = saveSystem;
             _dataStorage = dataStorage;
             _money = dataStorage.Money;
+            _bestScore = dataStorage.BestScore;
             _finishedLevels = dataStorage.FinishedLevels;
             _unlockedLevels = dataStorage.UnlockedLevels;
         }
@@ -148,6 +150,9 @@ namespace Assets.GameProgression
         {
             _pointsPerStroke = points;
             _counter += points * multiplier;
+            _bestScore = _counter > _bestScore ? _counter : _bestScore;
+            _dataStorage.BestScore = _bestScore;
+            _saveSystem.SaveAsync();
         }
 
         private void AddMoney()

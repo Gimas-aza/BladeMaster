@@ -16,17 +16,25 @@ namespace Assets.ShopManagement
 
         private UnityAction<IItem> _itemIsBought;
         private IItemSkin _equippedItem;
+        private ISaveSystem _saveSystem;
 
         public event Func<int, bool> RequestToBuy;
         public event UnityAction<IItemSkin> BoughtSkin;
 
-        // private void Awake()
-        // {
-        //     foreach (var item in _items)
-        //     {
-        //         item.IsBought = false;
-        //     }
-        // }
+        public void Init(ISaveSystem saveSystem, IShopData shopData)
+        {
+            _saveSystem = saveSystem;
+
+            for (int i = shopData.Items.Count; i < _items.Count; i++)
+            {
+                shopData.Items.Add(new ItemData());
+            }
+
+            for (int i = 0; i < _items.Count; i++)
+            {
+                _items[i].Init(shopData.Items[i]);
+            }
+        }
 
         public void SubscribeToEvents(
             ref Func<List<IItem>> itemsRequestedForDisplay,
@@ -47,8 +55,10 @@ namespace Assets.ShopManagement
         {
             if (RequestToBuy?.Invoke(item.Price) ?? false && !item.IsBought)
             {
-                item.IsBought = true;
+                item.SetBought(true);
                 SetEquippedItem(item);
+                _saveSystem.SaveAsync();
+
                 BoughtSkin?.Invoke(item as IItemSkin);
                 _itemIsBought?.Invoke(item);
             }
@@ -57,19 +67,31 @@ namespace Assets.ShopManagement
         private void EquipItem(IItem item)
         {
             SetEquippedItem(item);
+            _saveSystem.SaveAsync();
+
             BoughtSkin?.Invoke(item as IItemSkin);
         }
 
         private void SetEquippedItem(IItem item)
         {
-            _items.ForEach(x => x.IsEquipped = false);
-            _items.First(x => ReferenceEquals(x, item)).IsEquipped = true;
+            _items.ForEach(x => x.SetEquipped(false));
+            _items.First(x => ReferenceEquals(x, item)).SetEquipped(true);
         }
 
         public IItemSkin GetEquippedItem()
         {
-            _equippedItem = _items.First(x => x.IsEquipped);
+            _equippedItem = _items.FirstOrDefault(x => x.IsEquipped);
+            _equippedItem ??= GetDefaultItem();
+            _saveSystem.SaveAsync();
             return _equippedItem;
+        }
+
+        private IItemSkin GetDefaultItem()
+        {
+            var defaultItem = _items[0];
+            defaultItem.SetEquipped(true);
+            defaultItem.SetBought(true);
+            return defaultItem;
         }
     }
 }

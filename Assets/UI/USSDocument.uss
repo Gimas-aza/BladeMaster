@@ -531,3 +531,9 @@
     height: 55px;
     flex-grow: 1;
 }
+
+.MainMenu__LabelBestScore {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: rgb(182, 0, 113);
+}

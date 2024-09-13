@@ -45,6 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _items:
-  - {fileID: 8534812975403724355, guid: 22d37643486216bedb72c10cf7ed5201, type: 3}
-  - {fileID: 2700057023924301412, guid: 6b880907b5b3d894bba594cf359cc0a4, type: 3}
-  _knifeComponent: {fileID: 5366742609670441172, guid: c44211a7a83123f2bb8920d09c97b38b, type: 3}
+  - {fileID: 11400000, guid: 78c29ba68ea9e88f086f0dd3b8792d5b, type: 2}
+  - {fileID: 11400000, guid: a6dc8431fbd56fb46b6dd6098809fd87, type: 2}

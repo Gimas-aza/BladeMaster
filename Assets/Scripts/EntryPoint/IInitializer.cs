@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Assets.GameProgression;
 using Assets.MVP;
 using Assets.MVP.Model;
+using Assets.ShopManagement;
 using UnityEngine;
 
 namespace Assets.EntryPoint
@@ -9,7 +10,6 @@ namespace Assets.EntryPoint
     public interface IInitializer
     {
         void Init() { }
-        void Init(ISaveSystem saveSystem) { }
         void Init(
             ISpawnerEnemies spawnerEnemies,
             IKnivesPool knivesPool,
@@ -20,5 +20,6 @@ namespace Assets.EntryPoint
         void Init(GameObject gameObject) { }
         void Init(int levelIndex) { }
         void Init(IShop shop, ISaveSystem saveSystem, ref IPlayerProgressionData dataStorage) { }
+        void Init(ISaveSystem saveSystem, IShopData shop) { }
     }
 }

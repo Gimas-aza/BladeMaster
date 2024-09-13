@@ -64,11 +64,12 @@ namespace Assets.EntryPoint
             switch (stateView)
             {
                 case StateView.MainMenu:
-                    var shop = _objectFactory.CreateObject<ShopComponent>() as IModel;
+                    var shop = _objectFactory.CreateObject<ShopComponent>() as IInitializer;
 
+                    shop.Init(_saveSystem, _dataStorage);
                     _playerProgression.Init(shop as IShop, _saveSystem, ref dataStoragePlayer);
 
-                    _models.Add(shop);
+                    _models.Add(shop as IModel);
                     break;
                 case StateView.GameMenu:
                     var player = _objectFactory.CreateObject<PlayerComponent>() as IModel;

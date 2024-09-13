@@ -1,7 +1,17 @@
 <?xml version="1.0"?>
 <DataStorage xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Money>0</Money>
-  <Counter>0</Counter>
+  <Money>4950</Money>
+  <BestScore>0</BestScore>
   <FinishedLevels>0</FinishedLevels>
   <UnlockedLevels>1</UnlockedLevels>
+  <Items>
+    <ItemData>
+      <IsBought>true</IsBought>
+      <IsEquipped>true</IsEquipped>
+    </ItemData>
+    <ItemData>
+      <IsBought>true</IsBought>
+      <IsEquipped>false</IsEquipped>
+    </ItemData>
+  </Items>
 </DataStorage>
