@@ -31,6 +31,7 @@ namespace Assets.GameProgression
         private IPlayerProgressionData _dataStorage;
         private UnityAction<int> _monitorCounter;
         private UnityAction<int> _monitorMoney;
+        private UnityAction<int> _monitorBestScore;
         private UnityAction<bool> _finishedLevel;
         private UnityAction<int> _displayRatingScore;
 
@@ -98,10 +99,12 @@ namespace Assets.GameProgression
             _monitorMoney?.Invoke(_money);
         }
 
-        public void SubscribeToEvents(ref UnityAction<int> monitorMoney)
+        public void SubscribeToEvents(ref UnityAction<int> monitorMoney, ref UnityAction<int> monitorBestScore)
         {
             _monitorMoney = monitorMoney;
+            _monitorBestScore = monitorBestScore;
             _monitorMoney?.Invoke(_money);
+            _monitorBestScore?.Invoke(_bestScore);
         }
 
         private void StartActionForHit(ITarget target)
@@ -153,6 +156,7 @@ namespace Assets.GameProgression
             _bestScore = _counter > _bestScore ? _counter : _bestScore;
             _dataStorage.BestScore = _bestScore;
             _saveSystem.SaveAsync();
+            _monitorBestScore?.Invoke(_bestScore);
         }
 
         private void AddMoney()

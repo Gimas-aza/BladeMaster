@@ -19,6 +19,7 @@ namespace Assets.MVP
         private VisualElement _viewItem;
         private VisualElement _containerItemsShop;
         private List<Label> _money;
+        private Label _bestScore;
 
         private Button _buttonPlay;
         private Button _buttonShop;
@@ -38,6 +39,7 @@ namespace Assets.MVP
         public event UnityAction<IItem> EquipItem;
         public UnityAction<IItem> ItemIsBought;
         public UnityAction<int> MonitorMoney;
+        public UnityAction<int> MonitorBestScore;
 
         public StateMainMenu(
             VisualElement root,
@@ -51,6 +53,7 @@ namespace Assets.MVP
             _templateItemShop = templateItemShop;
             ItemIsBought += (item) => SetButtonItem(item);
             MonitorMoney += SetMoney;
+            MonitorBestScore += SetBestScore;
             presenter.RegisterEventsForView(
                 ref LevelAmountRequestedForDisplay,
                 ref PressingTheSelectedLevel,
@@ -59,7 +62,8 @@ namespace Assets.MVP
                 ref ItemRequestedForBuy,
                 ref EquipItem,
                 ref ItemIsBought,
-                ref MonitorMoney
+                ref MonitorMoney,
+                ref MonitorBestScore
             );
             Start();
         }
@@ -78,6 +82,7 @@ namespace Assets.MVP
             _viewItem = _root.Q<VisualElement>("ViewItem");
             _containerItemsShop = _root.Q<VisualElement>("GroupBoxItemShop");
             _money = _root.Query<Label>("Money").ToList();
+            _bestScore = _root.Q<Label>("LabelBestScore");
 
             _buttonPlay = _root.Q<Button>("ButtonPlay");
             _buttonShop = _root.Q<Button>("ButtonShop");
@@ -203,6 +208,12 @@ namespace Assets.MVP
             await UniTask.WaitForEndOfFrame();
             foreach (var money in _money)
                 money.text = $"{amount}";
+        }
+
+        private async void SetBestScore(int amount)
+        {
+            await UniTask.WaitForEndOfFrame();
+            _bestScore.text = $"{amount}";
         }
     }
 }

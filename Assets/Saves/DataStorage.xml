@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <DataStorage xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Money>4950</Money>
-  <BestScore>0</BestScore>
-  <FinishedLevels>0</FinishedLevels>
-  <UnlockedLevels>1</UnlockedLevels>
+  <Money>5010</Money>
+  <BestScore>10</BestScore>
+  <FinishedLevels>1</FinishedLevels>
+  <UnlockedLevels>2</UnlockedLevels>
   <Items>
     <ItemData>
       <IsBought>true</IsBought>

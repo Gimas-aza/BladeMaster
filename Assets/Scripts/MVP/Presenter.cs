@@ -25,7 +25,8 @@ namespace Assets.MVP
             ref UnityAction<IItem> itemRequestedForBuy,
             ref UnityAction<IItem> equipItem,
             ref UnityAction<IItem> itemIsBought,
-            ref UnityAction<int> monitorMoney
+            ref UnityAction<int> monitorMoney,
+            ref UnityAction<int> monitorBestScore
         )
         {
             foreach (var model in _models)
@@ -44,7 +45,8 @@ namespace Assets.MVP
                     ref itemIsBought
                 );
                 model.SubscribeToEvents(
-                    ref monitorMoney
+                    ref monitorMoney,
+                    ref monitorBestScore
                 );
             }
         }

@@ -37,7 +37,8 @@ namespace Assets.MVP.Model
             ref UnityAction<int> displayRatingScore
         ) { }
         void SubscribeToEvents(
-            ref UnityAction<int> monitorMoney
+            ref UnityAction<int> monitorMoney,
+            ref UnityAction<int> monitorBestScore
         ) { }
     }
 }
