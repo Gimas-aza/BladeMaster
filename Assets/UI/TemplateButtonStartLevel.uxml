@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" >
     <Style src="project://database/Assets/UI/USSDocument.uss?fileID=7433441132597879392&amp;guid=9ea713745d90fece29c4d874887a4e8a&amp;type=3#USSDocument" />
-    
-    <engine:Button name="ButtonStartLevel" text="" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button" />
+        <engine:Button name="ButtonStartLevel" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button LevelsMenu__ButtonStartLevel">
+            <engine:VisualElement name="ContainerScores" class="LevelsMenu__ContainerScores">
+                <engine:VisualElement name="RatingScoreFull" class="GameMenu__ScoresIcons LevelsMenu__ScoresIcons" style="background-image: url(&quot;project://database/Assets/UI/Sprites/KnifeScoreRed.png?fileID=21300000&amp;guid=15e640d0cdd7b08b8a9f1f0edbd009d2&amp;type=3#KnifeScoreRed&quot;); display: none;" />
+                <engine:VisualElement name="RatingScoreFull" class="GameMenu__ScoresIcons LevelsMenu__ScoresIcons" style="background-image: url(&quot;project://database/Assets/UI/Sprites/KnifeScoreRed.png?fileID=21300000&amp;guid=15e640d0cdd7b08b8a9f1f0edbd009d2&amp;type=3#KnifeScoreRed&quot;); display: none;" />
+                <engine:VisualElement name="RatingScoreFull" class="GameMenu__ScoresIcons LevelsMenu__ScoresIcons" style="background-image: url(&quot;project://database/Assets/UI/Sprites/KnifeScoreRed.png?fileID=21300000&amp;guid=15e640d0cdd7b08b8a9f1f0edbd009d2&amp;type=3#KnifeScoreRed&quot;); display: none;" />
+                <engine:VisualElement name="RatingScoreEmpty" class="GameMenu__ScoresIcons LevelsMenu__ScoresIcons" />
+                <engine:VisualElement name="RatingScoreEmpty" class="GameMenu__ScoresIcons LevelsMenu__ScoresIcons" />
+                <engine:VisualElement name="RatingScoreEmpty" class="GameMenu__ScoresIcons LevelsMenu__ScoresIcons" style="flex-grow: 0;" />
+            </engine:VisualElement>
+        </engine:Button>
 </engine:UXML>

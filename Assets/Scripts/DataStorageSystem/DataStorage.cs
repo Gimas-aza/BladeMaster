@@ -14,6 +14,7 @@ namespace Assets.DataStorageSystem
         public int BestScore { get; set; } = 0;
         public int FinishedLevels { get; set; } = 0;
         public int UnlockedLevels { get; set; } = 1;
+        public List<int> RatingScoreOfLevels { get; set; }
         public List<ItemData> Items { get; set; }
     }
 }

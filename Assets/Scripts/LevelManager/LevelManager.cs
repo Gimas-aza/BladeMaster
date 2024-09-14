@@ -39,5 +39,7 @@ namespace Assets.LevelManager
         }
 
         public int GetLevelIndex() => CurrentLevelIndex;
+
+        public int GetAmountLevels() => MaxLevelIndex;
     }
 }

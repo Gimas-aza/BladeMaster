@@ -67,18 +67,22 @@ namespace Assets.EntryPoint
                     var shop = _objectFactory.CreateObject<ShopComponent>() as IInitializer;
 
                     shop.Init(_saveSystem, _dataStorage);
-                    _playerProgression.Init(shop as IShop, _saveSystem, ref dataStoragePlayer);
+                    _playerProgression.Init(
+                        shop as IShop,
+                        _saveSystem,
+                        ref dataStoragePlayer,
+                        _levelManager as ILevelManager
+                    );
 
                     _models.Add(shop as IModel);
                     break;
                 case StateView.GameMenu:
-                    var player = _objectFactory.CreateObject<PlayerComponent>() as IModel;
-                    var playerInit = player as IInitializer;
+                    var player = _objectFactory.CreateObject<PlayerComponent>() as IInitializer;
                     var knife = _objectFactory.CreateObject<KnifeComponent>();
                     var enemySpawner =
                         _objectFactory.CreateObject<EnemySpawnerComponent>() as IInitializer;
 
-                    playerInit.Init(knife.gameObject);
+                    player.Init(knife.gameObject, _levelManager.GetLevelIndex() - 1);
                     enemySpawner.Init(levelIndex - 1);
                     _playerProgression.Init(
                         enemySpawner as ISpawnerEnemies,
@@ -86,7 +90,7 @@ namespace Assets.EntryPoint
                         _levelManager as ILevelManager
                     );
 
-                    _models.Add(player);
+                    _models.Add(player as IModel);
                     break;
             }
         }

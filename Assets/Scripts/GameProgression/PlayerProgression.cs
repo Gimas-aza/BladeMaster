@@ -19,11 +19,13 @@ namespace Assets.GameProgression
         private int _money;
         private int _finishedLevels = 0;
         private int _currentLevel;
+        private int _amountLevels;
         private int _unlockedLevels = 1;
         private int _pointsPerStroke;
         private int _moneyPerHit = 10;
         private int _amountHits;
         private int _multiplier;
+        private List<int> _ratingScoreOfLevels;
         private List<ITarget> _enemies;
         private List<IKnife> _knives;
         private IItemSkin _currentSkin;
@@ -34,6 +36,32 @@ namespace Assets.GameProgression
         private UnityAction<int> _monitorBestScore;
         private UnityAction<bool> _finishedLevel;
         private UnityAction<int> _displayRatingScore;
+
+        public void Init(
+            IShop shop,
+            ISaveSystem saveSystem,
+            ref IPlayerProgressionData dataStorage,
+            ILevelManager levelManager
+        )
+        {
+            shop.RequestToBuy += TrySpentMoney;
+            shop.BoughtSkin += (item) => _currentSkin = item;
+            _currentSkin = shop.GetEquippedItem();
+
+            _amountLevels = levelManager.GetAmountLevels();
+            _saveSystem = saveSystem;
+            _dataStorage = dataStorage;
+            _money = dataStorage.Money;
+            _bestScore = dataStorage.BestScore;
+            _finishedLevels = dataStorage.FinishedLevels;
+            _unlockedLevels = dataStorage.UnlockedLevels;
+            _ratingScoreOfLevels = dataStorage.RatingScoreOfLevels;
+
+            for (int i = _ratingScoreOfLevels.Count; i < _amountLevels; i++)
+                _ratingScoreOfLevels.Add(0);
+
+            dataStorage.RatingScoreOfLevels = _ratingScoreOfLevels;
+        }
 
         public void Init(
             ISpawnerEnemies spawnerEnemies,
@@ -58,24 +86,10 @@ namespace Assets.GameProgression
             {
                 knife.Hit += StartActionForHit;
                 knife.NoHit += StartActionForNoHit;
-                
+
                 if (_currentSkin != null)
                     knife.SwitchSkin(_currentSkin.GetSkin());
             }
-        }
-
-        public void Init(IShop shop, ISaveSystem saveSystem, ref IPlayerProgressionData dataStorage)
-        {
-            shop.RequestToBuy += TrySpentMoney;
-            shop.BoughtSkin += (item) => _currentSkin = item;
-            _currentSkin = shop.GetEquippedItem();
-
-            _saveSystem = saveSystem;
-            _dataStorage = dataStorage;
-            _money = dataStorage.Money;
-            _bestScore = dataStorage.BestScore;
-            _finishedLevels = dataStorage.FinishedLevels;
-            _unlockedLevels = dataStorage.UnlockedLevels;
         }
 
         public void SubscribeToEvents(ref Func<int> unlockedLevels)
@@ -99,12 +113,19 @@ namespace Assets.GameProgression
             _monitorMoney?.Invoke(_money);
         }
 
-        public void SubscribeToEvents(ref UnityAction<int> monitorMoney, ref UnityAction<int> monitorBestScore)
+        public void SubscribeToEvents(
+            ref UnityAction<int> monitorMoney,
+            ref UnityAction<int> monitorBestScore,
+            ref Func<int, int> ratingScoreReceived
+        )
         {
             _monitorMoney = monitorMoney;
             _monitorBestScore = monitorBestScore;
+
             _monitorMoney?.Invoke(_money);
             _monitorBestScore?.Invoke(_bestScore);
+
+            ratingScoreReceived += (index) => _ratingScoreOfLevels[index];
         }
 
         private void StartActionForHit(ITarget target)
@@ -186,10 +207,17 @@ namespace Assets.GameProgression
                 _unlockedLevels++;
                 _dataStorage.FinishedLevels = _finishedLevels;
                 _dataStorage.UnlockedLevels = _unlockedLevels;
-                _saveSystem.SaveAsync();
             }
 
-            _displayRatingScore?.Invoke(CalculateRatingScore());
+            var currentRatingScore = CalculateRatingScore();
+            _ratingScoreOfLevels[_currentLevel - 1] =
+                _ratingScoreOfLevels[_currentLevel - 1] < currentRatingScore
+                    ? currentRatingScore
+                    : _ratingScoreOfLevels[_currentLevel - 1];
+            _dataStorage.RatingScoreOfLevels = _ratingScoreOfLevels;
+            _saveSystem.SaveAsync();
+
+            _displayRatingScore?.Invoke(currentRatingScore);
             _amountHits = 0;
             _finishedLevel?.Invoke(true);
         }

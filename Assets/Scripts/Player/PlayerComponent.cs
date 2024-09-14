@@ -12,12 +12,12 @@ namespace Assets.Player
     [RequireComponent(typeof(Rigidbody))]
     public class PlayerComponent : MonoBehaviour, IModel, IInitializer, IKnivesPool
     {
-        [Header("Player")]
+        [Header("Player input")]
         [SerializeField] private float _speed;
         [SerializeField] private float _radius;
         [Header("Knife")]
         [SerializeField] private KnivesPoolComponent _knivesPool;
-        [SerializeField] private int _amountOfKnives = 5;
+        [SerializeField] private List<int> _amountOfKnivesOnLevels;
         [SerializeField] private ThrowingForceSettings _knifeSettings;
 
         private Rigidbody _rigidbody;
@@ -29,9 +29,9 @@ namespace Assets.Player
             _rigidbody = GetComponent<Rigidbody>();
         }
 
-        public void Init(GameObject knife)
+        public void Init(GameObject knife, int levelIndex)
         {
-            _knivesPool.CreateKnife(knife, _amountOfKnives);
+            _knivesPool.CreateKnife(knife, _amountOfKnivesOnLevels[levelIndex]);
         }
 
         public void SubscribeToEvents(

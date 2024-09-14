@@ -17,9 +17,14 @@ namespace Assets.EntryPoint
         ) { }
         void Init(List<IModel> model) { }
         void Init(Presenter presenter, StateView currentState) { }
-        void Init(GameObject gameObject) { }
+        void Init(GameObject gameObject, int currentLevelIndex) { }
         void Init(int levelIndex) { }
-        void Init(IShop shop, ISaveSystem saveSystem, ref IPlayerProgressionData dataStorage) { }
+        void Init(
+            IShop shop,
+            ISaveSystem saveSystem,
+            ref IPlayerProgressionData dataStorage,
+            ILevelManager levelManager
+        ) { }
         void Init(ISaveSystem saveSystem, IShopData shop) { }
     }
 }

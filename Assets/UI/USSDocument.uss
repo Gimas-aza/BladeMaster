@@ -537,3 +537,26 @@
     -unity-font-style: bold;
     color: rgb(182, 0, 113);
 }
+
+.LevelsMenu__ButtonStartLevel {
+    -unity-text-align: middle-left;
+    padding-left: 25px;
+    align-items: flex-end;
+}
+
+.LevelsMenu__ContainerScores {
+    flex-direction: row;
+    margin-right: 20px;
+    width: 40%;
+    justify-content: space-around;
+    min-width: 100px;
+}
+
+.LevelsMenu__ScoresIcons {
+    height: 35px;
+    width: 35px;
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+}

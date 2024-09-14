@@ -76,8 +76,8 @@ namespace Assets.MVP
             _gameStatistic = _root.Query<VisualElement>("Statistic").ToList();
             _pauseMenu = _root.Q<VisualElement>("PauseMenu");
             _finishedLevelMenu = _root.Q<VisualElement>("FinishedLevelMenu");
-            _ratingScoreEmpty = _root.Query<VisualElement>("RatingScoreEmpty").ToList();
-            _ratingScoreFull = _root.Query<VisualElement>("RatingScoreFull").ToList();
+            _ratingScoreEmpty = _finishedLevelMenu.Query<VisualElement>("RatingScoreEmpty").ToList();
+            _ratingScoreFull = _finishedLevelMenu.Query<VisualElement>("RatingScoreFull").ToList();
             _counter = _root.Query<Label>("Counter").ToList();
             _money = _root.Query<Label>("Money").ToList();
             _buttonPause = _root.Q<Button>("ButtonPause");

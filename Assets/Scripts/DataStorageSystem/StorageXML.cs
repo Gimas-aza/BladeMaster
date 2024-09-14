@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading;
 using System.Xml.Serialization;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -9,12 +10,13 @@ namespace Assets.DataStorageSystem
     {
         private DataStorage _dataStorage = new();
         private readonly string _filePath;
+        private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
         public StorageXML()
         {
 #if UNITY_EDITOR
             _filePath = Path.Combine(Application.dataPath, "Saves", "DataStorage.xml");
-#else 
+#else
             _filePath = Path.Combine(Application.dataPath, "DataStorage.xml");
 #endif
             Directory.CreateDirectory(Path.GetDirectoryName(_filePath));
@@ -24,7 +26,16 @@ namespace Assets.DataStorageSystem
         {
             var serializer = new XmlSerializer(typeof(DataStorage));
 
-            using (var reader = new FileStream(_filePath, FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous))
+            using (
+                var reader = new FileStream(
+                    _filePath,
+                    FileMode.OpenOrCreate,
+                    FileAccess.Read,
+                    FileShare.Read,
+                    4096,
+                    FileOptions.Asynchronous
+                )
+            )
             {
                 return await UniTask.RunOnThreadPool(() => TryDeserialize(serializer, reader));
             }
@@ -32,11 +43,28 @@ namespace Assets.DataStorageSystem
 
         public async void SaveAsync()
         {
-            var serializer = new XmlSerializer(typeof(DataStorage));
-
-            using (var reader = new FileStream(_filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous))
+            await _semaphore.WaitAsync();
+            try
             {
-                await UniTask.RunOnThreadPool(() => serializer.Serialize(reader, _dataStorage)); 
+                var serializer = new XmlSerializer(typeof(DataStorage));
+
+                using (
+                    var stream = new FileStream(
+                        _filePath,
+                        FileMode.Create,
+                        FileAccess.Write,
+                        FileShare.None,
+                        4096,
+                        FileOptions.Asynchronous
+                    )
+                )
+                {
+                    await UniTask.RunOnThreadPool(() => serializer.Serialize(stream, _dataStorage));
+                }
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 

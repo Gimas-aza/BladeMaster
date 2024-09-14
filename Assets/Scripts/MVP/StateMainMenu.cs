@@ -37,6 +37,7 @@ namespace Assets.MVP
         public event Func<List<IItem>> ItemsRequestedForDisplay;
         public event UnityAction<IItem> ItemRequestedForBuy;
         public event UnityAction<IItem> EquipItem;
+        public event Func<int, int> RatingScoreReceived;
         public UnityAction<IItem> ItemIsBought;
         public UnityAction<int> MonitorMoney;
         public UnityAction<int> MonitorBestScore;
@@ -63,7 +64,8 @@ namespace Assets.MVP
                 ref EquipItem,
                 ref ItemIsBought,
                 ref MonitorMoney,
-                ref MonitorBestScore
+                ref MonitorBestScore,
+                ref RatingScoreReceived
             );
             Start();
         }
@@ -130,12 +132,28 @@ namespace Assets.MVP
                 _buttonsStartLevel[i].style.display = DisplayStyle.Flex;
                 _buttonsStartLevel[i].enabledSelf = false;
                 _buttonsStartLevel[i].clicked += () => PressingTheSelectedLevel?.Invoke(index + 1);
+                SetRatingScoreForButtonLevel(i, RatingScoreReceived?.Invoke(i) ?? 0);
             }
             for (var i = 0; i < unlockedLevels; i++)
             {
                 if (i >= levelAmount)
                     break;
                 _buttonsStartLevel[i].enabledSelf = true;
+            }
+        }
+
+        private void SetRatingScoreForButtonLevel(int index, int ratingScore)
+        {
+            var ratingScoreFull = _buttonsStartLevel[index].Query<VisualElement>("RatingScoreFull").ToList();
+            var ratingScoreEmpty = _buttonsStartLevel[index].Query<VisualElement>("RatingScoreEmpty").ToList();
+
+            for (int i = 0; i < ratingScoreEmpty.Count; i++)
+            {
+                if (i < ratingScore)
+                {
+                    ratingScoreFull[i].style.display = DisplayStyle.Flex;
+                    ratingScoreEmpty[i].style.display = DisplayStyle.None;
+                }
             }
         }
 
