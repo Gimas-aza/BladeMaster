@@ -18,9 +18,10 @@ namespace Assets.MVP
         private VisualElement _containerButtonsStartLevel;
         private VisualElement _viewItem;
         private VisualElement _containerItemsShop;
+        // ==========================================================
         private List<Label> _money;
         private Label _bestScore;
-
+        private DropdownField _dropdownQuality;
         private Button _buttonPlay;
         private Button _buttonShop;
         private Button _buttonSettings;
@@ -38,9 +39,12 @@ namespace Assets.MVP
         public event UnityAction<IItem> ItemRequestedForBuy;
         public event UnityAction<IItem> EquipItem;
         public event Func<int, int> RatingScoreReceived;
+        public event UnityAction<int> ChangeQuality;
+        // ==========================================================
         public UnityAction<IItem> ItemIsBought;
         public UnityAction<int> MonitorMoney;
         public UnityAction<int> MonitorBestScore;
+        public Func<int> CurrentQuality;
 
         public StateMainMenu(
             VisualElement root,
@@ -65,7 +69,9 @@ namespace Assets.MVP
                 ref ItemIsBought,
                 ref MonitorMoney,
                 ref MonitorBestScore,
-                ref RatingScoreReceived
+                ref RatingScoreReceived,
+                ref ChangeQuality,
+                ref CurrentQuality
             );
             Start();
         }
@@ -85,6 +91,7 @@ namespace Assets.MVP
             _containerItemsShop = _root.Q<VisualElement>("GroupBoxItemShop");
             _money = _root.Query<Label>("Money").ToList();
             _bestScore = _root.Q<Label>("LabelBestScore");
+            _dropdownQuality = _root.Q<DropdownField>("DropdownQuality");
 
             _buttonPlay = _root.Q<Button>("ButtonPlay");
             _buttonShop = _root.Q<Button>("ButtonShop");
@@ -99,6 +106,9 @@ namespace Assets.MVP
             _buttonSettings.clicked += () => ShowMenu("SettingsMenu");
             _buttonExit.clicked += Application.Quit;
 
+            _dropdownQuality.RegisterValueChangedCallback(OnChangeQuality);
+            _dropdownQuality.index = CurrentQuality?.Invoke() ?? 0;
+
             foreach (var button in _buttonBack)
             {
                 button.clicked += () => ShowMenu("MainMenu");
@@ -107,6 +117,11 @@ namespace Assets.MVP
             ShowMenu("MainMenu");
             AddButtonsStartLevel();
             AddButtonsItemsShop();
+        }
+
+        private void OnChangeQuality(ChangeEvent<string> evt)
+        {
+            ChangeQuality?.Invoke(_dropdownQuality.index);
         }
 
         private void ShowMenu(string menuName)

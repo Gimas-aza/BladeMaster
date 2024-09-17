@@ -14,6 +14,9 @@ namespace Assets.MVP
         private bool _isClampingTouch = false;
         private bool _isGameActive = true;
         private IForceOfThrowingKnife _forceOfThrowing;
+        private VisualElement _settingsMenu;
+        private Button _buttonBackGameMenu;
+        private DropdownField _dropdownQuality;
         private VisualElement _gameMenu;
         private VisualElement _gameMenuInfo;
         private List<VisualElement> _gameStatistic;
@@ -41,12 +44,14 @@ namespace Assets.MVP
         public event UnityAction MonitorInputTouchEnded;
         public event UnityAction ClickedButtonBackMainMenu;
         public event UnityAction ClickedButtonAgainLevel;
+        public event UnityAction<int> ChangeQuality;
         // ==========================================================
         public UnityAction<int> MonitorCounter;
         public UnityAction<int> MonitorMoney;
         public UnityAction<bool> FinishedLevel;
         public UnityAction<IAmountOfKnives> DisplayAmountKnives;
         public UnityAction<int> DisplayRatingScore;
+        public Func<int> CurrentQuality;
 
         public StateGameMenu(VisualElement root, Presenter presenter)
         {
@@ -62,7 +67,9 @@ namespace Assets.MVP
                 ref FinishedLevel,
                 ref DisplayAmountKnives,
                 ref ClickedButtonAgainLevel,
-                ref DisplayRatingScore
+                ref DisplayRatingScore,
+                ref ChangeQuality,
+                ref CurrentQuality
             );
             OnMonitorInputInFixedUpdate();
             OnMonitorInputInUpdate();
@@ -71,6 +78,7 @@ namespace Assets.MVP
 
         private void Start()
         {
+            _settingsMenu = _root.Q<VisualElement>("SettingsMenu");
             _gameMenu = _root.Q<VisualElement>("GameMenu");
             _gameMenuInfo = _root.Q<VisualElement>("GameMenu-Info");
             _gameStatistic = _root.Query<VisualElement>("Statistic").ToList();
@@ -89,10 +97,15 @@ namespace Assets.MVP
             _amountKnives = _root.Q<Label>("LabelAmountKnives");
             _pressureForce = _root.Q<ProgressBar>("ProgressBarPressureForce");
             _buttonButtonAgain = _root.Q<Button>("ButtonAgain");
+            _buttonBackGameMenu = _settingsMenu.Q<Button>("ButtonBack");
+            _dropdownQuality = _root.Q<DropdownField>("DropdownQuality");
 
             _buttonPause.clicked += OnButtonPauseClick;
             _buttonContinue.clicked += OnButtonContinueClick;
             _buttonButtonAgain.clicked += OnButtonButtonAgainClick;
+            _buttonBackGameMenu.clicked += OnButtonBackGameMenuClick;
+            _dropdownQuality.RegisterValueChangedCallback(OnChangeQuality);
+            _dropdownQuality.index = CurrentQuality?.Invoke() ?? 0;
 
             foreach (var buttonSettings in _buttonsSettings)
                 buttonSettings.clicked += OnButtonSettingsClick;
@@ -101,6 +114,11 @@ namespace Assets.MVP
 
             _gameMenu.style.display = DisplayStyle.Flex;
             AdjustLayout();
+        }
+
+        private void OnChangeQuality(ChangeEvent<string> evt)
+        {
+            ChangeQuality?.Invoke(_dropdownQuality.index);
         }
 
         private void OnButtonButtonAgainClick()
@@ -134,7 +152,14 @@ namespace Assets.MVP
 
         private void OnButtonSettingsClick()
         {
-            Debug.Log("OnButtonSettingsClick");
+            _settingsMenu.style.display = DisplayStyle.Flex;
+            _gameMenu.style.display = DisplayStyle.None;
+        }
+
+        private void OnButtonBackGameMenuClick()
+        {
+            _settingsMenu.style.display = DisplayStyle.None;
+            _gameMenu.style.display = DisplayStyle.Flex;
         }
 
         private void OnButtonBackMainMenuClick()

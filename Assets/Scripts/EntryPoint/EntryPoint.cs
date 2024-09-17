@@ -8,6 +8,7 @@ using Assets.MVP;
 using Assets.MVP.Model;
 using Assets.Player;
 using Assets.ShopManagement;
+using Assets.GameSettings;
 using UnityEngine;
 
 namespace Assets.EntryPoint
@@ -20,6 +21,7 @@ namespace Assets.EntryPoint
         private ILevelManager _levelManager;
         private IInitializer _presenter;
         private IInitializer _playerProgression;
+        private IInitializer _settings;
         private List<IModel> _models;
         private DataStorage _dataStorage;
 
@@ -36,11 +38,14 @@ namespace Assets.EntryPoint
             _levelManager = new GameSceneManager();
             _presenter = new Presenter();
             _playerProgression = new PlayerProgression();
+            _settings = new Settings();
 
             _dataStorage = await _loadSystem.LoadAsync();
+            _settings.Init(_saveSystem, _dataStorage as ISettingsData);
 
             _models.Add(_levelManager as IModel);
             _models.Add(_playerProgression as IModel);
+            _models.Add(_settings as IModel);
 
             _levelManager.LevelLoaded += OnLevelLoaded;
             _levelManager.LoadLevel(0);
@@ -66,7 +71,7 @@ namespace Assets.EntryPoint
                 case StateView.MainMenu:
                     var shop = _objectFactory.CreateObject<ShopComponent>() as IInitializer;
 
-                    shop.Init(_saveSystem, _dataStorage);
+                    shop.Init(_saveSystem, _dataStorage as IShopData);
                     _playerProgression.Init(
                         shop as IShop,
                         _saveSystem,

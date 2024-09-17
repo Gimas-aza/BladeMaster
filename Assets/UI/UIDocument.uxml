@@ -23,7 +23,7 @@
         </engine:VisualElement>
         <engine:ScrollView name="ContainerButtonsStartLevel" horizontal-scroller-visibility="Hidden" language-direction="Inherit" nested-interaction-kind="Default" enabled="true" class="LevelsMenu__List" />
         <engine:VisualElement style="flex-grow: 1; flex-direction: row; margin-top: 15px; width: 100%; justify-content: space-between; align-self: center; align-content: flex-start; align-items: center;">
-            <engine:Button name="ButtonBack" text="Назад" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonLeft" />
+            <engine:Button name="ButtonBack" text="Назад" class="LevelsMenu__Button ShopMenu__Button ButtonBack" />
         </engine:VisualElement>
     </engine:VisualElement>
     <engine:VisualElement name="ShopMenu" style="flex-grow: 1; background-color: rgb(255, 255, 255); -unity-background-scale-mode: stretch-to-fill; -unity-background-image-tint-color: rgb(255, 255, 255); background-image: url(&quot;project://database/Assets/UI/Sprites/BackgroundMainMenu.jpg?fileID=2800000&amp;guid=7131e5d6d29d5148f9b752de33ee2dfa&amp;type=3#BackgroundMainMenu&quot;); justify-content: space-between; align-items: center; align-content: stretch; padding-top: 60px; align-self: auto; padding-left: 15px; padding-right: 15px; flex-direction: column; flex-wrap: nowrap; display: none; padding-bottom: 40px;">
@@ -42,7 +42,7 @@
             <engine:GroupBox name="GroupBoxItemShop" style="flex-direction: row; flex-wrap: wrap; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; flex-grow: 1; width: 100%; justify-content: flex-start;" />
         </engine:ScrollView>
         <engine:VisualElement style="flex-grow: 1; flex-direction: row; margin-top: 15px; width: 100%; justify-content: space-between; align-self: center; align-content: flex-start; align-items: center;">
-            <engine:Button name="ButtonBack" text="Назад" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonLeft" />
+            <engine:Button name="ButtonBack" text="Назад" class="LevelsMenu__Button ShopMenu__Button ButtonBack" />
             <engine:Button name="ButtonBuy" text="Купить" enabled="false" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonRight" />
         </engine:VisualElement>
     </engine:VisualElement>
@@ -53,10 +53,11 @@
         </engine:VisualElement>
         <engine:VisualElement style="flex-grow: 1; width: 100%; margin-top: 30px;">
             <engine:Slider label="Общая громкость:" value="42" high-value="100" fill="true" class="SettingsMenu__Slider" />
-            <engine:Toggle label="Выбрация:" value="false" toggle-on-label-click="true" class="SettingsMenu__Checkbox" />
+            <engine:Toggle label="Выбрация:" value="false" toggle-on-label-click="true" class="SettingsMenu__Checkbox" style="display: none;" />
+            <engine:DropdownField label="Графика:" choices="Низкая,Средня,Высокая" name="DropdownQuality" index="0" class="SettingsMenu__DropdownQuality" />
         </engine:VisualElement>
-        <engine:VisualElement style="flex-grow: 0; flex-direction: row; margin-top: 15px; width: 100%; justify-content: flex-start; align-self: flex-end; align-content: auto; align-items: flex-end; height: auto;">
-            <engine:Button name="ButtonBack" text="Назад" class="LevelsMenu__Button ShopMenu__Button ShopMenu__ButtonLeft" />
+        <engine:VisualElement style="flex-grow: 0; flex-direction: row; margin-top: 15px; width: 100%; justify-content: flex-start; align-self: flex-end; align-content: auto; align-items: flex-end; height: 80px;">
+            <engine:Button name="ButtonBack" text="Назад" class="LevelsMenu__Button ShopMenu__Button ButtonBack" />
         </engine:VisualElement>
     </engine:VisualElement>
     <engine:VisualElement name="GameMenu" style="flex-grow: 1; align-items: center; justify-content: flex-start; padding-top: 50px; padding-bottom: 50px; display: none;">
@@ -78,7 +79,7 @@
                 <engine:ProgressBar value="0" name="ProgressBarPressureForce" class="GameMenu__ProgressBar" />
                 <engine:VisualElement style="flex-grow: 1; flex-direction: row;">
                     <engine:VisualElement style="flex-grow: 0; width: 40px; background-image: url(&quot;project://database/Assets/UI/Sprites/KnifeIcon.png?fileID=21300000&amp;guid=4dc84972feda5c1a4920d1b2b8ac89ed&amp;type=3#KnifeIcon&quot;); -unity-background-scale-mode: scale-and-crop; height: 40px;" />
-                    <engine:Label name="LabelAmountKnives" text="0/5" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 10px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 35px; align-items: flex-start; flex-grow: 0; -unity-text-align: middle-left;" />
+                    <engine:Label name="LabelAmountKnives" text="0/5" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 10px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 35px; align-items: flex-start; flex-grow: 0; -unity-text-align: middle-left; color: rgb(255, 130, 37); -unity-text-outline-width: 2px; -unity-text-outline-color: rgba(23, 59, 69, 0.49); -unity-font-style: bold;" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Assets.GameProgression;
+using Assets.GameSettings;
 using Assets.MVP;
 using Assets.MVP.Model;
 using Assets.ShopManagement;
@@ -26,5 +27,6 @@ namespace Assets.EntryPoint
             ILevelManager levelManager
         ) { }
         void Init(ISaveSystem saveSystem, IShopData shop) { }
+        void Init(ISaveSystem saveSystem, ISettingsData settings) { }
     }
 }

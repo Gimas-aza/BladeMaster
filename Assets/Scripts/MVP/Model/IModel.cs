@@ -41,5 +41,9 @@ namespace Assets.MVP.Model
             ref UnityAction<int> monitorBestScore,
             ref Func<int, int> ratingScoreReceived
         ) { }
+        void SubscribeToEvents(
+            ref UnityAction<int> changeQuality,
+            ref Func<int> currentQuality
+        ) { }
     }
 }

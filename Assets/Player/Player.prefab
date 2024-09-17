@@ -114,7 +114,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 58.5
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -163,8 +163,8 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
+  m_RenderPostProcessing: 1
+  m_Antialiasing: 1
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
@@ -226,8 +226,8 @@ MonoBehaviour:
   _speed: 30
   _radius: 30
   _knivesPool: {fileID: 4113183521672044098}
-  _amountOfKnivesOnLevels: 03000000
+  _amountOfKnivesOnLevels: 96000000
   _knifeSettings:
     MinForce: 20
-    MaxForce: 50
+    MaxForce: 100
     ForceScalingFactor: 1

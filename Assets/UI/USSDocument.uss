@@ -560,3 +560,39 @@
     border-bottom-width: 3px;
     border-left-width: 3px;
 }
+
+.ButtonBack {
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 5px;
+}
+
+.ShopMenu__ButtonLeft {
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 0;
+}
+
+.SettingsMenu__DropdownQuality {
+    font-size: 25px;
+    color: rgb(23, 59, 69);
+    margin-top: 20px;
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-bottom: 2px;
+}
+
+.SettingsMenu__DropdownQuality .unity-base-field__input {
+    background-color: rgb(248, 237, 237);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-left-color: rgb(23, 59, 69);
+    border-right-color: rgb(23, 59, 69);
+    border-top-color: rgb(23, 59, 69);
+    border-bottom-color: rgb(23, 59, 69);
+    margin-left: 71px;
+}

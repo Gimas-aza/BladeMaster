@@ -27,7 +27,9 @@ namespace Assets.MVP
             ref UnityAction<IItem> itemIsBought,
             ref UnityAction<int> monitorMoney,
             ref UnityAction<int> monitorBestScore,
-            ref Func<int, int> ratingScoreReceived
+            ref Func<int, int> ratingScoreReceived,
+            ref UnityAction<int> changeQuality,
+            ref Func<int> currentQuality
         )
         {
             foreach (var model in _models)
@@ -50,6 +52,10 @@ namespace Assets.MVP
                     ref monitorBestScore,
                     ref ratingScoreReceived
                 );
+                model.SubscribeToEvents(
+                    ref changeQuality,
+                    ref currentQuality
+                );
             }
         }
 
@@ -63,7 +69,9 @@ namespace Assets.MVP
             ref UnityAction<bool> finishedLevel,
             ref UnityAction<IAmountOfKnives> displayAmountKnives,
             ref UnityAction clickedButtonAgainLevel,
-            ref UnityAction<int> displayRatingScore
+            ref UnityAction<int> displayRatingScore,
+            ref UnityAction<int> changeQuality,
+            ref Func<int> currentQuality
         )
         {
             foreach (var model in _models)
@@ -83,6 +91,10 @@ namespace Assets.MVP
                     ref monitorMoney,
                     ref finishedLevel,
                     ref displayRatingScore
+                );
+                model.SubscribeToEvents(
+                    ref changeQuality,
+                    ref currentQuality
                 );
             }
         }
