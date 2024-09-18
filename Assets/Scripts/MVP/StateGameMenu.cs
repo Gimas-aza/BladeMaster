@@ -17,6 +17,7 @@ namespace Assets.MVP
         private VisualElement _settingsMenu;
         private Button _buttonBackGameMenu;
         private DropdownField _dropdownQuality;
+        private Slider _sliderVolume;
         private VisualElement _gameMenu;
         private VisualElement _gameMenuInfo;
         private List<VisualElement> _gameStatistic;
@@ -45,17 +46,20 @@ namespace Assets.MVP
         public event UnityAction ClickedButtonBackMainMenu;
         public event UnityAction ClickedButtonAgainLevel;
         public event UnityAction<int> ChangeQuality;
+        public event UnityAction<float> ChangeVolume;
         // ==========================================================
         public UnityAction<int> MonitorCounter;
         public UnityAction<int> MonitorMoney;
         public UnityAction<bool> FinishedLevel;
         public UnityAction<IAmountOfKnives> DisplayAmountKnives;
         public UnityAction<int> DisplayRatingScore;
-        public Func<int> CurrentQuality;
+        public UnityAction<int> CurrentQuality;
+        public UnityAction<float> CurrentVolume;
 
         public StateGameMenu(VisualElement root, Presenter presenter)
         {
             _root = root;
+            Start();
             SubscribeToMonitorUpdate();
             presenter.RegisterEventsForView(
                 ref MonitorInputRotation,
@@ -69,11 +73,13 @@ namespace Assets.MVP
                 ref ClickedButtonAgainLevel,
                 ref DisplayRatingScore,
                 ref ChangeQuality,
-                ref CurrentQuality
+                ref CurrentQuality,
+                ref ChangeVolume,
+                ref CurrentVolume
             );
             OnMonitorInputInFixedUpdate();
             OnMonitorInputInUpdate();
-            Start();
+            AdjustLayout();
         }
 
         private void Start()
@@ -99,13 +105,14 @@ namespace Assets.MVP
             _buttonButtonAgain = _root.Q<Button>("ButtonAgain");
             _buttonBackGameMenu = _settingsMenu.Q<Button>("ButtonBack");
             _dropdownQuality = _root.Q<DropdownField>("DropdownQuality");
+            _sliderVolume = _root.Q<Slider>("SliderVolume");
 
             _buttonPause.clicked += OnButtonPauseClick;
             _buttonContinue.clicked += OnButtonContinueClick;
             _buttonButtonAgain.clicked += OnButtonButtonAgainClick;
             _buttonBackGameMenu.clicked += OnButtonBackGameMenuClick;
             _dropdownQuality.RegisterValueChangedCallback(OnChangeQuality);
-            _dropdownQuality.index = CurrentQuality?.Invoke() ?? 0;
+            _sliderVolume.RegisterValueChangedCallback(OnChangeVolume);
 
             foreach (var buttonSettings in _buttonsSettings)
                 buttonSettings.clicked += OnButtonSettingsClick;
@@ -113,12 +120,16 @@ namespace Assets.MVP
                 buttonBackMainMenu.clicked += OnButtonBackMainMenuClick;
 
             _gameMenu.style.display = DisplayStyle.Flex;
-            AdjustLayout();
         }
 
         private void OnChangeQuality(ChangeEvent<string> evt)
         {
             ChangeQuality?.Invoke(_dropdownQuality.index);
+        }
+
+        private void OnChangeVolume(ChangeEvent<float> evt)
+        {
+            ChangeVolume?.Invoke(_sliderVolume.value / 100);
         }
 
         private void OnButtonButtonAgainClick()
@@ -133,6 +144,8 @@ namespace Assets.MVP
             FinishedLevel += SetFinishedLevel;
             DisplayAmountKnives += SetAmountKnives;
             DisplayRatingScore += SetRating;
+            CurrentQuality += (quality) => _dropdownQuality.index = quality;
+            CurrentVolume += (volume) => _sliderVolume.value = volume * 100;
         }
 
         private void OnButtonPauseClick()

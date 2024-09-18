@@ -22,6 +22,7 @@ namespace Assets.MVP
         private List<Label> _money;
         private Label _bestScore;
         private DropdownField _dropdownQuality;
+        private Slider _sliderVolume;
         private Button _buttonPlay;
         private Button _buttonShop;
         private Button _buttonSettings;
@@ -40,11 +41,13 @@ namespace Assets.MVP
         public event UnityAction<IItem> EquipItem;
         public event Func<int, int> RatingScoreReceived;
         public event UnityAction<int> ChangeQuality;
+        public event UnityAction<float> ChangeVolume;
         // ==========================================================
         public UnityAction<IItem> ItemIsBought;
         public UnityAction<int> MonitorMoney;
         public UnityAction<int> MonitorBestScore;
-        public Func<int> CurrentQuality;
+        public UnityAction<int> CurrentQuality;
+        public UnityAction<float> CurrentVolume;
 
         public StateMainMenu(
             VisualElement root,
@@ -56,9 +59,8 @@ namespace Assets.MVP
             _root = root;
             _templateButtonStartLevel = templateButtonStartLevel;
             _templateItemShop = templateItemShop;
-            ItemIsBought += (item) => SetButtonItem(item);
-            MonitorMoney += SetMoney;
-            MonitorBestScore += SetBestScore;
+            Start();
+            SubscribeToMonitorUpdate();
             presenter.RegisterEventsForView(
                 ref LevelAmountRequestedForDisplay,
                 ref PressingTheSelectedLevel,
@@ -71,9 +73,14 @@ namespace Assets.MVP
                 ref MonitorBestScore,
                 ref RatingScoreReceived,
                 ref ChangeQuality,
-                ref CurrentQuality
+                ref CurrentQuality,
+                ref ChangeVolume,
+                ref CurrentVolume
             );
-            Start();
+
+            ShowMenu("MainMenu");
+            AddButtonsStartLevel();
+            AddButtonsItemsShop();
         }
 
         private void Start()
@@ -92,6 +99,7 @@ namespace Assets.MVP
             _money = _root.Query<Label>("Money").ToList();
             _bestScore = _root.Q<Label>("LabelBestScore");
             _dropdownQuality = _root.Q<DropdownField>("DropdownQuality");
+            _sliderVolume = _root.Q<Slider>("SliderVolume");
 
             _buttonPlay = _root.Q<Button>("ButtonPlay");
             _buttonShop = _root.Q<Button>("ButtonShop");
@@ -107,21 +115,31 @@ namespace Assets.MVP
             _buttonExit.clicked += Application.Quit;
 
             _dropdownQuality.RegisterValueChangedCallback(OnChangeQuality);
-            _dropdownQuality.index = CurrentQuality?.Invoke() ?? 0;
+            _sliderVolume.RegisterValueChangedCallback(OnChangeVolume);
 
             foreach (var button in _buttonBack)
             {
                 button.clicked += () => ShowMenu("MainMenu");
             }
+        }
 
-            ShowMenu("MainMenu");
-            AddButtonsStartLevel();
-            AddButtonsItemsShop();
+        private void SubscribeToMonitorUpdate()
+        {
+            ItemIsBought += (item) => SetButtonItem(item);
+            MonitorMoney += SetMoney;
+            MonitorBestScore += SetBestScore;
+            CurrentQuality += (value) => _dropdownQuality.index = value;
+            CurrentVolume += (value) => _sliderVolume.value = value * 100;
         }
 
         private void OnChangeQuality(ChangeEvent<string> evt)
         {
             ChangeQuality?.Invoke(_dropdownQuality.index);
+        }
+
+        private void OnChangeVolume(ChangeEvent<float> evt)
+        {
+            ChangeVolume?.Invoke(_sliderVolume.value / 100);
         }
 
         private void ShowMenu(string menuName)

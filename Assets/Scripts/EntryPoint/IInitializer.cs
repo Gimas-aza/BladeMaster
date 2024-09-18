@@ -4,6 +4,7 @@ using Assets.GameSettings;
 using Assets.MVP;
 using Assets.MVP.Model;
 using Assets.ShopManagement;
+using Assets.Sounds;
 using UnityEngine;
 
 namespace Assets.EntryPoint
@@ -28,5 +29,7 @@ namespace Assets.EntryPoint
         ) { }
         void Init(ISaveSystem saveSystem, IShopData shop) { }
         void Init(ISaveSystem saveSystem, ISettingsData settings) { }
+        void Init(AudioComponent audioSource) { }
+        void Init(StateView currentState) { }
     }
 }

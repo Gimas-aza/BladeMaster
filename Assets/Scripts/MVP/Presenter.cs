@@ -29,7 +29,9 @@ namespace Assets.MVP
             ref UnityAction<int> monitorBestScore,
             ref Func<int, int> ratingScoreReceived,
             ref UnityAction<int> changeQuality,
-            ref Func<int> currentQuality
+            ref UnityAction<int> currentQuality,
+            ref UnityAction<float> changeVolume,
+            ref UnityAction<float> currentVolume
         )
         {
             foreach (var model in _models)
@@ -54,7 +56,9 @@ namespace Assets.MVP
                 );
                 model.SubscribeToEvents(
                     ref changeQuality,
-                    ref currentQuality
+                    ref currentQuality,
+                    ref changeVolume,
+                    ref currentVolume
                 );
             }
         }
@@ -71,7 +75,9 @@ namespace Assets.MVP
             ref UnityAction clickedButtonAgainLevel,
             ref UnityAction<int> displayRatingScore,
             ref UnityAction<int> changeQuality,
-            ref Func<int> currentQuality
+            ref UnityAction<int> currentQuality,
+            ref UnityAction<float> changeVolume,
+            ref UnityAction<float> currentVolume
         )
         {
             foreach (var model in _models)
@@ -94,7 +100,9 @@ namespace Assets.MVP
                 );
                 model.SubscribeToEvents(
                     ref changeQuality,
-                    ref currentQuality
+                    ref currentQuality,
+                    ref changeVolume,
+                    ref currentVolume
                 );
             }
         }

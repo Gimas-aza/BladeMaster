@@ -15,5 +15,6 @@ namespace Assets.DataStorageSystem
         public List<int> RatingScoreOfLevels { get; set; }
         public List<ItemData> Items { get; set; }
         public int QualityIndex { get; set; } = 0;
+        public float Volume { get; set; } = 0.5f;
     }
 }

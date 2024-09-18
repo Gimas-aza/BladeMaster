@@ -43,7 +43,9 @@ namespace Assets.MVP.Model
         ) { }
         void SubscribeToEvents(
             ref UnityAction<int> changeQuality,
-            ref Func<int> currentQuality
+            ref UnityAction<int> currentQuality,
+            ref UnityAction<float> changeVolume,
+            ref UnityAction<float> currentVolume
         ) { }
     }
 }

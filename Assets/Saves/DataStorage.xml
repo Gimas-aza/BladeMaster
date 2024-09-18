@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <DataStorage xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Money>5180</Money>
+  <Money>5220</Money>
   <BestScore>50</BestScore>
   <FinishedLevels>1</FinishedLevels>
   <UnlockedLevels>2</UnlockedLevels>
@@ -17,5 +17,6 @@
       <IsEquipped>false</IsEquipped>
     </ItemData>
   </Items>
-  <QualityIndex>0</QualityIndex>
+  <QualityIndex>2</QualityIndex>
+  <Volume>0.213</Volume>
 </DataStorage>

@@ -35,6 +35,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e1eb05941dc830a48ab406e96336b179
+    m_Address: Assets/AudioComponent
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fe8f9d3eb55880e9bb441ff17916b412
     m_Address: Assets/PlayerComponent
     m_ReadOnly: 0

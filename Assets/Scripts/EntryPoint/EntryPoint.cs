@@ -10,6 +10,7 @@ using Assets.Player;
 using Assets.ShopManagement;
 using Assets.GameSettings;
 using UnityEngine;
+using Assets.Sounds;
 
 namespace Assets.EntryPoint
 {
@@ -66,6 +67,8 @@ namespace Assets.EntryPoint
         private void AddObjects(StateView stateView, int levelIndex)
         {
             var dataStoragePlayer = _dataStorage as IPlayerProgressionData;
+            var audio = _objectFactory.CreateObject<AudioComponent>() as IInitializer;
+
             switch (stateView)
             {
                 case StateView.MainMenu:
@@ -78,6 +81,8 @@ namespace Assets.EntryPoint
                         ref dataStoragePlayer,
                         _levelManager as ILevelManager
                     );
+                    audio.Init(stateView);
+                    _settings.Init(audio as AudioComponent);
 
                     _models.Add(shop as IModel);
                     break;
@@ -94,6 +99,8 @@ namespace Assets.EntryPoint
                         player as IKnivesPool,
                         _levelManager as ILevelManager
                     );
+                    audio.Init(stateView);
+                    _settings.Init(audio as AudioComponent);
 
                     _models.Add(player as IModel);
                     break;
