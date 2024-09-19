@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d41b5957bedf52eea978f94f19d3ada6, type: 3}
   m_Name: Item1
   m_EditorClassIdentifier: 
-  _skin: {fileID: 1255321121303355106, guid: 1ac2a2ef27324e4f09b06c305446d9ac, type: 3}
+  _skin: {fileID: 2983304699683989746, guid: 1472e0229186db556bd56666ae8a3b50, type: 3}
   _price: 20
   _icon: {fileID: 21300000, guid: e2cf8e6e6aa5919b58ad4a04c000ff0f, type: 3}
+  _isBought: 1
+  _isEquipped: 1

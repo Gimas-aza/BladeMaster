@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a44e138d568d946eba6d78e4e85a1b5c, type: 3}
+  m_Name: Level1
+  m_EditorClassIdentifier: 
+  enemyLocators:
+  - EnemyPrefab: {fileID: 3420041590822766756, guid: 519d316a866b83ad49978fa1d2dbbfac, type: 3}
+    Position: {x: -3.2, y: 1.123, z: -4.227}
+    Rotation: {x: 0.35806373, y: 0.80815, z: -0.18943292, w: -0.42755017}
+  - EnemyPrefab: {fileID: 3420041590822766756, guid: 519d316a866b83ad49978fa1d2dbbfac, type: 3}
+    Position: {x: 3, y: 1.12, z: -4.132}
+    Rotation: {x: -0.15501961, y: -0.34987932, z: 0.3742504, w: 0.84468335}
+  - EnemyPrefab: {fileID: 4113904853901269537, guid: 85458304e6533e25cb86b3e1104a2266, type: 3}
+    Position: {x: -0.066, y: 1.615, z: 1.155}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
