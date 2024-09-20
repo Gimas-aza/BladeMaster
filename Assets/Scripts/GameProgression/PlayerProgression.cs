@@ -19,15 +19,15 @@ namespace Assets.GameProgression
         private int _money;
         private int _finishedLevels = 0;
         private int _currentLevel;
-        private int _amountLevels;
+        private int _amountOfLevels;
         private int _unlockedLevels = 1;
         private int _pointsPerStroke;
         private int _moneyPerHit = 10;
         private int _amountHits;
         private int _multiplier;
         private List<int> _ratingScoreOfLevels;
-        private List<ITarget> _enemies;
-        private List<IKnife> _knives;
+        private List<IScoreProvider> _enemies;
+        private List<IWeaponEvents> _knives;
         private IItemSkin _currentSkin;
         private ISaveSystem _saveSystem;
         private IPlayerProgressionData _dataStorage;
@@ -41,14 +41,14 @@ namespace Assets.GameProgression
             IShop shop,
             ISaveSystem saveSystem,
             ref IPlayerProgressionData dataStorage,
-            ILevelManager levelManager
+            int amountOfLevels
         )
         {
             shop.RequestToBuy += TrySpentMoney;
             shop.BoughtSkin += (item) => _currentSkin = item;
             _currentSkin = shop.GetEquippedItem();
 
-            _amountLevels = levelManager.GetAmountLevels();
+            _amountOfLevels = amountOfLevels;
             _saveSystem = saveSystem;
             _dataStorage = dataStorage;
             _money = dataStorage.Money;
@@ -57,7 +57,7 @@ namespace Assets.GameProgression
             _unlockedLevels = dataStorage.UnlockedLevels;
             _ratingScoreOfLevels = dataStorage.RatingScoreOfLevels;
 
-            for (int i = _ratingScoreOfLevels.Count; i < _amountLevels; i++)
+            for (int i = _ratingScoreOfLevels.Count; i < _amountOfLevels; i++)
                 _ratingScoreOfLevels.Add(0);
 
             dataStorage.RatingScoreOfLevels = _ratingScoreOfLevels;
@@ -66,12 +66,12 @@ namespace Assets.GameProgression
         public void Init(
             ISpawnerEnemies spawnerEnemies,
             IKnivesPool knivesPool,
-            ILevelManager levelManager
+            int currentLevelIndex
         )
         {
             _enemies = spawnerEnemies.GetEnemies();
             _knives = knivesPool.GetKnives();
-            _currentLevel = levelManager.GetLevelIndex();
+            _currentLevel = currentLevelIndex;
             _counter = 0;
             _pointsPerStroke = 20;
             _multiplier = 0;
@@ -130,9 +130,13 @@ namespace Assets.GameProgression
 
         private void StartActionForHit(ITarget target)
         {
+            var scoreProvider = target as IScoreProvider;
+            if (scoreProvider == null)
+                Debug.LogError("Target does not implement IScoreProvider.");
+
             _amountHits++;
             _multiplier++;
-            AddCounter(target.GetPointsPerStroke(), _multiplier);
+            AddCounter(scoreProvider.GetPointsPerStroke(), _multiplier);
             AddMoney();
             _monitorCounter?.Invoke(_counter);
             _monitorMoney?.Invoke(_money);

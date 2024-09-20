@@ -4,14 +4,13 @@ using UnityEngine;
 namespace Assets.Enemy
 {
     [RequireComponent(typeof(Collider))]
-    public class EnemyComponent : MonoBehaviour, ITarget
+    public class EnemyComponent : MonoBehaviour, ITarget, IScoreProvider
     {
         [SerializeField] private float _speed;
         [SerializeField] private int _pointsPerStroke;
 
         private Vector3 _targetPosition = Vector3.zero;
-
-        [HideInInspector] public bool _isHit;
+        private bool _isHit;
 
         private void Update()
         {

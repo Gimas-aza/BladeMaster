@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.EntryPoint;
 using Assets.GameProgression;
 using Assets.MVP;
@@ -79,9 +80,9 @@ namespace Assets.Player
             _displayAmountKnives?.Invoke(_knivesPool);
         }
 
-        public List<IKnife> GetKnives()
+        public List<IWeaponEvents> GetKnives()
         {
-            return _knivesPool.GetKnives();
+            return _knivesPool.GetKnives().Cast<IWeaponEvents>().ToList();
         }
     }
 }

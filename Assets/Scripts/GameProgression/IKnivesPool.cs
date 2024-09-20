@@ -5,6 +5,6 @@ namespace Assets.GameProgression
 {
     public interface IKnivesPool
     {
-        List<IKnife> GetKnives();
+        List<IWeaponEvents> GetKnives();
     }
 }

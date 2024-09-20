@@ -15,7 +15,7 @@ namespace Assets.EntryPoint
         void Init(
             ISpawnerEnemies spawnerEnemies,
             IKnivesPool knivesPool,
-            ILevelManager levelManager
+            int currentLevelIndex
         ) { }
         void Init(List<IModel> model) { }
         void Init(Presenter presenter, StateView currentState) { }
@@ -25,7 +25,7 @@ namespace Assets.EntryPoint
             IShop shop,
             ISaveSystem saveSystem,
             ref IPlayerProgressionData dataStorage,
-            ILevelManager levelManager
+            int amountOfLevels
         ) { }
         void Init(ISaveSystem saveSystem, IShopData shop) { }
         void Init(ISaveSystem saveSystem, ISettingsData settings) { }

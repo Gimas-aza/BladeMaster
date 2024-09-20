@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Assets.EntryPoint;
 using Assets.GameProgression;
 using Assets.Target;
@@ -57,14 +58,14 @@ namespace Assets.Enemy
             return true;
         }
 
-        public List<ITarget> GetEnemies()
+        public List<IScoreProvider> GetEnemies()
         {
             var enemies = new List<ITarget>();
             foreach (var enemy in _enemies)
             {
                 enemies.Add(enemy);
             }
-            return enemies;
+            return enemies.Cast<IScoreProvider>().ToList();
         }
     }
 }
