@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 namespace Assets.Knife
 {
-    public class KnifeComponent : MonoBehaviour, IKnife
+    public class KnifeComponent : MonoBehaviour, IKnife, IKnifeObject
     {
         [SerializeField] private List<Rigidbody> _rigidbodyList;
         [SerializeField] private TriggerHandler _triggerHandler;
@@ -84,6 +84,11 @@ namespace Assets.Knife
         public void SwitchSkin(GameObject skin)
         {
             _skin = Instantiate(skin, _rigidbodyList[0].transform);
+        }
+
+        public GameObject GetGameObject()
+        {
+            return gameObject;
         }
     }
 }

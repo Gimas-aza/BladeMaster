@@ -12,9 +12,9 @@ namespace Assets.MVP
     {
         private List<IModel> _models;
 
-        public void Init(List<IModel> model)
+        public void Init(IResolver resolver)
         {
-            _models = model;
+            _models = resolver.Resolve<List<IModel>>();
         }
 
         public void RegisterEventsForView(

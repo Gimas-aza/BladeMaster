@@ -12,24 +12,22 @@ namespace Assets.GameSettings
         private int _qualityIndex;
         private float _volume;
         private AudioComponent _audioSource;
+        private IResolver _resolver;
         private ISaveSystem _saveSystem;
         private ISettingsData _settingsData;
         private UnityAction<int> _currentQuality;
         private UnityAction<float> _currentVolume;
 
-        public void Init(ISaveSystem saveSystem, ISettingsData settingsData)
+        public void Init(IResolver resolver)
         {
-            _saveSystem = saveSystem;
-            _settingsData = settingsData;
-            _qualityIndex = settingsData.QualityIndex;
-            _volume = settingsData.Volume;
+            _resolver = resolver;
+            _saveSystem = resolver.Resolve<ISaveSystem>();
+            _settingsData = resolver.Resolve<ISettingsData>();
+
+            _qualityIndex = _settingsData.QualityIndex;
+            _volume = _settingsData.Volume;
 
             ChangeQuality(_qualityIndex);
-        }
-
-        public void Init(AudioComponent audioSource)
-        {
-            _audioSource = audioSource;
         }
 
         public void SubscribeToEvents(
@@ -61,7 +59,9 @@ namespace Assets.GameSettings
         {
             _volume = value;
             _settingsData.Volume = value;
-            if (_audioSource != null) _audioSource.Volume = value;
+            if (_audioSource == null)
+                _audioSource = _resolver.Resolve<AudioComponent>();
+            _audioSource.Volume = value;
 
             _saveSystem.SaveAsync();
         }

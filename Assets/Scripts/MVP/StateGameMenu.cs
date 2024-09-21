@@ -14,31 +14,9 @@ namespace Assets.MVP
         private bool _isClampingTouch = false;
         private bool _isGameActive = true;
         private IForceOfThrowingKnife _forceOfThrowing;
-        private VisualElement _settingsMenu;
-        private Button _buttonBackGameMenu;
-        private DropdownField _dropdownQuality;
-        private Slider _sliderVolume;
-        private VisualElement _gameMenu;
-        private VisualElement _gameMenuInfo;
-        private List<VisualElement> _gameStatistic;
-        private VisualElement _pauseMenu;
-        private VisualElement _finishedLevelMenu;
-        private VisualElement _pauseMenuStatistic;
-        private List<VisualElement> _ratingScoreEmpty;
-        private List<VisualElement> _ratingScoreFull;
-        // ==========================================================
-        private List<Label> _counter;
-        private List<Label> _money;
-        private Label _win;
-        private Label _lose;
-        private Label _amountKnives;
-        private ProgressBar _pressureForce;
-        // ==========================================================
-        private Button _buttonPause;
-        private Button _buttonContinue;
-        private List<Button> _buttonsSettings;
-        private List<Button> _buttonsBackMainMenu;
-        private Button _buttonButtonAgain;
+
+        // UI Elements
+        private UIElements _uiElements;
 
         public event UnityAction<float> MonitorInputRotation;
         public event Func<IForceOfThrowingKnife> MonitorInputTouchBegin;
@@ -47,7 +25,7 @@ namespace Assets.MVP
         public event UnityAction ClickedButtonAgainLevel;
         public event UnityAction<int> ChangeQuality;
         public event UnityAction<float> ChangeVolume;
-        // ==========================================================
+
         public UnityAction<int> MonitorCounter;
         public UnityAction<int> MonitorMoney;
         public UnityAction<bool> FinishedLevel;
@@ -59,9 +37,39 @@ namespace Assets.MVP
         public StateGameMenu(VisualElement root, Presenter presenter)
         {
             _root = root;
-            Start();
-            SubscribeToMonitorUpdate();
-            presenter.RegisterEventsForView(
+            _presenter = presenter;
+
+            InitializeUI();
+            SubscribeToEvents();
+            RegisterPresenterEvents();
+            
+            OnMonitorInputInFixedUpdate();
+            OnMonitorInputInUpdate();
+            AdjustLayout();
+        }
+
+        private void InitializeUI()
+        {
+            _uiElements = new UIElements(_root);
+
+            _uiElements.ButtonPause.clicked += OnButtonPauseClick;
+            _uiElements.ButtonContinue.clicked += OnButtonContinueClick;
+            _uiElements.ButtonAgain.clicked += OnButtonButtonAgainClick;
+            _uiElements.ButtonBackGameMenu.clicked += OnButtonBackGameMenuClick;
+            _uiElements.DropdownQuality.RegisterValueChangedCallback(OnChangeQuality);
+            _uiElements.SliderVolume.RegisterValueChangedCallback(OnChangeVolume);
+
+            foreach (var buttonSettings in _uiElements.ButtonsSettings)
+                buttonSettings.clicked += OnButtonSettingsClick;
+            foreach (var buttonBackMainMenu in _uiElements.ButtonsBackMainMenu)
+                buttonBackMainMenu.clicked += OnButtonBackMainMenuClick;
+
+            _uiElements.GameMenu.style.display = DisplayStyle.Flex;
+        }
+
+        private void RegisterPresenterEvents()
+        {
+            _presenter.RegisterEventsForView(
                 ref MonitorInputRotation,
                 ref MonitorInputTouchBegin,
                 ref MonitorInputTouchEnded,
@@ -77,59 +85,16 @@ namespace Assets.MVP
                 ref ChangeVolume,
                 ref CurrentVolume
             );
-            OnMonitorInputInFixedUpdate();
-            OnMonitorInputInUpdate();
-            AdjustLayout();
-        }
-
-        private void Start()
-        {
-            _settingsMenu = _root.Q<VisualElement>("SettingsMenu");
-            _gameMenu = _root.Q<VisualElement>("GameMenu");
-            _gameMenuInfo = _root.Q<VisualElement>("GameMenu-Info");
-            _gameStatistic = _root.Query<VisualElement>("Statistic").ToList();
-            _pauseMenu = _root.Q<VisualElement>("PauseMenu");
-            _finishedLevelMenu = _root.Q<VisualElement>("FinishedLevelMenu");
-            _ratingScoreEmpty = _finishedLevelMenu.Query<VisualElement>("RatingScoreEmpty").ToList();
-            _ratingScoreFull = _finishedLevelMenu.Query<VisualElement>("RatingScoreFull").ToList();
-            _counter = _root.Query<Label>("Counter").ToList();
-            _money = _root.Query<Label>("Money").ToList();
-            _buttonPause = _root.Q<Button>("ButtonPause");
-            _buttonContinue = _root.Q<Button>("ButtonContinue");
-            _buttonsSettings = _root.Query<Button>("ButtonSettings").ToList();
-            _buttonsBackMainMenu = _root.Query<Button>("ButtonBackMainMenu").ToList();
-            _win = _root.Q<Label>("LabelWin");
-            _lose = _root.Q<Label>("LabelLose");
-            _amountKnives = _root.Q<Label>("LabelAmountKnives");
-            _pressureForce = _root.Q<ProgressBar>("ProgressBarPressureForce");
-            _buttonButtonAgain = _root.Q<Button>("ButtonAgain");
-            _buttonBackGameMenu = _settingsMenu.Q<Button>("ButtonBack");
-            _dropdownQuality = _root.Q<DropdownField>("DropdownQuality");
-            _sliderVolume = _root.Q<Slider>("SliderVolume");
-
-            _buttonPause.clicked += OnButtonPauseClick;
-            _buttonContinue.clicked += OnButtonContinueClick;
-            _buttonButtonAgain.clicked += OnButtonButtonAgainClick;
-            _buttonBackGameMenu.clicked += OnButtonBackGameMenuClick;
-            _dropdownQuality.RegisterValueChangedCallback(OnChangeQuality);
-            _sliderVolume.RegisterValueChangedCallback(OnChangeVolume);
-
-            foreach (var buttonSettings in _buttonsSettings)
-                buttonSettings.clicked += OnButtonSettingsClick;
-            foreach (var buttonBackMainMenu in _buttonsBackMainMenu)
-                buttonBackMainMenu.clicked += OnButtonBackMainMenuClick;
-
-            _gameMenu.style.display = DisplayStyle.Flex;
         }
 
         private void OnChangeQuality(ChangeEvent<string> evt)
         {
-            ChangeQuality?.Invoke(_dropdownQuality.index);
+            ChangeQuality?.Invoke(_uiElements.DropdownQuality.index);
         }
 
         private void OnChangeVolume(ChangeEvent<float> evt)
         {
-            ChangeVolume?.Invoke(_sliderVolume.value / 100);
+            ChangeVolume?.Invoke(_uiElements.SliderVolume.value / 100);
         }
 
         private void OnButtonButtonAgainClick()
@@ -137,42 +102,42 @@ namespace Assets.MVP
             ClickedButtonAgainLevel?.Invoke();
         }
 
-        private void SubscribeToMonitorUpdate()
+        private void SubscribeToEvents()
         {
             MonitorCounter += SetCount;
             MonitorMoney += SetMoney;
             FinishedLevel += SetFinishedLevel;
             DisplayAmountKnives += SetAmountKnives;
             DisplayRatingScore += SetRating;
-            CurrentQuality += (quality) => _dropdownQuality.index = quality;
-            CurrentVolume += (volume) => _sliderVolume.value = volume * 100;
+            CurrentQuality += (quality) => _uiElements.DropdownQuality.index = quality;
+            CurrentVolume += (volume) => _uiElements.SliderVolume.value = volume * 100;
         }
 
         private void OnButtonPauseClick()
         {
-            _pauseMenu.style.display = DisplayStyle.Flex;
-            _gameMenuInfo.style.display = DisplayStyle.None;
+            _uiElements.PauseMenu.style.display = DisplayStyle.Flex;
+            _uiElements.GameMenuInfo.style.display = DisplayStyle.None;
             _isGameActive = false;
         }
 
         private async void OnButtonContinueClick()
         {
-            _pauseMenu.style.display = DisplayStyle.None;
-            _gameMenuInfo.style.display = DisplayStyle.Flex;
+            _uiElements.PauseMenu.style.display = DisplayStyle.None;
+            _uiElements.GameMenuInfo.style.display = DisplayStyle.Flex;
             await UniTask.Delay(200);
             _isGameActive = true;
         }
 
         private void OnButtonSettingsClick()
         {
-            _settingsMenu.style.display = DisplayStyle.Flex;
-            _gameMenu.style.display = DisplayStyle.None;
+            _uiElements.SettingsMenu.style.display = DisplayStyle.Flex;
+            _uiElements.GameMenu.style.display = DisplayStyle.None;
         }
 
         private void OnButtonBackGameMenuClick()
         {
-            _settingsMenu.style.display = DisplayStyle.None;
-            _gameMenu.style.display = DisplayStyle.Flex;
+            _uiElements.SettingsMenu.style.display = DisplayStyle.None;
+            _uiElements.GameMenu.style.display = DisplayStyle.Flex;
         }
 
         private void OnButtonBackMainMenuClick()
@@ -185,7 +150,6 @@ namespace Assets.MVP
             while (true)
             {
                 OnMonitorInputAcceleration();
-
                 await UniTask.WaitForFixedUpdate();
             }
         }
@@ -193,7 +157,7 @@ namespace Assets.MVP
         private void OnMonitorInputAcceleration()
         {
             Vector3 acceleration = Input.acceleration;
-            if ((acceleration.x > 0.3f || acceleration.x < -0.3f) && _isGameActive)
+            if (Mathf.Abs(acceleration.x) > 0.3f && _isGameActive)
             {
                 MonitorInputRotation?.Invoke(acceleration.x);
             }
@@ -209,7 +173,6 @@ namespace Assets.MVP
                     var touch = Input.GetTouch(0);
                     HandleTouchPhase(touch, ref time);
                 }
-
                 await UniTask.WaitForEndOfFrame();
             }
         }
@@ -240,83 +203,70 @@ namespace Assets.MVP
 
         private void MovedOrStationaryPhase(Touch touch, ref float time)
         {
-            if (!_isClampingTouch)
-                return;
+            if (!_isClampingTouch) return;
 
             var force = _forceOfThrowing.GetPercentOfForce(Time.time - time);
-            _pressureForce.value = force;
+            _uiElements.PressureForce.value = force;
         }
 
         private void EndedPhase(Touch touch)
         {
-            if (!_isClampingTouch)
-                return;
+            if (!_isClampingTouch) return;
 
             _isClampingTouch = false;
-            _pressureForce.value = 0;
+            _uiElements.PressureForce.value = 0;
             MonitorInputTouchEnded?.Invoke();
         }
 
         private async void SetCount(int amount)
         {
             await UniTask.WaitForEndOfFrame();
-            foreach (var counter in _counter)
-                counter.text = $"{amount}";
+            _uiElements.Counter.ForEach(counter => counter.text = $"{amount}");
             AdjustLayout();
         }
 
         private async void SetMoney(int amount)
         {
             await UniTask.WaitForEndOfFrame();
-            foreach (var money in _money)
-                money.text = $"{amount}";
+            _uiElements.Money.ForEach(money => money.text = $"{amount}");
             AdjustLayout();
         }
 
         private void AdjustLayout()
         {
-            for (int i = 0; i < _gameStatistic.Count; i++)
+            for (int i = 0; i < _uiElements.GameStatistic.Count; i++)
             {
-                int totalLength = _counter[i].text.Length + _money[i].text.Length;
-                _gameStatistic[i].style.flexDirection =
+                int totalLength = _uiElements.Counter[i].text.Length + _uiElements.Money[i].text.Length;
+                _uiElements.GameStatistic[i].style.flexDirection =
                     totalLength > 6 ? FlexDirection.Column : FlexDirection.Row;
             }
         }
 
         private void SetFinishedLevel(bool isWin)
         {
-            _finishedLevelMenu.style.display = DisplayStyle.Flex;
-            _pauseMenu.style.display = DisplayStyle.None;
-            _gameMenuInfo.style.display = DisplayStyle.None;
+            _uiElements.FinishedLevelMenu.style.display = DisplayStyle.Flex;
+            _uiElements.PauseMenu.style.display = DisplayStyle.None;
+            _uiElements.GameMenuInfo.style.display = DisplayStyle.None;
 
-            if (isWin)
-            {
-                _win.style.display = DisplayStyle.Flex;
-                _lose.style.display = DisplayStyle.None;
-            }
-            else
-            {
-                _win.style.display = DisplayStyle.None;
-                _lose.style.display = DisplayStyle.Flex;
-            }
+            _uiElements.Win.style.display = isWin ? DisplayStyle.Flex : DisplayStyle.None;
+            _uiElements.Lose.style.display = isWin ? DisplayStyle.None : DisplayStyle.Flex;
+
             _isGameActive = false;
         }
 
         private async void SetAmountKnives(IAmountOfKnives amountOfKnives)
         {
             await UniTask.WaitForEndOfFrame();
-            _amountKnives.text = $"{amountOfKnives.Amount}/{amountOfKnives.MaxAmount}";
+            _uiElements.AmountKnives.text = $"{amountOfKnives.Amount}/{amountOfKnives.MaxAmount}";
         }
 
         private void SetRating(int score)
         {
-            for (int i = 0; i < _ratingScoreEmpty.Count; i++)
+            for (int i = 0; i < _uiElements.RatingScoreEmpty.Count; i++)
             {
-                if (i < score)
-                {
-                    _ratingScoreFull[i].style.display = DisplayStyle.Flex;
-                    _ratingScoreEmpty[i].style.display = DisplayStyle.None;
-                }
+                bool isFull = i < score;
+                _uiElements.RatingScoreFull[i].style.display = isFull ? DisplayStyle.Flex : DisplayStyle.None;
+                _uiElements.RatingScoreEmpty[i].style.display = isFull ? DisplayStyle.None : DisplayStyle.Flex;
             }
         }
     }

@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 namespace Assets.LevelManager
 {
-    public abstract class LevelManager : ILevelManager, IModel
+    public abstract class LevelManager : ILevelManager, ILevelInfoProvider, IModel
     {
         protected static readonly int EntryPointIndex = -1;
         protected static readonly int MainMenuIndex = 0;

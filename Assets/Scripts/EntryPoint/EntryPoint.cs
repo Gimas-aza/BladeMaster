@@ -21,7 +21,6 @@ namespace Assets.EntryPoint
         private DIContainer _container;
         private IObject _objectFactory;
         private ILoadSystem _loadSystem;
-        private ISaveSystem _saveSystem;
         private ILevelManager _levelManager;
         private IInitializer _presenter;
         private IInitializer _playerProgression;
@@ -35,7 +34,7 @@ namespace Assets.EntryPoint
 
             InitializeFields();
             await LoadDataAsync();
-            InitializeSettings();
+            AddModels();
             SubscribeToLevelManagerEvents();
             LoadMainMenuLevel();
         }
@@ -46,29 +45,39 @@ namespace Assets.EntryPoint
             _models = new List<IModel>();
             _objectFactory = new ObjectFactory.ObjectFactory();
             _loadSystem = new DataStorageSystem.DataStorageSystem(new DataStorageSystem.StorageXML());
-            _saveSystem = _loadSystem as ISaveSystem;
             _levelManager = new GameSceneManager();
             _presenter = new Presenter();
             _playerProgression = new PlayerProgression();
             _settings = new Settings();
+
+            RegisterSingletons();
+        }
+
+        private void RegisterSingletons()
+        {
+            _container.RegisterSingleton(_ => _loadSystem as ISaveSystem);
+            _container.RegisterSingleton(_ => _presenter as Presenter);
+            _container.RegisterSingleton(_ => _levelManager as ILevelInfoProvider);
+            _container.RegisterTransient(c => 
+                c.Resolve<ILevelInfoProvider>().GetLevelIndex() == 0 ? StateView.MainMenu : StateView.GameMenu);
         }
 
         private async UniTask LoadDataAsync()
         {
             _dataStorage = await _loadSystem.LoadAsync();
+            RegisterDataStorage();
         }
 
-        private void InitializeSettings()
+        private void RegisterDataStorage()
         {
-            _settings.Init(_saveSystem, _dataStorage as ISettingsData);
-            AddModels();
+            _container.RegisterSingleton(_ => _dataStorage as ISettingsData);
+            _container.RegisterSingleton(_ => _dataStorage as IPlayerProgressionData);
+            _container.RegisterSingleton(_ => _dataStorage as IShopData);
         }
 
         private void AddModels()
         {
-            _models.Add(_levelManager as IModel);
-            _models.Add(_playerProgression as IModel);
-            _models.Add(_settings as IModel);
+            _models.AddRange(new IModel[] { _levelManager as IModel, _playerProgression as IModel, _settings as IModel });
         }
 
         private void SubscribeToLevelManagerEvents()
@@ -83,72 +92,75 @@ namespace Assets.EntryPoint
 
         private void OnLevelLoaded(int levelIndex)
         {
+            var containerChildren = new DIContainer(_container);
             var view = _objectFactory.CreateObject<View>() as IInitializer;
-            var currentState = (levelIndex == 0) ? StateView.MainMenu : StateView.GameMenu;
 
-            AddObjects(currentState, levelIndex);
-            ClearModels();
+            RegisterFields(containerChildren);
+            InitializeComponents(containerChildren);
 
-            _presenter.Init(_models);
-            view.Init(_presenter as Presenter, currentState);
+            _settings.Init(containerChildren);
+            _presenter.Init(containerChildren);
+            view.Init(containerChildren);
         }
 
-        private void AddObjects(StateView stateView, int levelIndex)
+        private void InitializeComponents(DIContainer containerChildren)
         {
-            var dataStoragePlayer = _dataStorage as IPlayerProgressionData;
-            var audio = _objectFactory.CreateObject<AudioComponent>() as IInitializer;
-
-            audio.Init(stateView);
+            var stateView = containerChildren.Resolve<StateView>();
 
             switch (stateView)
             {
                 case StateView.MainMenu:
-                    AddMainMenuObjects(dataStoragePlayer, levelIndex);
+                    InitializeMainMenuComponents(containerChildren);
                     break;
                 case StateView.GameMenu:
-                    AddGameMenuObjects(levelIndex);
+                    InitializeGameMenuComponents(containerChildren);
                     break;
             }
-
-            _settings.Init(audio as AudioComponent);
         }
 
-        private void AddMainMenuObjects(IPlayerProgressionData dataStoragePlayer, int levelIndex)
+        private void InitializeMainMenuComponents(DIContainer containerChildren)
         {
-            var shop = _objectFactory.CreateObject<ShopComponent>() as IInitializer;
-            shop.Init(_saveSystem, _dataStorage as IShopData);
+            var models = containerChildren.Resolve<List<IModel>>();
+            _playerProgression.Init(containerChildren);
 
-            _playerProgression.Init(
-                shop as IShop,
-                _saveSystem,
-                ref dataStoragePlayer,
-                levelIndex
-            );
-
-            _models.Add(shop as IModel);
+            models.Add(containerChildren.Resolve<IShop>() as IModel);
         }
 
-        private void AddGameMenuObjects(int levelIndex)
+        private void InitializeGameMenuComponents(DIContainer containerChildren)
         {
-            var player = _objectFactory.CreateObject<PlayerComponent>() as IInitializer;
-            var knife = _objectFactory.CreateObject<KnifeComponent>();
-            var enemySpawner = _objectFactory.CreateObject<EnemySpawnerComponent>() as IInitializer;
+            var models = containerChildren.Resolve<List<IModel>>();
+            _playerProgression.Init(containerChildren);
 
-            player.Init(knife.gameObject, levelIndex - 1);
-            enemySpawner.Init(levelIndex - 1);
-
-            _playerProgression.Init(
-                enemySpawner as ISpawnerEnemies,
-                player as IKnivesPool,
-                levelIndex
-            );
-
-            _models.Add(player as IModel);
+            models.Add(containerChildren.Resolve<IKnivesPool>() as IModel);
         }
 
-        private void ClearModels()
+        private void RegisterFields(DIContainer containerChildren)
         {
-            _models.RemoveAll(x => x.ToString() == "null");
+            containerChildren.RegisterSingleton(_ => new List<IModel>(_models));
+            containerChildren.RegisterSingleton((c) => {
+                var audio = _objectFactory.CreateObject<AudioComponent>() as IInitializer;
+                audio.Init(c);
+                return audio as AudioComponent;
+            });
+            containerChildren.RegisterSingleton((c) => {
+                var shop = _objectFactory.CreateObject<ShopComponent>() as IInitializer;
+                shop.Init(c);
+                return shop as IShop;
+            });
+            containerChildren.RegisterSingleton((c) => {
+                var knife = _objectFactory.CreateObject<KnifeComponent>();
+                return knife as IKnifeObject;
+            });
+            containerChildren.RegisterSingleton((c) => {
+                var player = _objectFactory.CreateObject<PlayerComponent>() as IInitializer;
+                player.Init(c);
+                return player as IKnivesPool;
+            });
+            containerChildren.RegisterSingleton((c) => {
+                var enemySpawner = _objectFactory.CreateObject<EnemySpawnerComponent>() as IInitializer;
+                enemySpawner.Init(c);
+                return enemySpawner as IEnemySpawner;
+            });
         }
     }
 }

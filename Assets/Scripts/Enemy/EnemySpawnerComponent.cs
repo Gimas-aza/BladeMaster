@@ -8,15 +8,17 @@ using UnityEngine.SceneManagement;
 
 namespace Assets.Enemy
 {
-    public class EnemySpawnerComponent : MonoBehaviour, IInitializer, ISpawnerEnemies
+    public class EnemySpawnerComponent : MonoBehaviour, IInitializer, IEnemySpawner
     {
         [SerializeField] private List<EnemyLocatorList> _transformOfEnemiesOnLevels;
 
         private int _currentLevel;
         private List<EnemyComponent> _enemies;
 
-        public void Init(int levelIndex)
+        public void Init(IResolver resolver)
         {
+            int levelIndex = resolver.Resolve<ILevelInfoProvider>().GetLevelIndex() - 1;
+
             if (!CheckLevelIndexValidity(levelIndex, _transformOfEnemiesOnLevels.Count - 1))
                 return;
             _currentLevel = levelIndex;

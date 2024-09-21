@@ -16,10 +16,10 @@ namespace Assets.MVP
         private VisualElement _root;
         private IStateView _stateView;
 
-        public void Init(Presenter presenter, StateView currentState)
+        public void Init(IResolver resolver)
         {
-            _currentState = currentState;
-            _presenter = presenter;
+            _currentState = resolver.Resolve<StateView>();
+            _presenter = resolver.Resolve<Presenter>();
         }
 
         private void Awake()

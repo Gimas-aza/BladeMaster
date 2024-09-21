@@ -4,7 +4,7 @@ using Assets.Target;
 
 namespace Assets.GameProgression
 {
-    public interface ISpawnerEnemies
+    public interface IEnemySpawner
     {
         List<IScoreProvider> GetEnemies();
     }

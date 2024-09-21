@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets.Enemy;
 using Assets.EntryPoint;
 using Assets.Knife;
+using Assets.MVP;
 using Assets.MVP.Model;
 using Assets.Player;
 using Assets.Target;
@@ -37,14 +38,24 @@ namespace Assets.GameProgression
         private UnityAction<bool> _finishedLevel;
         private UnityAction<int> _displayRatingScore;
 
-        public void Init(
-            IShop shop,
-            ISaveSystem saveSystem,
-            ref IPlayerProgressionData dataStorage,
-            int amountOfLevels
-        )
+        public void Init(IResolver resolver)
         {
-            shop.RequestToBuy += TrySpentMoney;
+            var currentState = resolver.Resolve<StateView>();
+
+            if (currentState == StateView.MainMenu)
+                InitializeDependenciesForMainMenu(resolver);
+            else if (currentState == StateView.GameMenu)
+                InitializeDependenciesForGameMenu(resolver);
+        }
+
+        private void InitializeDependenciesForMainMenu(IResolver resolver)
+        {
+            var shop = resolver.Resolve<IShop>();
+            int amountOfLevels = resolver.Resolve<ILevelInfoProvider>().GetAmountLevels();
+            var saveSystem = resolver.Resolve<ISaveSystem>();
+            var dataStorage = resolver.Resolve<IPlayerProgressionData>();
+
+            shop.RequestToBuy += TrySpendMoney;
             shop.BoughtSkin += (item) => _currentSkin = item;
             _currentSkin = shop.GetEquippedItem();
 
@@ -63,12 +74,12 @@ namespace Assets.GameProgression
             dataStorage.RatingScoreOfLevels = _ratingScoreOfLevels;
         }
 
-        public void Init(
-            ISpawnerEnemies spawnerEnemies,
-            IKnivesPool knivesPool,
-            int currentLevelIndex
-        )
+        private void InitializeDependenciesForGameMenu(IResolver resolver)
         {
+            var spawnerEnemies = resolver.Resolve<IEnemySpawner>();
+            var knivesPool = resolver.Resolve<IKnivesPool>();
+            int currentLevelIndex = resolver.Resolve<ILevelInfoProvider>().GetLevelIndex();
+
             _enemies = spawnerEnemies.GetEnemies();
             _knives = knivesPool.GetKnives();
             _currentLevel = currentLevelIndex;
@@ -240,7 +251,7 @@ namespace Assets.GameProgression
             return Math.Clamp(result, 0, 3);
         }
 
-        private bool TrySpentMoney(int price)
+        private bool TrySpendMoney(int price)
         {
             if (_money >= price)
             {

@@ -12,26 +12,9 @@ namespace Assets.MVP
     {
         private VisualTreeAsset _templateButtonStartLevel;
         private VisualTreeAsset _templateItemShop;
+        private Presenter _presenter;
         private VisualElement _root;
-
-        private Dictionary<string, VisualElement> _menus;
-        private VisualElement _containerButtonsStartLevel;
-        private VisualElement _viewItem;
-        private VisualElement _containerItemsShop;
-        // ==========================================================
-        private List<Label> _money;
-        private Label _bestScore;
-        private DropdownField _dropdownQuality;
-        private Slider _sliderVolume;
-        private Button _buttonPlay;
-        private Button _buttonShop;
-        private Button _buttonSettings;
-        private Button _buttonExit;
-        private List<Button> _buttonBack;
-        private List<Button> _buttonsStartLevel;
-        private Button _buttonBuyItem;
-        private Button _currentButtonItem;
-        private Action _preventButtonBuyItem;
+        private UIElements _uiElements;
 
         public event Func<int> LevelAmountRequestedForDisplay;
         public event UnityAction<int> PressingTheSelectedLevel;
@@ -42,7 +25,7 @@ namespace Assets.MVP
         public event Func<int, int> RatingScoreReceived;
         public event UnityAction<int> ChangeQuality;
         public event UnityAction<float> ChangeVolume;
-        // ==========================================================
+
         public UnityAction<IItem> ItemIsBought;
         public UnityAction<int> MonitorMoney;
         public UnityAction<int> MonitorBestScore;
@@ -59,9 +42,20 @@ namespace Assets.MVP
             _root = root;
             _templateButtonStartLevel = templateButtonStartLevel;
             _templateItemShop = templateItemShop;
-            Start();
+            _presenter = presenter;
+
+            InitializeUI();
             SubscribeToMonitorUpdate();
-            presenter.RegisterEventsForView(
+            RegisterPresenterEvents();
+
+            ShowMenu(StateMenu.MainMenu);
+            AddButtonsStartLevel();
+            AddButtonsItemsShop();
+        }
+
+        private void RegisterPresenterEvents()
+        {
+            _presenter.RegisterEventsForView(
                 ref LevelAmountRequestedForDisplay,
                 ref PressingTheSelectedLevel,
                 ref UnlockedLevels,
@@ -77,49 +71,23 @@ namespace Assets.MVP
                 ref ChangeVolume,
                 ref CurrentVolume
             );
-
-            ShowMenu("MainMenu");
-            AddButtonsStartLevel();
-            AddButtonsItemsShop();
         }
 
-        private void Start()
+        private void InitializeUI()
         {
-            _menus = new Dictionary<string, VisualElement>
+            _uiElements = new UIElements(_root);
+
+            _uiElements.ButtonPlay.clicked += () => ShowMenu(StateMenu.LevelsMenu);
+            _uiElements.ButtonShop.clicked += () => ShowMenu(StateMenu.ShopMenu);
+            _uiElements.ButtonSettings.clicked += () => ShowMenu(StateMenu.SettingsMenu);
+            _uiElements.ButtonExit.clicked += Application.Quit;
+
+            _uiElements.DropdownQuality.RegisterValueChangedCallback(OnChangeQuality);
+            _uiElements.SliderVolume.RegisterValueChangedCallback(OnChangeVolume);
+
+            foreach (var button in _uiElements.ButtonBack)
             {
-                { "MainMenu", _root.Q<VisualElement>("MainMenu") },
-                { "LevelsMenu", _root.Q<VisualElement>("LevelsMenu") },
-                { "ShopMenu", _root.Q<VisualElement>("ShopMenu") },
-                { "SettingsMenu", _root.Q<VisualElement>("SettingsMenu") }
-            };
-
-            _containerButtonsStartLevel = _root.Q<VisualElement>("ContainerButtonsStartLevel");
-            _viewItem = _root.Q<VisualElement>("ViewItem");
-            _containerItemsShop = _root.Q<VisualElement>("GroupBoxItemShop");
-            _money = _root.Query<Label>("Money").ToList();
-            _bestScore = _root.Q<Label>("LabelBestScore");
-            _dropdownQuality = _root.Q<DropdownField>("DropdownQuality");
-            _sliderVolume = _root.Q<Slider>("SliderVolume");
-
-            _buttonPlay = _root.Q<Button>("ButtonPlay");
-            _buttonShop = _root.Q<Button>("ButtonShop");
-            _buttonSettings = _root.Q<Button>("ButtonSettings");
-            _buttonExit = _root.Q<Button>("ButtonExit");
-            _buttonBack = _root.Query<Button>("ButtonBack").ToList();
-            _buttonsStartLevel = new List<Button>();
-            _buttonBuyItem = _root.Q<Button>("ButtonBuy");
-
-            _buttonPlay.clicked += () => ShowMenu("LevelsMenu");
-            _buttonShop.clicked += () => ShowMenu("ShopMenu");
-            _buttonSettings.clicked += () => ShowMenu("SettingsMenu");
-            _buttonExit.clicked += Application.Quit;
-
-            _dropdownQuality.RegisterValueChangedCallback(OnChangeQuality);
-            _sliderVolume.RegisterValueChangedCallback(OnChangeVolume);
-
-            foreach (var button in _buttonBack)
-            {
-                button.clicked += () => ShowMenu("MainMenu");
+                button.clicked += () => ShowMenu(StateMenu.MainMenu);
             }
         }
 
@@ -128,26 +96,25 @@ namespace Assets.MVP
             ItemIsBought += (item) => SetButtonItem(item);
             MonitorMoney += SetMoney;
             MonitorBestScore += SetBestScore;
-            CurrentQuality += (value) => _dropdownQuality.index = value;
-            CurrentVolume += (value) => _sliderVolume.value = value * 100;
+            CurrentQuality += (value) => _uiElements.DropdownQuality.index = value;
+            CurrentVolume += (value) => _uiElements.SliderVolume.value = value * 100;
         }
 
         private void OnChangeQuality(ChangeEvent<string> evt)
         {
-            ChangeQuality?.Invoke(_dropdownQuality.index);
+            ChangeQuality?.Invoke(_uiElements.DropdownQuality.index);
         }
 
         private void OnChangeVolume(ChangeEvent<float> evt)
         {
-            ChangeVolume?.Invoke(_sliderVolume.value / 100);
+            ChangeVolume?.Invoke(_uiElements.SliderVolume.value / 100);
         }
 
-        private void ShowMenu(string menuName)
+        private void ShowMenu(StateMenu menuName)
         {
-            foreach (var menu in _menus)
+            foreach (var menu in _uiElements.Menus)
             {
-                menu.Value.style.display =
-                    menu.Key == menuName ? DisplayStyle.Flex : DisplayStyle.None;
+                menu.Value.style.display = menu.Key == menuName ? DisplayStyle.Flex : DisplayStyle.None;
             }
         }
 
@@ -162,23 +129,22 @@ namespace Assets.MVP
             for (var i = 0; i < levelAmount; i++)
             {
                 int index = i;
-                _buttonsStartLevel[i].style.display = DisplayStyle.Flex;
-                _buttonsStartLevel[i].enabledSelf = false;
-                _buttonsStartLevel[i].clicked += () => PressingTheSelectedLevel?.Invoke(index + 1);
+                _uiElements.ButtonsStartLevel[i].style.display = DisplayStyle.Flex;
+                _uiElements.ButtonsStartLevel[i].enabledSelf = false;
+                _uiElements.ButtonsStartLevel[i].clicked += () => PressingTheSelectedLevel?.Invoke(index + 1);
                 SetRatingScoreForButtonLevel(i, RatingScoreReceived?.Invoke(i) ?? 0);
             }
             for (var i = 0; i < unlockedLevels; i++)
             {
-                if (i >= levelAmount)
-                    break;
-                _buttonsStartLevel[i].enabledSelf = true;
+                if (i >= levelAmount) break;
+                _uiElements.ButtonsStartLevel[i].enabledSelf = true;
             }
         }
 
         private void SetRatingScoreForButtonLevel(int index, int ratingScore)
         {
-            var ratingScoreFull = _buttonsStartLevel[index].Query<VisualElement>("RatingScoreFull").ToList();
-            var ratingScoreEmpty = _buttonsStartLevel[index].Query<VisualElement>("RatingScoreEmpty").ToList();
+            var ratingScoreFull = _uiElements.ButtonsStartLevel[index].Query<VisualElement>("RatingScoreFull").ToList();
+            var ratingScoreEmpty = _uiElements.ButtonsStartLevel[index].Query<VisualElement>("RatingScoreEmpty").ToList();
 
             for (int i = 0; i < ratingScoreEmpty.Count; i++)
             {
@@ -201,44 +167,45 @@ namespace Assets.MVP
 
                 newButtonItem.style.backgroundImage = new StyleBackground(item.Icon);
                 newButtonItem.clicked += () => SetButtonItem(item, newButtonItem);
-                _currentButtonItem = newButtonItem;
-                if (item.IsBought)
-                    _currentButtonItem.AddToClassList("ShopMenu__Item-Bought");
+                _uiElements.CurrentButtonItem = newButtonItem;
 
-                _containerItemsShop.Add(newButtonItem);
+                if (item.IsBought)
+                    _uiElements.CurrentButtonItem.AddToClassList("ShopMenu__Item-Bought");
+
+                _uiElements.ContainerItemsShop.Add(newButtonItem);
             }
         }
 
         private void SetButtonItem(IItem item, Button buttonItem = null)
         {
-            if (_preventButtonBuyItem != null)
+            if (_uiElements.PreventButtonBuyItem != null)
                 UnsetButtonBuyItem();
 
-            buttonItem ??= _currentButtonItem;
-            _viewItem.style.backgroundImage = new StyleBackground(item.Icon);
+            buttonItem ??= _uiElements.CurrentButtonItem;
+            _uiElements.ViewItem.style.backgroundImage = new StyleBackground(item.Icon);
             if (!item.IsBought)
                 SetItemForBuy(item);
             else
                 SetItemForEquip(item, buttonItem);
 
-            _buttonBuyItem.enabledSelf = true;
+            _uiElements.ButtonBuyItem.enabledSelf = true;
         }
 
-        private void UnsetButtonBuyItem() => _buttonBuyItem.clicked -= _preventButtonBuyItem;
+        private void UnsetButtonBuyItem() => _uiElements.ButtonBuyItem.clicked -= _uiElements.PreventButtonBuyItem;
 
         private void SetItemForBuy(IItem item)
         {
-            _buttonBuyItem.text = $"Купить за {item.Price}";
-            _preventButtonBuyItem = () => ItemRequestedForBuy?.Invoke(item);
-            _buttonBuyItem.clicked += _preventButtonBuyItem;
+            _uiElements.ButtonBuyItem.text = $"Купить за {item.Price}";
+            _uiElements.PreventButtonBuyItem = () => ItemRequestedForBuy?.Invoke(item);
+            _uiElements.ButtonBuyItem.clicked += _uiElements.PreventButtonBuyItem;
         }
 
         private void SetItemForEquip(IItem item, Button buttonItem)
         {
-            _buttonBuyItem.text = "Экипировать";
+            _uiElements.ButtonBuyItem.text = "Экипировать";
             buttonItem.AddToClassList("ShopMenu__Item-Bought");
-            _preventButtonBuyItem = () => EquipItem?.Invoke(item);
-            _buttonBuyItem.clicked += _preventButtonBuyItem;
+            _uiElements.PreventButtonBuyItem = () => EquipItem?.Invoke(item);
+            _uiElements.ButtonBuyItem.clicked += _uiElements.PreventButtonBuyItem;
         }
 
         private void CreateButtonsStartLevel(int levelAmount)
@@ -249,22 +216,22 @@ namespace Assets.MVP
                 var newButtonStartLevel = newTemplateButtonStartLevel.Q<Button>("ButtonStartLevel");
                 newButtonStartLevel.text = $"Уровень {i + 1}";
 
-                _containerButtonsStartLevel.Add(newButtonStartLevel);
-                _buttonsStartLevel.Add(newButtonStartLevel);
+                _uiElements.ContainerButtonsStartLevel.Add(newButtonStartLevel);
+                _uiElements.ButtonsStartLevel.Add(newButtonStartLevel);
             }
         }
 
         private async void SetMoney(int amount)
         {
             await UniTask.WaitForEndOfFrame();
-            foreach (var money in _money)
+            foreach (var money in _uiElements.Money)
                 money.text = $"{amount}";
         }
 
         private async void SetBestScore(int amount)
         {
             await UniTask.WaitForEndOfFrame();
-            _bestScore.text = $"{amount}";
+            _uiElements.BestScore.text = $"{amount}";
         }
     }
 }

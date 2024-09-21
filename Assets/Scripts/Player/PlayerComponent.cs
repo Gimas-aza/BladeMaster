@@ -30,9 +30,12 @@ namespace Assets.Player
             _rigidbody = GetComponent<Rigidbody>();
         }
 
-        public void Init(GameObject knife, int levelIndex)
+        public void Init(IResolver resolver)
         {
-            _knivesPool.CreateKnife(knife, _amountOfKnivesOnLevels[levelIndex]);
+            var knife = resolver.Resolve<IKnifeObject>();
+            int levelIndex = resolver.Resolve<ILevelInfoProvider>().GetLevelIndex();
+
+            _knivesPool.CreateKnife(knife.GetGameObject(), _amountOfKnivesOnLevels[levelIndex - 1]);
         }
 
         public void SubscribeToEvents(

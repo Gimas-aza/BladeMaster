@@ -21,9 +21,10 @@ namespace Assets.ShopManagement
         public event Func<int, bool> RequestToBuy;
         public event UnityAction<IItemSkin> BoughtSkin;
 
-        public void Init(ISaveSystem saveSystem, IShopData shopData)
+        public void Init(IResolver resolver)
         {
-            _saveSystem = saveSystem;
+            var shopData = resolver.Resolve<IShopData>();
+            _saveSystem = resolver.Resolve<ISaveSystem>();
 
             for (int i = shopData.Items.Count; i < _items.Count; i++)
             {
