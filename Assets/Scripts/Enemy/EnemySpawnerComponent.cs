@@ -15,9 +15,9 @@ namespace Assets.Enemy
         private int _currentLevel;
         private List<EnemyComponent> _enemies;
 
-        public void Init(IResolver resolver)
+        public void Init(IResolver container)
         {
-            int levelIndex = resolver.Resolve<ILevelInfoProvider>().GetLevelIndex() - 1;
+            int levelIndex = container.Resolve<ILevelInfoProvider>().GetLevelIndex() - 1;
 
             if (!CheckLevelIndexValidity(levelIndex, _transformOfEnemiesOnLevels.Count - 1))
                 return;

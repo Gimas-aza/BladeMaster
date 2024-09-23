@@ -15,9 +15,9 @@ namespace Assets.Sounds
 
         public float Volume { get => _audioSource.volume; set => _audioSource.volume = value; }
 
-        public void Init(IResolver resolver)
+        public void Init(IResolver container)
         {
-            var currentState = resolver.Resolve<StateView>();
+            var currentState = container.Resolve<StateView>();
 
             if (currentState == StateView.MainMenu) _audioSource.resource = _mainMenuMusic;
             if (currentState == StateView.GameMenu) _audioSource.resource = _gameMusic;

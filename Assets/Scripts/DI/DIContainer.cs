@@ -52,7 +52,11 @@ namespace Assets.DI
                     $"DI: Already registered with tag {key.Item1} and type {key.Item2.FullName}"
                 );
 
-            _registrations[key] = new DIRegistration { IsSingleton = true, Instance = instance };
+            _registrations[key] = new DIRegistration 
+            {
+                IsSingleton = true,
+                Instance = instance
+            };
         }
 
         public T Resolve<T>(string tag = null)

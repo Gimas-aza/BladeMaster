@@ -14,12 +14,21 @@ namespace Assets.Player
     public class PlayerComponent : MonoBehaviour, IModel, IInitializer, IKnivesPool
     {
         [Header("Player input")]
-        [SerializeField] private float _speed;
-        [SerializeField] private float _radius;
+        [SerializeField]
+        private float _speed;
+
+        [SerializeField]
+        private float _radius;
+
         [Header("Knife")]
-        [SerializeField] private KnivesPoolComponent _knivesPool;
-        [SerializeField] private List<int> _amountOfKnivesOnLevels;
-        [SerializeField] private ThrowingForceSettings _knifeSettings;
+        [SerializeField]
+        private KnivesPoolComponent _knivesPool;
+
+        [SerializeField]
+        private List<int> _amountOfKnivesOnLevels;
+
+        [SerializeField]
+        private ThrowingForceSettings _knifeSettings;
 
         private Rigidbody _rigidbody;
         private float _time;
@@ -30,26 +39,23 @@ namespace Assets.Player
             _rigidbody = GetComponent<Rigidbody>();
         }
 
-        public void Init(IResolver resolver)
+        public void Init(IResolver container)
         {
-            var knife = resolver.Resolve<IKnifeObject>();
-            int levelIndex = resolver.Resolve<ILevelInfoProvider>().GetLevelIndex();
+            var knife = container.Resolve<IKnifeObject>();
+            int levelIndex = container.Resolve<ILevelInfoProvider>().GetLevelIndex();
 
             _knivesPool.CreateKnife(knife.GetGameObject(), _amountOfKnivesOnLevels[levelIndex - 1]);
         }
 
-        public void SubscribeToEvents(
-            ref UnityAction<float> monitorInputRotation,
-            ref Func<IForceOfThrowingKnife> monitorInputTouchBegin,
-            ref UnityAction monitorInputTouchEnded,
-            ref UnityAction<IAmountOfKnives> displayAmountKnives
-        )
+        public void SubscribeToEvents(IResolver container)
         {
-            monitorInputRotation += InputRotation;
-            monitorInputTouchBegin += InputTouchBegin;
-            monitorInputTouchEnded += InputTouchEnded;
+            var uiEvents = container.Resolve<IUIEvents>();
 
-            _displayAmountKnives = displayAmountKnives;
+            uiEvents.MonitorInputRotation += InputRotation;
+            uiEvents.MonitorInputTouchBegin += InputTouchBegin;
+            uiEvents.MonitorInputTouchEnded += InputTouchEnded;
+
+            _displayAmountKnives = uiEvents.DisplayAmountKnives;
             _displayAmountKnives?.Invoke(_knivesPool);
         }
 

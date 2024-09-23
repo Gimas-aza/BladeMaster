@@ -15,35 +15,28 @@ namespace Assets.GameSettings
         private IResolver _resolver;
         private ISaveSystem _saveSystem;
         private ISettingsData _settingsData;
-        private UnityAction<int> _currentQuality;
-        private UnityAction<float> _currentVolume;
 
-        public void Init(IResolver resolver)
+        public void Init(IResolver container)
         {
-            _resolver = resolver;
-            _saveSystem = resolver.Resolve<ISaveSystem>();
-            _settingsData = resolver.Resolve<ISettingsData>();
+            _resolver = container;
+            _saveSystem = container.Resolve<ISaveSystem>();
+            _settingsData = container.Resolve<ISettingsData>();
 
             _qualityIndex = _settingsData.QualityIndex;
             _volume = _settingsData.Volume;
 
             ChangeQuality(_qualityIndex);
+            ChangeVolume(_volume);
         }
 
-        public void SubscribeToEvents(
-            ref UnityAction<int> changeQuality,
-            ref UnityAction<int> currentQuality,
-            ref UnityAction<float> changeVolume,
-            ref UnityAction<float> currentVolume
-        )
+        public void SubscribeToEvents(IResolver container)
         {
-            changeQuality += ChangeQuality;
-            _currentQuality = currentQuality;
-            changeVolume += ChangeVolume;
-            _currentVolume = currentVolume;
+            var uiEvents = container.Resolve<IUIEvents>();
+            uiEvents.ChangeQuality += ChangeQuality;
+            uiEvents.ChangeVolume += ChangeVolume;
 
-            _currentVolume?.Invoke(_volume);
-            _currentQuality?.Invoke(_qualityIndex);
+            uiEvents.CurrentQuality?.Invoke(_qualityIndex);
+            uiEvents.CurrentVolume?.Invoke(_volume);
         }
 
         private void ChangeQuality(int index)

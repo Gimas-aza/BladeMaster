@@ -1,48 +1,31 @@
-using System;
-using System.Collections.Generic;
+using Assets.DI;
+using Assets.MVP.Model;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UIElements;
 
 namespace Assets.MVP
 {
     public class StateGameMenu : IStateView
     {
-        private VisualElement _root;
         private Presenter _presenter;
         private bool _isClampingTouch = false;
         private bool _isGameActive = true;
         private IForceOfThrowingKnife _forceOfThrowing;
-
-        // UI Elements
         private UIElements _uiElements;
+        private UIEvents _uiEvents;
 
-        public event UnityAction<float> MonitorInputRotation;
-        public event Func<IForceOfThrowingKnife> MonitorInputTouchBegin;
-        public event UnityAction MonitorInputTouchEnded;
-        public event UnityAction ClickedButtonBackMainMenu;
-        public event UnityAction ClickedButtonAgainLevel;
-        public event UnityAction<int> ChangeQuality;
-        public event UnityAction<float> ChangeVolume;
-
-        public UnityAction<int> MonitorCounter;
-        public UnityAction<int> MonitorMoney;
-        public UnityAction<bool> FinishedLevel;
-        public UnityAction<IAmountOfKnives> DisplayAmountKnives;
-        public UnityAction<int> DisplayRatingScore;
-        public UnityAction<int> CurrentQuality;
-        public UnityAction<float> CurrentVolume;
-
-        public StateGameMenu(VisualElement root, Presenter presenter)
+        public StateGameMenu(UIElements elements, UIEvents events, DIContainer container, Presenter presenter)
         {
-            _root = root;
             _presenter = presenter;
+            _uiElements = elements;
+            _uiEvents = events;
 
             InitializeUI();
             SubscribeToEvents();
-            RegisterPresenterEvents();
-            
+
+            _presenter.RegisterEventsForView(container);
+
             OnMonitorInputInFixedUpdate();
             OnMonitorInputInUpdate();
             AdjustLayout();
@@ -50,11 +33,9 @@ namespace Assets.MVP
 
         private void InitializeUI()
         {
-            _uiElements = new UIElements(_root);
-
             _uiElements.ButtonPause.clicked += OnButtonPauseClick;
             _uiElements.ButtonContinue.clicked += OnButtonContinueClick;
-            _uiElements.ButtonAgain.clicked += OnButtonButtonAgainClick;
+            _uiElements.ButtonAgain.clicked += _uiEvents.OnButtonButtonAgainClick;
             _uiElements.ButtonBackGameMenu.clicked += OnButtonBackGameMenuClick;
             _uiElements.DropdownQuality.RegisterValueChangedCallback(OnChangeQuality);
             _uiElements.SliderVolume.RegisterValueChangedCallback(OnChangeVolume);
@@ -62,55 +43,30 @@ namespace Assets.MVP
             foreach (var buttonSettings in _uiElements.ButtonsSettings)
                 buttonSettings.clicked += OnButtonSettingsClick;
             foreach (var buttonBackMainMenu in _uiElements.ButtonsBackMainMenu)
-                buttonBackMainMenu.clicked += OnButtonBackMainMenuClick;
+                buttonBackMainMenu.clicked += _uiEvents.OnButtonBackMainMenuClick;
 
             _uiElements.GameMenu.style.display = DisplayStyle.Flex;
         }
 
-        private void RegisterPresenterEvents()
-        {
-            _presenter.RegisterEventsForView(
-                ref MonitorInputRotation,
-                ref MonitorInputTouchBegin,
-                ref MonitorInputTouchEnded,
-                ref ClickedButtonBackMainMenu,
-                ref MonitorCounter,
-                ref MonitorMoney,
-                ref FinishedLevel,
-                ref DisplayAmountKnives,
-                ref ClickedButtonAgainLevel,
-                ref DisplayRatingScore,
-                ref ChangeQuality,
-                ref CurrentQuality,
-                ref ChangeVolume,
-                ref CurrentVolume
-            );
-        }
-
         private void OnChangeQuality(ChangeEvent<string> evt)
         {
-            ChangeQuality?.Invoke(_uiElements.DropdownQuality.index);
+            _uiEvents.OnChangeQuality(_uiElements.DropdownQuality.index);
         }
 
         private void OnChangeVolume(ChangeEvent<float> evt)
         {
-            ChangeVolume?.Invoke(_uiElements.SliderVolume.value / 100);
-        }
-
-        private void OnButtonButtonAgainClick()
-        {
-            ClickedButtonAgainLevel?.Invoke();
+            _uiEvents.OnChangeVolume(_uiElements.SliderVolume.value / 100);
         }
 
         private void SubscribeToEvents()
         {
-            MonitorCounter += SetCount;
-            MonitorMoney += SetMoney;
-            FinishedLevel += SetFinishedLevel;
-            DisplayAmountKnives += SetAmountKnives;
-            DisplayRatingScore += SetRating;
-            CurrentQuality += (quality) => _uiElements.DropdownQuality.index = quality;
-            CurrentVolume += (volume) => _uiElements.SliderVolume.value = volume * 100;
+            _uiEvents.MonitorCounter += SetCount;
+            _uiEvents.MonitorMoney += SetMoney;
+            _uiEvents.FinishedLevel += SetFinishedLevel;
+            _uiEvents.DisplayAmountKnives += SetAmountKnives;
+            _uiEvents.DisplayRatingScore += SetRating;
+            _uiEvents.CurrentQuality += (quality) => _uiElements.DropdownQuality.index = quality;
+            _uiEvents.CurrentVolume += (volume) => _uiElements.SliderVolume.value = volume * 100;
         }
 
         private void OnButtonPauseClick()
@@ -140,11 +96,6 @@ namespace Assets.MVP
             _uiElements.GameMenu.style.display = DisplayStyle.Flex;
         }
 
-        private void OnButtonBackMainMenuClick()
-        {
-            ClickedButtonBackMainMenu?.Invoke();
-        }
-
         private async void OnMonitorInputInFixedUpdate()
         {
             while (true)
@@ -159,7 +110,7 @@ namespace Assets.MVP
             Vector3 acceleration = Input.acceleration;
             if (Mathf.Abs(acceleration.x) > 0.3f && _isGameActive)
             {
-                MonitorInputRotation?.Invoke(acceleration.x);
+                _uiEvents.OnMonitorInputRotation(acceleration.x);
             }
         }
 
@@ -198,7 +149,7 @@ namespace Assets.MVP
         {
             _isClampingTouch = true;
             time = Time.time;
-            _forceOfThrowing = MonitorInputTouchBegin?.Invoke();
+            _forceOfThrowing = _uiEvents.OnMonitorInputTouchBegin();
         }
 
         private void MovedOrStationaryPhase(Touch touch, ref float time)
@@ -215,7 +166,7 @@ namespace Assets.MVP
 
             _isClampingTouch = false;
             _uiElements.PressureForce.value = 0;
-            MonitorInputTouchEnded?.Invoke();
+            _uiEvents.OnMonitorInputTouchEnded();
         }
 
         private async void SetCount(int amount)

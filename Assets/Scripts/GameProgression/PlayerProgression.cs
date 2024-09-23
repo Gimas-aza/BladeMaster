@@ -38,14 +38,14 @@ namespace Assets.GameProgression
         private UnityAction<bool> _finishedLevel;
         private UnityAction<int> _displayRatingScore;
 
-        public void Init(IResolver resolver)
+        public void Init(IResolver container)
         {
-            var currentState = resolver.Resolve<StateView>();
+            var currentState = container.Resolve<StateView>();
 
             if (currentState == StateView.MainMenu)
-                InitializeDependenciesForMainMenu(resolver);
+                InitializeDependenciesForMainMenu(container);
             else if (currentState == StateView.GameMenu)
-                InitializeDependenciesForGameMenu(resolver);
+                InitializeDependenciesForGameMenu(container);
         }
 
         private void InitializeDependenciesForMainMenu(IResolver resolver)
@@ -103,40 +103,22 @@ namespace Assets.GameProgression
             }
         }
 
-        public void SubscribeToEvents(ref Func<int> unlockedLevels)
+        public void SubscribeToEvents(IResolver container)
         {
-            unlockedLevels += () => _unlockedLevels;
-        }
+            var uiEvents = container.Resolve<IUIEvents>();
 
-        public void SubscribeToEvents(
-            ref UnityAction<int> monitorCounter,
-            ref UnityAction<int> monitorMoney,
-            ref UnityAction<bool> finishedLevel,
-            ref UnityAction<int> displayRatingScore
-        )
-        {
-            _monitorCounter = monitorCounter;
-            _monitorMoney = monitorMoney;
-            _finishedLevel = finishedLevel;
-            _displayRatingScore = displayRatingScore;
+            _monitorMoney = uiEvents.MonitorMoney;
+            _monitorCounter = uiEvents.MonitorCounter;
+            _finishedLevel = uiEvents.FinishedLevel;
+            _displayRatingScore = uiEvents.DisplayRatingScore;
+            _monitorBestScore = uiEvents.MonitorBestScore;
 
             _monitorCounter?.Invoke(_counter);
             _monitorMoney?.Invoke(_money);
-        }
-
-        public void SubscribeToEvents(
-            ref UnityAction<int> monitorMoney,
-            ref UnityAction<int> monitorBestScore,
-            ref Func<int, int> ratingScoreReceived
-        )
-        {
-            _monitorMoney = monitorMoney;
-            _monitorBestScore = monitorBestScore;
-
-            _monitorMoney?.Invoke(_money);
             _monitorBestScore?.Invoke(_bestScore);
 
-            ratingScoreReceived += (index) => _ratingScoreOfLevels[index];
+            uiEvents.UnlockedLevels += () => _unlockedLevels;
+            uiEvents.RatingScoreReceived += (index) => _ratingScoreOfLevels[index];
         }
 
         private void StartActionForHit(ITarget target)

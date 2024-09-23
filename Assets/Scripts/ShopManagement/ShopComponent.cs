@@ -21,10 +21,10 @@ namespace Assets.ShopManagement
         public event Func<int, bool> RequestToBuy;
         public event UnityAction<IItemSkin> BoughtSkin;
 
-        public void Init(IResolver resolver)
+        public void Init(IResolver container)
         {
-            var shopData = resolver.Resolve<IShopData>();
-            _saveSystem = resolver.Resolve<ISaveSystem>();
+            var shopData = container.Resolve<IShopData>();
+            _saveSystem = container.Resolve<ISaveSystem>();
 
             for (int i = shopData.Items.Count; i < _items.Count; i++)
             {
@@ -37,20 +37,20 @@ namespace Assets.ShopManagement
             }
         }
 
-        public void SubscribeToEvents(
-            ref Func<List<IItem>> itemsRequestedForDisplay,
-            ref UnityAction<IItem> itemRequestedForBuy,
-            ref UnityAction<IItem> equipItem,
-            ref UnityAction<IItem> itemIsBought
-        )
+        public void SubscribeToEvents(IResolver container)
         {
-            itemsRequestedForDisplay += GetItems;
-            itemRequestedForBuy += BuyItem;
-            equipItem += EquipItem;
-            _itemIsBought = itemIsBought;
+            var uiEvents = container.Resolve<IUIEvents>(); 
+
+            uiEvents.ItemsRequestedForDisplay += GetItems;
+            uiEvents.ItemRequestedForBuy += BuyItem;
+            uiEvents.EquipItem += EquipItem;
+            _itemIsBought = uiEvents.ItemIsBought;
         }
 
-        public List<IItem> GetItems() => _items.Cast<IItem>().ToList();
+        public List<IItem> GetItems()
+        {
+            return _items.Cast<IItem>().ToList();
+        } 
 
         private void BuyItem(IItem item)
         {

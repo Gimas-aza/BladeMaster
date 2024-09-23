@@ -26,16 +26,14 @@ namespace Assets.LevelManager
         protected void OnLevelLoaded() => LevelLoaded?.Invoke(CurrentLevelIndex);
         protected void OnLevelStartedToLoad() => LevelStartedToLoad?.Invoke();
 
-        public void SubscribeToEvents(ref Func<int> levelAmountRequestedForDisplay, ref UnityAction<int> pressingTheSelectedLevel)
+        public void SubscribeToEvents(IResolver container)
         {
-            levelAmountRequestedForDisplay += () => MaxLevelIndex;
-            pressingTheSelectedLevel += LoadLevel;
-        }
+            var uiEvents = container.Resolve<IUIEvents>();
 
-        public void SubscribeToEvents(ref UnityAction clickedButtonBackMainMenu, ref UnityAction clickedButtonAgainLevel)
-        {
-            clickedButtonBackMainMenu += () => LoadLevel(MainMenuIndex);
-            clickedButtonAgainLevel += ReloadingCurrentLevel;
+            uiEvents.LevelAmountRequestedForDisplay += () => MaxLevelIndex;
+            uiEvents.PressingTheSelectedLevel += LoadLevel;
+            uiEvents.ClickedButtonBackMainMenu += () => LoadLevel(MainMenuIndex);
+            uiEvents.ClickedButtonAgainLevel += ReloadingCurrentLevel;
         }
 
         public int GetLevelIndex() => CurrentLevelIndex;
