@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.DI
 {
-    public class DIContainer : IResolver
+    public class DIContainer : IDIContainer
     {
         private readonly DIContainer _parentContainer;
         private readonly Dictionary<(string, Type), DIRegistration> _registrations = new();

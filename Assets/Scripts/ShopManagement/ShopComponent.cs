@@ -10,7 +10,7 @@ using UnityEngine.Events;
 
 namespace Assets.ShopManagement
 {
-    public class ShopComponent : MonoBehaviour, IModel, IInitializer, IShop
+    public class ShopComponent : MonoBehaviour, IInitializer, IModel, IShop
     {
         [SerializeField] private List<ItemComponent> _items;
 
@@ -26,9 +26,11 @@ namespace Assets.ShopManagement
             var shopData = container.Resolve<IShopData>();
             _saveSystem = container.Resolve<ISaveSystem>();
 
-            for (int i = shopData.Items.Count; i < _items.Count; i++)
+            int missingItemsCount = _items.Count - shopData.Items.Count;
+            if (missingItemsCount > 0)
             {
-                shopData.Items.Add(new ItemData());
+                var newItems = Enumerable.Repeat(new ItemData { IsBought = false, IsEquipped = false }, missingItemsCount);
+                shopData.Items.AddRange(newItems);
             }
 
             for (int i = 0; i < _items.Count; i++)
@@ -39,7 +41,7 @@ namespace Assets.ShopManagement
 
         public void SubscribeToEvents(IResolver container)
         {
-            var uiEvents = container.Resolve<IUIEvents>(); 
+            var uiEvents = container.Resolve<IUIEvents>();
 
             uiEvents.ItemsRequestedForDisplay += GetItems;
             uiEvents.ItemRequestedForBuy += BuyItem;
@@ -47,20 +49,23 @@ namespace Assets.ShopManagement
             _itemIsBought = uiEvents.ItemIsBought;
         }
 
-        public List<IItem> GetItems()
+        public IItemSkin GetEquippedItem()
         {
-            return _items.Cast<IItem>().ToList();
-        } 
+            _equippedItem = _items.FirstOrDefault(x => x.IsEquipped) ?? GetDefaultItem();
+
+            _saveSystem.SaveAsync();
+            return _equippedItem;
+        }
+
+        private List<IItem> GetItems() => _items.Cast<IItem>().ToList();
 
         private void BuyItem(IItem item)
         {
-            if (RequestToBuy?.Invoke(item.Price) ?? false && !item.IsBought)
+            if (RequestToBuy?.Invoke(item.Price) == true && !item.IsBought)
             {
                 item.SetBought(true);
-                SetEquippedItem(item);
-                _saveSystem.SaveAsync();
+                EquipItem(item);
 
-                BoughtSkin?.Invoke(item as IItemSkin);
                 _itemIsBought?.Invoke(item);
             }
         }
@@ -75,16 +80,7 @@ namespace Assets.ShopManagement
 
         private void SetEquippedItem(IItem item)
         {
-            _items.ForEach(x => x.SetEquipped(false));
-            _items.First(x => ReferenceEquals(x, item)).SetEquipped(true);
-        }
-
-        public IItemSkin GetEquippedItem()
-        {
-            _equippedItem = _items.FirstOrDefault(x => x.IsEquipped);
-            _equippedItem ??= GetDefaultItem();
-            _saveSystem.SaveAsync();
-            return _equippedItem;
+            _items.ForEach(i => i.SetEquipped(ReferenceEquals(i, item)));
         }
 
         private IItemSkin GetDefaultItem()

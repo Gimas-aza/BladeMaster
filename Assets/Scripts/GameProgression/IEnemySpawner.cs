@@ -6,6 +6,6 @@ namespace Assets.GameProgression
 {
     public interface IEnemySpawner
     {
-        List<IScoreProvider> GetEnemies();
+        List<IPointsPerActionProvider> GetEnemies();
     }
 }

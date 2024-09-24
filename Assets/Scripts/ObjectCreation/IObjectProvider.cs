@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.ObjectFactory
+namespace Assets.ObjectCreation
 {
     public interface IObjectProvider
     {

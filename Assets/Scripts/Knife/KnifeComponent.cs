@@ -8,7 +8,7 @@ namespace Assets.Knife
 {
     public class KnifeComponent : MonoBehaviour, IKnife, IKnifeObject
     {
-        [SerializeField] private List<Rigidbody> _rigidbodyList;
+        [SerializeField] private List<Rigidbody> _rigidbodies;
         [SerializeField] private TriggerHandler _triggerHandler;
 
         private bool _isThrown = false;
@@ -19,19 +19,26 @@ namespace Assets.Knife
 
         private void Awake()
         {
-            if (_triggerHandler == null) Debug.LogError("TriggerHandler is null"); 
+            if (!IsFieldValid())
+                return;
+
             _triggerHandler.TriggerEntered += OnTriggerEnter;
+            EnsureRigidbodiesAreInitialized();
+        }
+
+        private void OnDestroy()
+        {
+            if (_triggerHandler != null)
+            {
+                _triggerHandler.TriggerEntered -= OnTriggerEnter;
+            }
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            foreach (var rigidbody in _rigidbodyList)
-            {
-                rigidbody.isKinematic = true;
-                rigidbody.useGravity = false;
-            }
+            SetRigidbodiesState(isKinematic: true, useGravity: false);
 
-            if (other.TryGetComponent(out ITarget target) && !target.IsHit() && !_isThrown)
+            if (!_isThrown && other.TryGetComponent(out ITarget target) && !target.IsHit())
             {
                 _isThrown = true;
                 target.SetHit(true);
@@ -44,11 +51,11 @@ namespace Assets.Knife
             }
         }
 
-        public void SetTransform(Transform transform)
+        public void SetTransform(Transform parentTransform)
         {
-            this.transform.SetParent(transform);
-            this.transform.position = transform.position;
-            this.transform.rotation = transform.rotation;
+            transform.SetParent(parentTransform);
+            transform.position = parentTransform.position;
+            transform.rotation = parentTransform.rotation;
         }
 
         public void SetActive(bool active)
@@ -57,38 +64,53 @@ namespace Assets.Knife
 
             if (!active)
             {
-                foreach (var rigidbody in _rigidbodyList)
-                {
-                    rigidbody.isKinematic = true;
-                    rigidbody.useGravity = false;
-                }
+                SetRigidbodiesState(isKinematic: true, useGravity: false);
             }
         }
-
-        public void SetGlobalParent() => transform.SetParent(null);
-
-        public bool IsActive() => gameObject.activeSelf;
-        public bool IsThrow() => _isThrown;
 
         public void Throw(float force)
         {
-            foreach (var rigidbody in _rigidbodyList)
+            SetRigidbodiesState(isKinematic: false, useGravity: true);
+
+            if (_rigidbodies.Count > 0)
             {
-                rigidbody.isKinematic = false;
-                rigidbody.useGravity = true;
+                _rigidbodies[0].AddForce(transform.forward * force, ForceMode.Impulse);
+            }
+            else
+            {
+                Debug.LogError("No rigidbodies available to apply force");
+            }
+        }
+
+        public void SwitchSkin(GameObject newSkin)
+        {
+            if (_skin != null)
+            {
+                Destroy(_skin);
             }
 
-            _rigidbodyList[0].AddForce(transform.forward * force, ForceMode.Impulse);
+            _skin = Instantiate(newSkin, _rigidbodies[0].transform);
         }
 
-        public void SwitchSkin(GameObject skin)
+        public void SetGlobalParent() => transform.SetParent(null);
+        public bool IsActive() => gameObject.activeSelf;
+        public bool IsThrow() => _isThrown;
+        public GameObject GetGameObject() => gameObject;
+
+        private void EnsureRigidbodiesAreInitialized()
         {
-            _skin = Instantiate(skin, _rigidbodyList[0].transform);
+            SetRigidbodiesState(isKinematic: true, useGravity: false);
         }
 
-        public GameObject GetGameObject()
+        private void SetRigidbodiesState(bool isKinematic, bool useGravity)
         {
-            return gameObject;
+            foreach (var rb in _rigidbodies)
+            {
+                rb.isKinematic = isKinematic;
+                rb.useGravity = useGravity;
+            }
         }
+
+        private bool IsFieldValid() => _rigidbodies.Count > 0 && _triggerHandler != null;
     }
 }

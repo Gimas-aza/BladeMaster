@@ -15,51 +15,65 @@ namespace Assets.Player
 
         private void Awake()
         {
-            _knives = new();
+            _knives = new List<IKnife>();
             _knivesIndex = 0;
         }
 
         public void CreateKnife(GameObject templateKnife, int amount)
         {
+            if (templateKnife == null)
+            {
+                Debug.LogError("Template knife is null");
+                return;
+            }
+
             for (var i = 0; i < amount; i++)
             {
-                var newObject = GameObject
-                    .Instantiate(templateKnife, transform)
-                    .TryGetComponent<IKnife>(out var newKnife);
-                if (!newObject)
-                    Debug.LogError("KnifeComponent is null");
+                var newKnifeObject = Instantiate(templateKnife, transform);
+                if (!newKnifeObject.TryGetComponent<IKnife>(out var newKnife))
+                {
+                    Debug.LogError("KnifeComponent is missing on the instantiated object");
+                    Destroy(newKnifeObject);
+                    continue;
+                }
 
                 newKnife.SetTransform(transform);
                 newKnife.SetActive(false);
                 _knives.Add(newKnife);
             }
 
-            Destroy(templateKnife);
-            _knives[0].SetActive(true);
+            templateKnife.SetActive(false);
+
+            if (_knives.Count > 0)
+            {
+                _knives[0].SetActive(true);
+            }
         }
 
         public void ThrowKnife(float force)
         {
-            if (_knives.Count == 0)
-                Debug.LogError("Knives list is empty");
+            if (_knives == null || _knives.Count == 0)
+            {
+                Debug.LogError("No knives available in the pool");
+                return;
+            }
 
             if (_knivesIndex < _knives.Count)
             {
-                _knives[_knivesIndex].SetActive(true);
-                _knives[_knivesIndex].SetGlobalParent();
-                _knives[_knivesIndex].Throw(force);
+                var knifeToThrow = _knives[_knivesIndex];
+                knifeToThrow.SetActive(true);
+                knifeToThrow.SetGlobalParent();
+                knifeToThrow.Throw(force);
+
                 _knivesIndex++;
 
-                var currentKnives = _knives
-                    .Where((knife, index) => index == _knivesIndex)
-                    .FirstOrDefault();
-                currentKnives?.SetActive(true);
+                if (_knivesIndex < _knives.Count)
+                {
+                    _knives[_knivesIndex].SetActive(true);
+                }
             }
         }
 
-        public List<IKnife> GetKnives()
-        {
-            return _knives;
-        }
+        public List<IKnife> GetKnives() => _knives;
     }
 }

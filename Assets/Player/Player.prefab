@@ -223,11 +223,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f891d3bf7b7dcc8f9a795846f3b6838a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 30
-  _radius: 30
+  _rotationSpeed: 30
+  _rotationRadius: 30
   _knivesPool: {fileID: 4113183521672044098}
   _amountOfKnivesOnLevels: 96000000
   _knifeSettings:
-    MinForce: 20
-    MaxForce: 100
-    ForceScalingFactor: 1
+    _minForce: 20
+    _maxForce: 100
+    _forceScalingFactor: 1

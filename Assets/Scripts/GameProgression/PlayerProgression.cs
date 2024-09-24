@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Assets.Enemy;
+using System.Linq;
 using Assets.EntryPoint;
 using Assets.Knife;
 using Assets.MVP;
@@ -18,7 +18,7 @@ namespace Assets.GameProgression
         private int _maxCounter;
         private int _bestScore;
         private int _money;
-        private int _finishedLevels = 0;
+        private int _finishedLevels;
         private int _currentLevel;
         private int _amountOfLevels;
         private int _unlockedLevels = 1;
@@ -27,7 +27,7 @@ namespace Assets.GameProgression
         private int _amountHits;
         private int _multiplier;
         private List<int> _ratingScoreOfLevels;
-        private List<IScoreProvider> _enemies;
+        private List<IPointsPerActionProvider> _enemies;
         private List<IWeaponEvents> _knives;
         private IItemSkin _currentSkin;
         private ISaveSystem _saveSystem;
@@ -48,61 +48,6 @@ namespace Assets.GameProgression
                 InitializeDependenciesForGameMenu(container);
         }
 
-        private void InitializeDependenciesForMainMenu(IResolver resolver)
-        {
-            var shop = resolver.Resolve<IShop>();
-            int amountOfLevels = resolver.Resolve<ILevelInfoProvider>().GetAmountLevels();
-            var saveSystem = resolver.Resolve<ISaveSystem>();
-            var dataStorage = resolver.Resolve<IPlayerProgressionData>();
-
-            shop.RequestToBuy += TrySpendMoney;
-            shop.BoughtSkin += (item) => _currentSkin = item;
-            _currentSkin = shop.GetEquippedItem();
-
-            _amountOfLevels = amountOfLevels;
-            _saveSystem = saveSystem;
-            _dataStorage = dataStorage;
-            _money = dataStorage.Money;
-            _bestScore = dataStorage.BestScore;
-            _finishedLevels = dataStorage.FinishedLevels;
-            _unlockedLevels = dataStorage.UnlockedLevels;
-            _ratingScoreOfLevels = dataStorage.RatingScoreOfLevels;
-
-            for (int i = _ratingScoreOfLevels.Count; i < _amountOfLevels; i++)
-                _ratingScoreOfLevels.Add(0);
-
-            dataStorage.RatingScoreOfLevels = _ratingScoreOfLevels;
-        }
-
-        private void InitializeDependenciesForGameMenu(IResolver resolver)
-        {
-            var spawnerEnemies = resolver.Resolve<IEnemySpawner>();
-            var knivesPool = resolver.Resolve<IKnivesPool>();
-            int currentLevelIndex = resolver.Resolve<ILevelInfoProvider>().GetLevelIndex();
-
-            _enemies = spawnerEnemies.GetEnemies();
-            _knives = knivesPool.GetKnives();
-            _currentLevel = currentLevelIndex;
-            _counter = 0;
-            _pointsPerStroke = 20;
-            _multiplier = 0;
-            _maxCounter = 0;
-
-            foreach (var enemy in _enemies)
-            {
-                _maxCounter += enemy.GetPointsPerStroke() * 2;
-            }
-
-            foreach (var knife in _knives)
-            {
-                knife.Hit += StartActionForHit;
-                knife.NoHit += StartActionForNoHit;
-
-                if (_currentSkin != null)
-                    knife.SwitchSkin(_currentSkin.GetSkin());
-            }
-        }
-
         public void SubscribeToEvents(IResolver container)
         {
             var uiEvents = container.Resolve<IUIEvents>();
@@ -113,27 +58,97 @@ namespace Assets.GameProgression
             _displayRatingScore = uiEvents.DisplayRatingScore;
             _monitorBestScore = uiEvents.MonitorBestScore;
 
-            _monitorCounter?.Invoke(_counter);
-            _monitorMoney?.Invoke(_money);
-            _monitorBestScore?.Invoke(_bestScore);
+            UpdateUI();
+            SubscribeToUIEvents(uiEvents);
+        }
 
+        private void InitializeDependenciesForMainMenu(IResolver resolver)
+        {
+            var shop = resolver.Resolve<IShop>();
+            _amountOfLevels = resolver.Resolve<ILevelInfoProvider>().GetAmountLevels();
+            _saveSystem = resolver.Resolve<ISaveSystem>();
+            _dataStorage = resolver.Resolve<IPlayerProgressionData>();
+
+            shop.RequestToBuy += TrySpendMoney;
+            shop.BoughtSkin += (item) => _currentSkin = item;
+            _currentSkin = shop.GetEquippedItem();
+
+            LoadPlayerData();
+            InitializeRatingScores();
+        }
+
+        private void InitializeDependenciesForGameMenu(IResolver resolver)
+        {
+            var spawnerEnemies = resolver.Resolve<IEnemySpawner>();
+            var knivesPool = resolver.Resolve<IKnivesPool>();
+            _currentLevel = resolver.Resolve<ILevelInfoProvider>().GetLevelIndex();
+
+            _enemies = spawnerEnemies.GetEnemies();
+            _knives = knivesPool.GetKnives();
+            ResetGameState();
+
+            foreach (var enemy in _enemies)
+                _maxCounter += enemy.GetPointsPerStroke() * 2;
+
+            InitializeKnives();
+        }
+
+        private void LoadPlayerData()
+        {
+            _money = _dataStorage.Money;
+            _bestScore = _dataStorage.BestScore;
+            _finishedLevels = _dataStorage.FinishedLevels;
+            _unlockedLevels = _dataStorage.UnlockedLevels;
+            _ratingScoreOfLevels = _dataStorage.RatingScoreOfLevels;
+        }
+
+        private void InitializeRatingScores()
+        {
+            while (_ratingScoreOfLevels.Count < _amountOfLevels)
+                _ratingScoreOfLevels.Add(0);
+
+            _dataStorage.RatingScoreOfLevels = _ratingScoreOfLevels;
+        }
+
+        private void ResetGameState()
+        {
+            _counter = 0;
+            _pointsPerStroke = 20;
+            _multiplier = 0;
+            _amountHits = 0;
+        }
+
+        private void InitializeKnives()
+        {
+            foreach (var knife in _knives)
+            {
+                knife.Hit += StartActionForHit;
+                knife.NoHit += StartActionForNoHit;
+
+                if (_currentSkin != null)
+                    knife.SwitchSkin(_currentSkin.GetSkin());
+            }
+        }
+
+        private void SubscribeToUIEvents(IUIEvents uiEvents)
+        {
             uiEvents.UnlockedLevels += () => _unlockedLevels;
-            uiEvents.RatingScoreReceived += (index) => _ratingScoreOfLevels[index];
+            uiEvents.RatingScoreReceived += index => _ratingScoreOfLevels[index];
         }
 
         private void StartActionForHit(ITarget target)
         {
-            var scoreProvider = target as IScoreProvider;
-            if (scoreProvider == null)
-                Debug.LogError("Target does not implement IScoreProvider.");
+            if (target is not IPointsPerActionProvider scoreProvider)
+            {
+                Debug.LogError("Target does not implement IPointsPerActionProvider.");
+                return;
+            }
 
             _amountHits++;
             _multiplier++;
             AddCounter(scoreProvider.GetPointsPerStroke(), _multiplier);
             AddMoney();
-            _monitorCounter?.Invoke(_counter);
-            _monitorMoney?.Invoke(_money);
-
+            UpdateUI();
             EvaluateLevelCompletionStatus();
         }
 
@@ -141,37 +156,37 @@ namespace Assets.GameProgression
         {
             SubtractCounter();
             _multiplier = 0;
+            UpdateUI();
+            EvaluateLevelCompletionStatus();
+        }
+
+        private void UpdateUI()
+        {
             _monitorCounter?.Invoke(_counter);
             _monitorMoney?.Invoke(_money);
-
-            EvaluateLevelCompletionStatus();
+            _monitorBestScore?.Invoke(_bestScore);
         }
 
         private void EvaluateLevelCompletionStatus()
         {
-            var firstWin = _currentLevel != _finishedLevels;
-
             if (_amountHits == _enemies.Count)
-                CompletedLevel(firstWin);
+                CompletedLevel(_currentLevel != _finishedLevels);
             else if (IsKnivesAllThrown() && _amountHits != _enemies.Count)
                 FailedLevel();
         }
 
-        private bool IsKnivesAllThrown()
-        {
-            foreach (var knife in _knives)
-            {
-                if (!knife.IsThrow())
-                    return false;
-            }
-            return true;
-        }
+        private bool IsKnivesAllThrown() => _knives.All(knife => knife.IsThrow());
 
         private void AddCounter(int points, int multiplier = 1)
         {
             _pointsPerStroke = points;
             _counter += points * multiplier;
-            _bestScore = _counter > _bestScore ? _counter : _bestScore;
+            _bestScore = Math.Max(_counter, _bestScore);
+            SaveBestScore();
+        }
+
+        private void SaveBestScore()
+        {
             _dataStorage.BestScore = _bestScore;
             _saveSystem.SaveAsync();
             _monitorBestScore?.Invoke(_bestScore);
@@ -206,15 +221,7 @@ namespace Assets.GameProgression
                 _dataStorage.UnlockedLevels = _unlockedLevels;
             }
 
-            var currentRatingScore = CalculateRatingScore();
-            _ratingScoreOfLevels[_currentLevel - 1] =
-                _ratingScoreOfLevels[_currentLevel - 1] < currentRatingScore
-                    ? currentRatingScore
-                    : _ratingScoreOfLevels[_currentLevel - 1];
-            _dataStorage.RatingScoreOfLevels = _ratingScoreOfLevels;
-            _saveSystem.SaveAsync();
-
-            _displayRatingScore?.Invoke(currentRatingScore);
+            UpdateRatingScore();
             _amountHits = 0;
             _finishedLevel?.Invoke(true);
         }
@@ -223,6 +230,15 @@ namespace Assets.GameProgression
         {
             _amountHits = 0;
             _finishedLevel?.Invoke(false);
+        }
+
+        private void UpdateRatingScore()
+        {
+            var currentRatingScore = CalculateRatingScore();
+            _ratingScoreOfLevels[_currentLevel - 1] = Math.Max(_ratingScoreOfLevels[_currentLevel - 1], currentRatingScore);
+            _dataStorage.RatingScoreOfLevels = _ratingScoreOfLevels;
+            _saveSystem.SaveAsync();
+            _displayRatingScore?.Invoke(currentRatingScore);
         }
 
         private int CalculateRatingScore()

@@ -1,6 +1,6 @@
 namespace Assets.Target
 {
-    public interface IScoreProvider
+    public interface IPointsPerActionProvider
     {
         int GetPointsPerStroke();
     }

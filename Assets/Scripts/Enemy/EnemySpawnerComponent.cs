@@ -4,7 +4,6 @@ using Assets.EntryPoint;
 using Assets.GameProgression;
 using Assets.Target;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Assets.Enemy
 {
@@ -17,15 +16,18 @@ namespace Assets.Enemy
 
         public void Init(IResolver container)
         {
-            int levelIndex = container.Resolve<ILevelInfoProvider>().GetLevelIndex() - 1;
+            int levelIndex = container.Resolve<ILevelInfoProvider>().GetLevelIndex();
 
-            if (!CheckLevelIndexValidity(levelIndex, _transformOfEnemiesOnLevels.Count - 1))
+            if (!IsLevelIndexValid(levelIndex, _transformOfEnemiesOnLevels.Count))
                 return;
-            _currentLevel = levelIndex;
+
+            _currentLevel = levelIndex - 1;
             _enemies = new List<EnemyComponent>();
 
             SpawnEnemies();
         }
+
+        public List<IPointsPerActionProvider> GetEnemies() => _enemies.Cast<IPointsPerActionProvider>().ToList();
 
         private void SpawnEnemies()
         {
@@ -43,31 +45,21 @@ namespace Assets.Enemy
             }
         }
 
-        private bool CheckLevelIndexValidity(int levelIndex, int maxIndexEnemyLocators)
+        private bool IsLevelIndexValid(int levelIndex, int maxIndex)
         {
-            if (levelIndex > maxIndexEnemyLocators)
+            if (levelIndex <= 0)
             {
-                Debug.LogWarning(
-                    $"Level index out of range. Level index: {levelIndex}. Max index of enemy locators: {maxIndexEnemyLocators}"
-                );
+                Debug.LogError($"Invalid level index: {levelIndex - 1}. Level index cannot be negative.");
                 return false;
             }
-            else if (levelIndex < 0)
-            {
-                Debug.LogError($"Not correct level index: {levelIndex}");
-                return false;
-            }
-            return true;
-        }
 
-        public List<IScoreProvider> GetEnemies()
-        {
-            var enemies = new List<ITarget>();
-            foreach (var enemy in _enemies)
+            if (levelIndex > maxIndex)
             {
-                enemies.Add(enemy);
+                Debug.LogWarning($"Level index out of range. Level index: {levelIndex - 1}. Max index: {maxIndex - 1}");
+                return false;
             }
-            return enemies.Cast<IScoreProvider>().ToList();
+
+            return true;
         }
     }
 }

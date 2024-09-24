@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.DataStorageSystem
+namespace Assets.DataManagement
 {
     public class StorageXML : IStorage
     {
@@ -37,7 +37,7 @@ namespace Assets.DataStorageSystem
                 )
             )
             {
-                return await UniTask.RunOnThreadPool(() => TryDeserialize(serializer, reader));
+                return await UniTask.RunOnThreadPool(() => DeserializeData(serializer, reader));
             }
         }
 
@@ -68,16 +68,17 @@ namespace Assets.DataStorageSystem
             }
         }
 
-        private DataStorage TryDeserialize(XmlSerializer serializer, FileStream reader)
+        private DataStorage DeserializeData(XmlSerializer serializer, FileStream reader)
         {
             try
             {
                 var data = serializer.Deserialize(reader) as DataStorage;
-                _dataStorage = data;
+                _dataStorage = data ?? new DataStorage();
                 return data;
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
+                Debug.LogError($"Deserialization error: {ex.Message}");
                 return _dataStorage;
             }
         }

@@ -112,11 +112,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1a81fd44b70daa5591cc1661f4b3c05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rigidbodyList:
+  _rigidbodies:
   - {fileID: 9059741403918058437}
   - {fileID: 2590441876068004698}
   _triggerHandler: {fileID: 7451560949877760261}
-  Skin: {fileID: 0}
 --- !u!1 &2380231107514480980
 GameObject:
   m_ObjectHideFlags: 0

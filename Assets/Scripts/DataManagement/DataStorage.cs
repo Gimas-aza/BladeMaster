@@ -3,7 +3,7 @@ using Assets.GameProgression;
 using Assets.ShopManagement;
 using Assets.GameSettings;
 
-namespace Assets.DataStorageSystem
+namespace Assets.DataManagement
 {
     [System.Serializable]
     public class DataStorage : IPlayerProgressionData, IShopData, ISettingsData

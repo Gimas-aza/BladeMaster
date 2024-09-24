@@ -2,7 +2,7 @@ using UnityEngine;
 using Assets.EntryPoint;
 using Cysharp.Threading.Tasks;
 
-namespace Assets.ObjectFactory
+namespace Assets.ObjectCreation
 {
     public class ObjectFactory : IObject
     {

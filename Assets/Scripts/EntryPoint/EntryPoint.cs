@@ -1,4 +1,4 @@
-using Assets.DataStorageSystem;
+using Assets.DataManagement;
 using Assets.Enemy;
 using Assets.GameProgression;
 using Assets.Knife;
@@ -8,17 +8,18 @@ using Assets.MVP.Model;
 using Assets.Player;
 using Assets.ShopManagement;
 using Assets.GameSettings;
-using Assets.Sounds;
+using Assets.Audio;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Assets.DI;
+using Assets.ObjectCreation;
 
 namespace Assets.EntryPoint
 {
     public class EntryPoint : MonoBehaviour
     {
-        private DIContainer _container;
+        private IDIContainer _container;
         private IObject _objectFactory;
         private ILoadSystem _loadSystem;
         private ILevelManager _levelManager;
@@ -43,8 +44,8 @@ namespace Assets.EntryPoint
         {
             _container = new DIContainer();
             _models = new List<IModel>();
-            _objectFactory = new ObjectFactory.ObjectFactory();
-            _loadSystem = new DataStorageSystem.DataStorageSystem(new DataStorageSystem.StorageXML());
+            _objectFactory = new ObjectFactory();
+            _loadSystem = new DataStorageSystem(new StorageXML());
             _levelManager = new GameSceneManager();
             _presenter = new Presenter();
             _playerProgression = new PlayerProgression();
@@ -92,7 +93,7 @@ namespace Assets.EntryPoint
 
         private void OnLevelLoaded(int levelIndex)
         {
-            var containerChildren = new DIContainer(_container);
+            var containerChildren = new DIContainer(_container as DIContainer);
             var view = _objectFactory.CreateObject<View>() as IInitializer;
 
             RegisterFields(containerChildren);
@@ -140,7 +141,7 @@ namespace Assets.EntryPoint
             containerChildren.RegisterSingleton((c) => {
                 var audio = _objectFactory.CreateObject<AudioComponent>() as IInitializer;
                 audio.Init(c);
-                return audio as AudioComponent;
+                return audio as IAudioSettings;
             });
             containerChildren.RegisterSingleton((c) => {
                 var shop = _objectFactory.CreateObject<ShopComponent>() as IInitializer;

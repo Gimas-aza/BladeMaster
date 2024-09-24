@@ -3,7 +3,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Cysharp.Threading.Tasks;
 
-namespace Assets.ObjectFactory
+namespace Assets.ObjectCreation
 {
     public class AddressablesProvider : IObjectProvider 
     {

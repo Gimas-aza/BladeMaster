@@ -1,6 +1,6 @@
 using Cysharp.Threading.Tasks;
 
-namespace Assets.DataStorageSystem
+namespace Assets.DataManagement
 {
     public interface IStorage
     {

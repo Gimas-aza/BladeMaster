@@ -1,32 +1,27 @@
-using System;
 using Assets.EntryPoint;
 using Assets.MVP.Model;
-using Assets.Sounds;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Assets.GameSettings
 {
-    public class Settings : IModel, IInitializer
+    public class Settings : IInitializer, IModel 
     {
         private int _qualityIndex;
         private float _volume;
-        private AudioComponent _audioSource;
-        private IResolver _resolver;
+        private IAudioSettings _audioSource;
         private ISaveSystem _saveSystem;
         private ISettingsData _settingsData;
 
         public void Init(IResolver container)
         {
-            _resolver = container;
             _saveSystem = container.Resolve<ISaveSystem>();
             _settingsData = container.Resolve<ISettingsData>();
+            _audioSource = container.Resolve<IAudioSettings>();
 
             _qualityIndex = _settingsData.QualityIndex;
             _volume = _settingsData.Volume;
 
-            ChangeQuality(_qualityIndex);
-            ChangeVolume(_volume);
+            ApplySettings();
         }
 
         public void SubscribeToEvents(IResolver container)
@@ -41,6 +36,8 @@ namespace Assets.GameSettings
 
         private void ChangeQuality(int index)
         {
+            if (_qualityIndex == index) return;
+
             _qualityIndex = index;
             _settingsData.QualityIndex = index;
             QualitySettings.SetQualityLevel(index);
@@ -50,13 +47,19 @@ namespace Assets.GameSettings
 
         private void ChangeVolume(float value)
         {
+            if (Mathf.Approximately(_volume, value)) return;
+
             _volume = value;
             _settingsData.Volume = value;
-            if (_audioSource == null)
-                _audioSource = _resolver.Resolve<AudioComponent>();
             _audioSource.Volume = value;
 
             _saveSystem.SaveAsync();
+        }
+
+        private void ApplySettings()
+        {
+            QualitySettings.SetQualityLevel(_qualityIndex);
+            _audioSource.Volume = _volume;
         }
     }
 }

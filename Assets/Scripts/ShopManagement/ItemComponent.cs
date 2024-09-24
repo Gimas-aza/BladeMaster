@@ -1,3 +1,4 @@
+using System;
 using Assets.EntryPoint;
 using Assets.Knife;
 using UnityEngine;
@@ -22,26 +23,28 @@ namespace Assets.ShopManagement
 
         public void Init(ItemData data)
         {
-            _data = data;
-            _isBought = data.IsBought;
-            _isEquipped = data.IsEquipped;
+            _data = data ?? throw new ArgumentNullException(nameof(data));
+            SyncWithData();
         }
 
-        public GameObject GetSkin()
-        {
-            return _skin;
-        }
+        public GameObject GetSkin() => _skin;
 
         public void SetBought(bool isBought)
         {
-            _data.IsBought = isBought;
             _isBought = isBought;
+            _data.IsBought = isBought;
         }
 
         public void SetEquipped(bool isEquipped)
         {
-            _data.IsEquipped = isEquipped;
             _isEquipped = isEquipped;
+            _data.IsEquipped = isEquipped;
+        }
+
+        private void SyncWithData()
+        {
+            _isBought = _data.IsBought;
+            _isEquipped = _data.IsEquipped;
         }
     }
 }

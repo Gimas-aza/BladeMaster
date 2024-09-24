@@ -1,7 +1,5 @@
-using System;
 using Assets.EntryPoint;
 using Assets.MVP.Model;
-using UnityEngine;
 using UnityEngine.Events;
 
 namespace Assets.LevelManager
@@ -13,6 +11,7 @@ namespace Assets.LevelManager
         protected int CurrentLevelIndex { get; set; } = EntryPointIndex;
         protected int NextLevelIndex { get => (CurrentLevelIndex + 1 <= MaxLevelIndex) ? CurrentLevelIndex + 1 : CurrentLevelIndex; }
         protected int PreviousLevelIndex { get => (CurrentLevelIndex - 1 >= 0) ? CurrentLevelIndex - 1 : CurrentLevelIndex; }
+
         protected abstract int MaxLevelIndex { get; set; }
 
         public event UnityAction LevelStartedToLoad;

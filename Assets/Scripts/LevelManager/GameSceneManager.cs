@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -22,12 +23,7 @@ namespace Assets.LevelManager
             if (CurrentLevelIndex == MaxLevelIndex)
                 return;
 
-            OnLevelStartedToLoad();
-
-            CurrentLevelIndex = NextLevelIndex;
-            await SceneManager.LoadSceneAsync(NextLevelIndex + _sceneIndexOffset);
-
-            OnLevelLoaded();
+            await LoadSceneAsync(NextLevelIndex);
         }
 
         public override async void LoadPreviousLevel()
@@ -35,23 +31,24 @@ namespace Assets.LevelManager
             if (CurrentLevelIndex == PreviousLevelIndex)
                 return;
 
-            OnLevelStartedToLoad();
-
-            CurrentLevelIndex = PreviousLevelIndex;
-            await SceneManager.LoadSceneAsync(PreviousLevelIndex + _sceneIndexOffset);
-
-            OnLevelLoaded();
+            await LoadSceneAsync(PreviousLevelIndex);
         }
 
         public override async void LoadLevel(int sceneIndex)
         {
-            if (
-                CurrentLevelIndex == sceneIndex
-                || sceneIndex > MaxLevelIndex
-                || sceneIndex == EntryPointIndex
-            )
+            if (!IsValidSceneIndex(sceneIndex))
                 return;
 
+            await LoadSceneAsync(sceneIndex);
+        }
+
+        public override async void ReloadingCurrentLevel()
+        {
+            await LoadSceneAsync(CurrentLevelIndex);
+        }
+
+        private async UniTask LoadSceneAsync(int sceneIndex)
+        {
             OnLevelStartedToLoad();
 
             CurrentLevelIndex = sceneIndex;
@@ -60,13 +57,9 @@ namespace Assets.LevelManager
             OnLevelLoaded();
         }
 
-        public override async void ReloadingCurrentLevel()
+        private bool IsValidSceneIndex(int sceneIndex)
         {
-            OnLevelStartedToLoad();
-
-            await SceneManager.LoadSceneAsync(CurrentLevelIndex + _sceneIndexOffset);
-
-            OnLevelLoaded();
+            return sceneIndex >= 0 && sceneIndex <= MaxLevelIndex && sceneIndex != EntryPointIndex;
         }
     }
 }
