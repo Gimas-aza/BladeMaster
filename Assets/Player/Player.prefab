@@ -226,7 +226,7 @@ MonoBehaviour:
   _rotationSpeed: 30
   _rotationRadius: 30
   _knivesPool: {fileID: 4113183521672044098}
-  _amountOfKnivesOnLevels: 96000000
+  _amountOfKnivesOnLevels: 05000000
   _knifeSettings:
     _minForce: 20
     _maxForce: 100

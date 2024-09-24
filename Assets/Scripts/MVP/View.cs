@@ -1,6 +1,7 @@
 using Assets.DI;
 using Assets.EntryPoint;
 using Assets.MVP.Model;
+using Assets.MVP.State;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -16,6 +17,7 @@ namespace Assets.MVP
         private DIContainer _container;
         private UIEvents _uiEvents;
         private UIElements _uiElements;
+        private StateMachine _stateMachine;
         private StateView _currentState;
         private Presenter _presenter;
         private VisualElement _root;
@@ -25,26 +27,25 @@ namespace Assets.MVP
         {
             _currentState = container.Resolve<StateView>();
             _presenter = container.Resolve<Presenter>();
-        }
-
-        private void Awake()
-        {
             _root = GetComponent<UIDocument>().rootVisualElement;
             _container = new DIContainer();
             _uiEvents = new UIEvents();
             _uiElements = new UIElements(_root);
+            _stateMachine = new StateMachine(_uiElements, _uiEvents, _presenter, _container);
+
             RegisterFields();
+            StartState();
         }
 
-        private void Start()
+        private void StartState()
         {
             switch (_currentState)
             {
                 case StateView.MainMenu:
-                    _stateView = new StateMainMenu(_uiElements, _uiEvents, _container, _presenter);
+                    _stateMachine.ChangeState<StateMainMenu>();
                     break;
                 case StateView.GameMenu:
-                    _stateView = new StateGameMenu(_uiElements, _uiEvents, _container, _presenter);
+                    _stateMachine.ChangeState<StateGameMenu>();
                     break;
             }
         }

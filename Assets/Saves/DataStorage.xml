@@ -10,17 +10,17 @@
   <Items>
     <ItemData>
       <IsBought>true</IsBought>
+      <IsEquipped>false</IsEquipped>
+    </ItemData>
+    <ItemData>
+      <IsBought>true</IsBought>
+      <IsEquipped>false</IsEquipped>
+    </ItemData>
+    <ItemData>
+      <IsBought>true</IsBought>
       <IsEquipped>true</IsEquipped>
     </ItemData>
-    <ItemData>
-      <IsBought>true</IsBought>
-      <IsEquipped>false</IsEquipped>
-    </ItemData>
-    <ItemData>
-      <IsBought>true</IsBought>
-      <IsEquipped>false</IsEquipped>
-    </ItemData>
   </Items>
-  <QualityIndex>1</QualityIndex>
-  <Volume>0.085</Volume>
+  <QualityIndex>0</QualityIndex>
+  <Volume>0.271</Volume>
 </DataStorage>
