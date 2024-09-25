@@ -60,8 +60,8 @@
             <engine:Button name="ButtonBack" text="Назад" class="LevelsMenu__Button ShopMenu__Button ButtonBack" />
         </engine:VisualElement>
     </engine:VisualElement>
-    <engine:VisualElement name="GameMenu" style="flex-grow: 1; align-items: center; justify-content: flex-start; padding-top: 50px; padding-bottom: 50px; display: none;">
-        <engine:VisualElement name="GameMenu-Info" style="flex-grow: 1; align-self: center; justify-content: space-between; align-items: center; align-content: flex-start; left: auto; right: auto; top: auto; width: 100%; max-width: 100%; padding-bottom: 0; display: flex;">
+    <engine:VisualElement name="GameMenu" style="flex-grow: 1; align-items: center; justify-content: space-between; padding-top: 50px; padding-bottom: 50px; display: none; align-self: auto; width: 100%;">
+        <engine:VisualElement name="GameMenuContainer" style="flex-grow: 1; align-self: center; justify-content: space-between; align-items: center; align-content: flex-start; left: auto; right: auto; top: auto; width: 100%; max-width: 100%; padding-bottom: 0; display: flex;">
             <engine:VisualElement style="flex-grow: 0; width: 85.5%; align-items: center; padding-top: 10px;">
                 <engine:Button name="ButtonPause" style="width: 50px; height: 50px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; background-color: rgba(255, 255, 255, 0); background-image: url(&quot;project://database/Assets/UI/Sprites/music-pause-button-pair-of-lines-svgrepo-com.png?fileID=21300000&amp;guid=b2d163f1d788b88abaf58e3bfe066a12&amp;type=3#music-pause-button-pair-of-lines-svgrepo-com&quot;); border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0;" />
                 <engine:VisualElement name="Statistic" style="flex-grow: 0; flex-direction: row; justify-content: space-between; align-self: stretch; align-content: stretch;">
@@ -83,51 +83,51 @@
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
-        <engine:VisualElement name="PauseMenu" class="GameMenu__PauseMenu" style="flex-grow: 1; justify-content: space-between; display: none;">
-            <engine:VisualElement style="flex-grow: 1;">
-                <engine:VisualElement style="flex-grow: 0;">
-                    <engine:Label text="Пауза" emoji-fallback-support="false" class="GameMenu__LabelH1" />
-                    <engine:VisualElement name="Statistic" style="flex-grow: 1; justify-content: space-between; flex-direction: row;">
-                        <engine:VisualElement style="flex-grow: 0; flex-direction: row;">
-                            <engine:Label text="Счет:" emoji-fallback-support="false" style="margin-top: 0; margin-right: 10px; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 30px; color: rgb(255, 130, 37); -unity-font-style: bold; -unity-text-outline-width: 2px; -unity-text-outline-color: rgba(23, 59, 69, 0.49);" />
-                            <engine:Label text="0" name="Counter" style="font-size: 30px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(255, 130, 37); -unity-font-style: bold; -unity-text-outline-width: 1px; -unity-text-outline-color: rgb(23, 59, 69);" />
-                        </engine:VisualElement>
-                        <engine:VisualElement style="flex-grow: 0; flex-direction: row;">
-                            <engine:Label text="Деньги:" emoji-fallback-support="false" enable-rich-text="true" style="margin-top: 0; margin-right: 10px; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 30px; color: rgb(255, 130, 37); -unity-font-style: bold; -unity-text-outline-width: 2px; -unity-text-outline-color: rgba(23, 59, 69, 0.49);" />
-                            <engine:Label text="0" name="Money" style="font-size: 30px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(255, 130, 37); -unity-font-style: bold; -unity-text-outline-width: 1px; -unity-text-outline-color: rgb(23, 59, 69); white-space: normal; text-overflow: clip;" />
-                        </engine:VisualElement>
+    </engine:VisualElement>
+    <engine:VisualElement name="PauseMenu" class="GameMenu__PauseMenu" style="flex-grow: 1; justify-content: space-between; display: none;">
+        <engine:VisualElement style="flex-grow: 1;">
+            <engine:VisualElement style="flex-grow: 0;">
+                <engine:Label text="Пауза" emoji-fallback-support="false" class="GameMenu__LabelH1" />
+                <engine:VisualElement name="Statistic" style="flex-grow: 1; justify-content: space-between; flex-direction: row;">
+                    <engine:VisualElement style="flex-grow: 0; flex-direction: row;">
+                        <engine:Label text="Счет:" emoji-fallback-support="false" style="margin-top: 0; margin-right: 10px; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 30px; color: rgb(255, 130, 37); -unity-font-style: bold; -unity-text-outline-width: 2px; -unity-text-outline-color: rgba(23, 59, 69, 0.49);" />
+                        <engine:Label text="0" name="Counter" style="font-size: 30px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(255, 130, 37); -unity-font-style: bold; -unity-text-outline-width: 1px; -unity-text-outline-color: rgb(23, 59, 69);" />
+                    </engine:VisualElement>
+                    <engine:VisualElement style="flex-grow: 0; flex-direction: row;">
+                        <engine:Label text="Деньги:" emoji-fallback-support="false" enable-rich-text="true" style="margin-top: 0; margin-right: 10px; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 30px; color: rgb(255, 130, 37); -unity-font-style: bold; -unity-text-outline-width: 2px; -unity-text-outline-color: rgba(23, 59, 69, 0.49);" />
+                        <engine:Label text="0" name="Money" style="font-size: 30px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(255, 130, 37); -unity-font-style: bold; -unity-text-outline-width: 1px; -unity-text-outline-color: rgb(23, 59, 69); white-space: normal; text-overflow: clip;" />
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
-            <engine:Button name="ButtonContinue" text="Продолжить" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button PauseMenu__Button" />
-            <engine:Button name="ButtonSettings" text="Настройки" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button PauseMenu__Button" />
-            <engine:Button name="ButtonBackMainMenu" text="Главное меню" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button PauseMenu__Button" />
         </engine:VisualElement>
-        <engine:VisualElement name="FinishedLevelMenu" class="GameMenu__FinishedLevelMenu">
-            <engine:Label text="Конец уровня" emoji-fallback-support="false" class="GameMenu__LabelH1 GameMenu__LabelH2 GameMenu__LabelLevelFinish" />
-            <engine:VisualElement style="flex-grow: 1;">
-                <engine:VisualElement name="ContainerLoseOrWin" style="flex-grow: 1;">
-                    <engine:Label text="Уровень пройден" name="LabelWin" class="GameMenu__LabelH1 GameMenu__LabelWin" />
-                    <engine:Label text="Уровень не пройден" name="LabelLose" class="GameMenu__LabelH1 GameMenu__LabelLose" />
-                </engine:VisualElement>
-                <engine:VisualElement name="VisualElement" style="flex-grow: 0; flex-direction: row;">
-                    <engine:Label text="Счет:" emoji-fallback-support="false" style="margin-top: 0; margin-right: 10px; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 25px; color: rgb(255, 130, 37); -unity-font-style: bold; -unity-text-outline-width: 2px; -unity-text-outline-color: rgba(23, 59, 69, 0.53); -unity-text-align: lower-left;" />
-                    <engine:Label text="0" name="Counter" style="font-size: 25px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(255, 130, 37); -unity-font-style: bold; -unity-text-outline-width: 1px; -unity-text-outline-color: rgb(23, 59, 69); -unity-text-align: lower-left;" />
-                </engine:VisualElement>
-                <engine:VisualElement name="ContainerScores" style="flex-grow: 1; flex-direction: row; justify-content: space-evenly; align-items: center; margin-top: 0;">
-                    <engine:VisualElement name="RatingScoreFull" class="GameMenu__ScoresIcons" style="background-image: url(&quot;project://database/Assets/UI/Sprites/KnifeScoreRed.png?fileID=21300000&amp;guid=15e640d0cdd7b08b8a9f1f0edbd009d2&amp;type=3#KnifeScoreRed&quot;); display: none;" />
-                    <engine:VisualElement name="RatingScoreFull" class="GameMenu__ScoresIcons" style="background-image: url(&quot;project://database/Assets/UI/Sprites/KnifeScoreRed.png?fileID=21300000&amp;guid=15e640d0cdd7b08b8a9f1f0edbd009d2&amp;type=3#KnifeScoreRed&quot;); display: none;" />
-                    <engine:VisualElement name="RatingScoreFull" class="GameMenu__ScoresIcons" style="background-image: url(&quot;project://database/Assets/UI/Sprites/KnifeScoreRed.png?fileID=21300000&amp;guid=15e640d0cdd7b08b8a9f1f0edbd009d2&amp;type=3#KnifeScoreRed&quot;); display: none;" />
-                    <engine:VisualElement name="RatingScoreEmpty" class="GameMenu__ScoresIcons" />
-                    <engine:VisualElement name="RatingScoreEmpty" class="GameMenu__ScoresIcons" />
-                    <engine:VisualElement name="RatingScoreEmpty" class="GameMenu__ScoresIcons" style="flex-grow: 0;" />
-                </engine:VisualElement>
+        <engine:Button name="ButtonContinue" text="Продолжить" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button PauseMenu__Button" />
+        <engine:Button name="ButtonSettings" text="Настройки" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button PauseMenu__Button" />
+        <engine:Button name="ButtonBackMainMenu" text="Главное меню" emoji-fallback-support="false" enabled="true" focusable="true" class="LevelsMenu__Button PauseMenu__Button" />
+    </engine:VisualElement>
+    <engine:VisualElement name="FinishedLevelMenu" class="GameMenu__FinishedLevelMenu" style="display: none;">
+        <engine:Label text="Конец уровня" emoji-fallback-support="false" class="GameMenu__LabelH1 GameMenu__LabelH2 GameMenu__LabelLevelFinish" />
+        <engine:VisualElement style="flex-grow: 1;">
+            <engine:VisualElement name="ContainerLoseOrWin" style="flex-grow: 1;">
+                <engine:Label text="Уровень пройден" name="LabelWin" class="GameMenu__LabelH1 GameMenu__LabelWin" />
+                <engine:Label text="Уровень не пройден" name="LabelLose" class="GameMenu__LabelH1 GameMenu__LabelLose" />
             </engine:VisualElement>
-            <engine:VisualElement style="flex-grow: 1; justify-content: flex-end;">
-                <engine:Button text="Ещё раз" name="ButtonAgain" class="LevelsMenu__Button PauseMenu__Button" />
-                <engine:Button text="Настройки" name="ButtonSettings" class="LevelsMenu__Button PauseMenu__Button" />
-                <engine:Button text="Главное меню" name="ButtonBackMainMenu" class="LevelsMenu__Button PauseMenu__Button" />
+            <engine:VisualElement name="VisualElement" style="flex-grow: 0; flex-direction: row;">
+                <engine:Label text="Счет:" emoji-fallback-support="false" style="margin-top: 0; margin-right: 10px; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 25px; color: rgb(255, 130, 37); -unity-font-style: bold; -unity-text-outline-width: 2px; -unity-text-outline-color: rgba(23, 59, 69, 0.53); -unity-text-align: lower-left;" />
+                <engine:Label text="0" name="Counter" style="font-size: 25px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(255, 130, 37); -unity-font-style: bold; -unity-text-outline-width: 1px; -unity-text-outline-color: rgb(23, 59, 69); -unity-text-align: lower-left;" />
             </engine:VisualElement>
+            <engine:VisualElement name="ContainerScores" style="flex-grow: 1; flex-direction: row; justify-content: space-evenly; align-items: center; margin-top: 0;">
+                <engine:VisualElement name="RatingScoreFull" class="GameMenu__ScoresIcons" style="background-image: url(&quot;project://database/Assets/UI/Sprites/KnifeScoreRed.png?fileID=21300000&amp;guid=15e640d0cdd7b08b8a9f1f0edbd009d2&amp;type=3#KnifeScoreRed&quot;); display: none;" />
+                <engine:VisualElement name="RatingScoreFull" class="GameMenu__ScoresIcons" style="background-image: url(&quot;project://database/Assets/UI/Sprites/KnifeScoreRed.png?fileID=21300000&amp;guid=15e640d0cdd7b08b8a9f1f0edbd009d2&amp;type=3#KnifeScoreRed&quot;); display: none;" />
+                <engine:VisualElement name="RatingScoreFull" class="GameMenu__ScoresIcons" style="background-image: url(&quot;project://database/Assets/UI/Sprites/KnifeScoreRed.png?fileID=21300000&amp;guid=15e640d0cdd7b08b8a9f1f0edbd009d2&amp;type=3#KnifeScoreRed&quot;); display: none;" />
+                <engine:VisualElement name="RatingScoreEmpty" class="GameMenu__ScoresIcons" />
+                <engine:VisualElement name="RatingScoreEmpty" class="GameMenu__ScoresIcons" />
+                <engine:VisualElement name="RatingScoreEmpty" class="GameMenu__ScoresIcons" style="flex-grow: 0;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement style="flex-grow: 1; justify-content: flex-end;">
+            <engine:Button text="Ещё раз" name="ButtonAgain" class="LevelsMenu__Button PauseMenu__Button" />
+            <engine:Button text="Настройки" name="ButtonSettings" class="LevelsMenu__Button PauseMenu__Button" />
+            <engine:Button text="Главное меню" name="ButtonBackMainMenu" class="LevelsMenu__Button PauseMenu__Button" />
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

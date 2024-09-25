@@ -8,11 +8,10 @@ using Assets.MVP.Model;
 using Assets.Player;
 using Assets.Target;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Assets.GameProgression
 {
-    public class PlayerProgression : IInitializer, IModel
+    public class PlayerProgression : IInitializer, IModel 
     {
         private int _counter;
         private int _maxCounter;
@@ -20,54 +19,52 @@ namespace Assets.GameProgression
         private int _money;
         private int _finishedLevels;
         private int _currentLevel;
-        private int _amountOfLevels;
         private int _unlockedLevels = 1;
         private int _pointsPerStroke;
+        private float _averageEnemyPointsMultiplier = 1.5f;
         private int _moneyPerHit = 10;
         private int _amountHits;
         private int _multiplier;
+        private int _amountOfLevels;
         private List<int> _ratingScoreOfLevels;
         private List<IPointsPerActionProvider> _enemies;
         private List<IWeaponEvents> _knives;
         private IItemSkin _currentSkin;
         private ISaveSystem _saveSystem;
         private IPlayerProgressionData _dataStorage;
-        private UnityAction<int> _monitorCounter;
-        private UnityAction<int> _monitorMoney;
-        private UnityAction<int> _monitorBestScore;
-        private UnityAction<bool> _finishedLevel;
-        private UnityAction<int> _displayRatingScore;
+        private IUIEvents _uiEvents;
 
         public void Init(IResolver container)
         {
-            var currentState = container.Resolve<StateView>();
+            var currentState = container.Resolve<StateGame>();
 
-            if (currentState == StateView.MainMenu)
-                InitializeDependenciesForMainMenu(container);
-            else if (currentState == StateView.GameMenu)
-                InitializeDependenciesForGameMenu(container);
+            if (currentState == StateGame.MainMenu)
+                InitializeMainMenu(container);
+            else if (currentState == StateGame.GameMenu)
+                InitializeGameMenu(container);
         }
 
         public void SubscribeToEvents(IResolver container)
         {
-            var uiEvents = container.Resolve<IUIEvents>();
+            _uiEvents = container.Resolve<IUIEvents>();
 
-            _monitorMoney = uiEvents.MonitorMoney;
-            _monitorCounter = uiEvents.MonitorCounter;
-            _finishedLevel = uiEvents.FinishedLevel;
-            _displayRatingScore = uiEvents.DisplayRatingScore;
-            _monitorBestScore = uiEvents.MonitorBestScore;
-
+            _uiEvents.UnregisterPlayerProgressionEvents();
             UpdateUI();
-            SubscribeToUIEvents(uiEvents);
+            SubscribeToUIEvents(_uiEvents);
         }
 
-        private void InitializeDependenciesForMainMenu(IResolver resolver)
+        ~PlayerProgression()
         {
-            var shop = resolver.Resolve<IShop>();
-            _amountOfLevels = resolver.Resolve<ILevelInfoProvider>().GetAmountLevels();
-            _saveSystem = resolver.Resolve<ISaveSystem>();
-            _dataStorage = resolver.Resolve<IPlayerProgressionData>();
+            _uiEvents.UnregisterPlayerProgressionEvents();
+        }
+
+        private void InitializeMainMenu(IResolver container)
+        {
+            var shop = container.Resolve<IShop>();
+
+            _amountOfLevels = container.Resolve<ILevelInfoProvider>().GetAmountLevels();
+            _saveSystem = container.Resolve<ISaveSystem>();
+            _dataStorage = container.Resolve<IPlayerProgressionData>();
 
             shop.RequestToBuy += TrySpendMoney;
             shop.BoughtSkin += (item) => _currentSkin = item;
@@ -77,19 +74,17 @@ namespace Assets.GameProgression
             InitializeRatingScores();
         }
 
-        private void InitializeDependenciesForGameMenu(IResolver resolver)
+        private void InitializeGameMenu(IResolver container)
         {
-            var spawnerEnemies = resolver.Resolve<IEnemySpawner>();
-            var knivesPool = resolver.Resolve<IKnivesPool>();
-            _currentLevel = resolver.Resolve<ILevelInfoProvider>().GetLevelIndex();
+            var spawnerEnemies = container.Resolve<IEnemySpawner>();
+            var knivesPool = container.Resolve<IKnivesPool>();
 
+            _currentLevel = container.Resolve<ILevelInfoProvider>().GetLevelIndex();
             _enemies = spawnerEnemies.GetEnemies();
             _knives = knivesPool.GetKnives();
             ResetGameState();
 
-            foreach (var enemy in _enemies)
-                _maxCounter += enemy.GetPointsPerStroke() * 2;
-
+            _maxCounter = CalculateMaxCounter();
             InitializeKnives();
         }
 
@@ -116,6 +111,7 @@ namespace Assets.GameProgression
             _pointsPerStroke = 20;
             _multiplier = 0;
             _amountHits = 0;
+            _maxCounter = 0;
         }
 
         private void InitializeKnives()
@@ -146,38 +142,38 @@ namespace Assets.GameProgression
 
             _amountHits++;
             _multiplier++;
-            AddCounter(scoreProvider.GetPointsPerStroke(), _multiplier);
+            AddPoints(scoreProvider.GetPointsPerStroke(), _multiplier);
             AddMoney();
             UpdateUI();
-            EvaluateLevelCompletionStatus();
+            EvaluateLevelCompletion();
         }
 
         private void StartActionForNoHit()
         {
-            SubtractCounter();
+            SubtractPoints();
             _multiplier = 0;
             UpdateUI();
-            EvaluateLevelCompletionStatus();
+            EvaluateLevelCompletion();
         }
 
         private void UpdateUI()
         {
-            _monitorCounter?.Invoke(_counter);
-            _monitorMoney?.Invoke(_money);
-            _monitorBestScore?.Invoke(_bestScore);
+            _uiEvents.MonitorCounter?.Invoke(_counter);
+            _uiEvents.MonitorMoney?.Invoke(_money);
+            _uiEvents.MonitorBestScore?.Invoke(_bestScore);
         }
 
-        private void EvaluateLevelCompletionStatus()
+        private void EvaluateLevelCompletion()
         {
             if (_amountHits == _enemies.Count)
-                CompletedLevel(_currentLevel != _finishedLevels);
-            else if (IsKnivesAllThrown() && _amountHits != _enemies.Count)
-                FailedLevel();
+                CompleteLevel(_currentLevel > _finishedLevels);
+            else if (AreAllKnivesThrown() && _amountHits != _enemies.Count)
+                FailLevel();
         }
 
-        private bool IsKnivesAllThrown() => _knives.All(knife => knife.IsThrow());
+        private bool AreAllKnivesThrown() => _knives.All(knife => knife.IsThrow());
 
-        private void AddCounter(int points, int multiplier = 1)
+        private void AddPoints(int points, int multiplier = 1)
         {
             _pointsPerStroke = points;
             _counter += points * multiplier;
@@ -189,7 +185,7 @@ namespace Assets.GameProgression
         {
             _dataStorage.BestScore = _bestScore;
             _saveSystem.SaveAsync();
-            _monitorBestScore?.Invoke(_bestScore);
+            _uiEvents.MonitorBestScore?.Invoke(_bestScore);
         }
 
         private void AddMoney()
@@ -199,7 +195,7 @@ namespace Assets.GameProgression
             _saveSystem.SaveAsync();
         }
 
-        private void SubtractCounter()
+        private void SubtractPoints()
         {
             _counter -= _pointsPerStroke / 2;
         }
@@ -211,7 +207,7 @@ namespace Assets.GameProgression
             _saveSystem.SaveAsync();
         }
 
-        private void CompletedLevel(bool isFirstWin)
+        private void CompleteLevel(bool isFirstWin)
         {
             if (isFirstWin)
             {
@@ -222,14 +218,12 @@ namespace Assets.GameProgression
             }
 
             UpdateRatingScore();
-            _amountHits = 0;
-            _finishedLevel?.Invoke(true);
+            _uiEvents.FinishedLevel?.Invoke(true);
         }
 
-        private void FailedLevel()
+        private void FailLevel()
         {
-            _amountHits = 0;
-            _finishedLevel?.Invoke(false);
+            _uiEvents.FinishedLevel?.Invoke(false);
         }
 
         private void UpdateRatingScore()
@@ -238,15 +232,14 @@ namespace Assets.GameProgression
             _ratingScoreOfLevels[_currentLevel - 1] = Math.Max(_ratingScoreOfLevels[_currentLevel - 1], currentRatingScore);
             _dataStorage.RatingScoreOfLevels = _ratingScoreOfLevels;
             _saveSystem.SaveAsync();
-            _displayRatingScore?.Invoke(currentRatingScore);
+            _uiEvents.DisplayRatingScore?.Invoke(currentRatingScore);
         }
 
         private int CalculateRatingScore()
         {
-            var percent = (float)_counter / _maxCounter * 100;
+            var percentage = (float)_counter / _maxCounter * 100;
             var sector = 100 / 3;
-            var result = (int)Math.Ceiling(percent / sector);
-            return Math.Clamp(result, 0, 3);
+            return Mathf.Clamp((int)Mathf.Ceil(percentage / sector), 0, 3);
         }
 
         private bool TrySpendMoney(int price)
@@ -254,10 +247,12 @@ namespace Assets.GameProgression
             if (_money >= price)
             {
                 SubtractMoney(price);
-                _monitorMoney?.Invoke(_money);
+                _uiEvents.MonitorMoney?.Invoke(_money);
                 return true;
             }
             return false;
         }
+
+        private int CalculateMaxCounter() => _enemies.Sum(enemy => Mathf.CeilToInt(enemy.GetPointsPerStroke() * _averageEnemyPointsMultiplier));
     }
 }

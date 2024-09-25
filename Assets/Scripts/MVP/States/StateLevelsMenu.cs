@@ -1,4 +1,3 @@
-using System;
 using Assets.DI;
 using UnityEngine.UIElements;
 
@@ -8,16 +7,19 @@ namespace Assets.MVP.State
     {
         private VisualTreeAsset _templateButtonStartLevel;
         private UIEvents _uiEvents;
+        private StateMachine _stateMachine;
         private UIElements _uiElements;
 
         public void Init(StateMachine stateMachine, UIElements elements, UIEvents events, DIContainer container)
         {
+            _stateMachine = stateMachine;
             _uiElements = elements;
             _uiEvents = events;
             _templateButtonStartLevel = container.Resolve<VisualTreeAsset>(
                 "templateButtonStartLevel"
             );
 
+            InitializeUI();
             stateMachine.RegisterEvents();
 
             AddButtonsStartLevel();
@@ -31,6 +33,16 @@ namespace Assets.MVP.State
         public void Exit()
         {
             HideMenu();
+        }
+
+        private void InitializeUI()
+        {
+            _uiElements.ButtonsBack[typeof(StateLevelsMenu)].clicked += BackToPreviousState;
+        }
+
+        private void BackToPreviousState()
+        {
+            _stateMachine.BackToPreviousState();
         }
 
         private void AddButtonsStartLevel()
@@ -92,8 +104,8 @@ namespace Assets.MVP.State
             }
         }
 
-        private void ShowMenu() => _uiElements.Menus[StateMenu.LevelsMenu].style.display = DisplayStyle.Flex;
+        private void ShowMenu() => _uiElements.Menus[typeof(StateLevelsMenu)].style.display = DisplayStyle.Flex;
 
-        private void HideMenu() => _uiElements.Menus[StateMenu.LevelsMenu].style.display = DisplayStyle.None;
+        private void HideMenu() => _uiElements.Menus[typeof(StateLevelsMenu)].style.display = DisplayStyle.None;
     }
 }

@@ -14,9 +14,9 @@ namespace Assets.ShopManagement
     {
         [SerializeField] private List<ItemComponent> _items;
 
-        private UnityAction<IItem> _itemIsBought;
         private IItemSkin _equippedItem;
         private ISaveSystem _saveSystem;
+        private IUIEvents _uiEvents;
 
         public event Func<int, bool> RequestToBuy;
         public event UnityAction<IItemSkin> BoughtSkin;
@@ -41,12 +41,12 @@ namespace Assets.ShopManagement
 
         public void SubscribeToEvents(IResolver container)
         {
-            var uiEvents = container.Resolve<IUIEvents>();
+            _uiEvents = container.Resolve<IUIEvents>();
 
-            uiEvents.ItemsRequestedForDisplay += GetItems;
-            uiEvents.ItemRequestedForBuy += BuyItem;
-            uiEvents.EquipItem += EquipItem;
-            _itemIsBought = uiEvents.ItemIsBought;
+            _uiEvents.UnregisterShopEvents();
+            _uiEvents.ItemsRequestedForDisplay += GetItems;
+            _uiEvents.ItemRequestedForBuy += BuyItem;
+            _uiEvents.EquipItem += EquipItem;
         }
 
         public IItemSkin GetEquippedItem()
@@ -55,6 +55,11 @@ namespace Assets.ShopManagement
 
             _saveSystem.SaveAsync();
             return _equippedItem;
+        }
+
+        private void OnDestroy()
+        {
+            _uiEvents.UnregisterShopEvents();
         }
 
         private List<IItem> GetItems() => _items.Cast<IItem>().ToList();
@@ -66,7 +71,7 @@ namespace Assets.ShopManagement
                 item.SetBought(true);
                 EquipItem(item);
 
-                _itemIsBought?.Invoke(item);
+                _uiEvents.ItemIsBought?.Invoke(item);
             }
         }
 

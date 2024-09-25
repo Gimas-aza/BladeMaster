@@ -43,7 +43,7 @@ namespace Assets.MVP.State
 
         private void InitializeUI()
         {
-            _uiElements.ButtonPause.clicked += OnButtonPauseClick;
+            _uiElements.ButtonPause.clicked += SetPause;
         }
 
         private void SubscribeToEvents()
@@ -51,10 +51,11 @@ namespace Assets.MVP.State
             _uiEvents.MonitorCounter += SetCount;
             _uiEvents.MonitorMoney += SetMoney;
             _uiEvents.FinishedLevel += SetFinishedLevel;
+            _uiEvents.DisplayRatingScore += SetRating;
             _uiEvents.DisplayAmountKnives += SetAmountKnives;
         }
 
-        private void OnButtonPauseClick()
+        private void SetPause()
         {
             _isGameActive = false;
             _stateMachine.ChangeState<StatePauseMenu>();
@@ -166,6 +167,16 @@ namespace Assets.MVP.State
             _stateMachine.ChangeState<StateFinishedMenu>();
         }
 
+        private void SetRating(int score)
+        {
+            for (int i = 0; i < _uiElements.RatingScoreEmpty.Count; i++)
+            {
+                bool isFull = i < score;
+                _uiElements.RatingScoreFull[i].style.display = isFull ? DisplayStyle.Flex : DisplayStyle.None;
+                _uiElements.RatingScoreEmpty[i].style.display = isFull ? DisplayStyle.None : DisplayStyle.Flex;
+            }
+        }
+
         private async void SetAmountKnives(IAmountOfKnives amountOfKnives)
         {
             await UniTask.WaitForEndOfFrame();
@@ -174,12 +185,12 @@ namespace Assets.MVP.State
 
         private void ShowMenu()
         {
-            _uiElements.GameMenuInfo.style.display = DisplayStyle.Flex;
+            _uiElements.GameMenu.style.display = DisplayStyle.Flex;
         }
 
         private void HideMenu()
         {
-            _uiElements.GameMenuInfo.style.display = DisplayStyle.None;
+            _uiElements.GameMenu.style.display = DisplayStyle.None;
         }
     }
 }

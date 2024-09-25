@@ -34,55 +34,56 @@ namespace Assets.MVP
         public UnityAction<float> CurrentVolume { get; set; }
 
         public int OnLevelAmountRequestedForDisplay() => LevelAmountRequestedForDisplay?.Invoke() ?? 0;
-
         public void OnPressingTheSelectedLevel(int level) => PressingTheSelectedLevel?.Invoke(level);
-
         public int OnUnlockedLevels() => UnlockedLevels?.Invoke() ?? 0;
-
         public List<IItem> OnItemsRequestedForDisplay() => ItemsRequestedForDisplay?.Invoke() ?? new List<IItem>();
-
         public void OnItemRequestedForBuy(IItem item) => ItemRequestedForBuy?.Invoke(item);
-
         public void OnEquipItem(IItem item) => EquipItem?.Invoke(item);
-
         public int OnRatingScoreReceived(int level) => RatingScoreReceived?.Invoke(level) ?? 0;
-
         public void OnChangeQuality(int quality) => ChangeQuality?.Invoke(quality);
-
         public void OnChangeVolume(float volume) => ChangeVolume?.Invoke(volume);
-
         public void OnButtonButtonAgainClick() => ClickedButtonAgainLevel?.Invoke();
-
         public void OnButtonBackMainMenuClick() => ClickedButtonBackMainMenu?.Invoke();
-
         public void OnMonitorInputRotation(float value) => MonitorInputRotation?.Invoke(value);
-
         public IForceOfThrowingKnife OnMonitorInputTouchBegin() => MonitorInputTouchBegin?.Invoke();
-
         public void OnMonitorInputTouchEnded() => MonitorInputTouchEnded?.Invoke();
 
-        public void UnregisterAllEvents()
+        public void UnregisterLevelManagerEvents()
         {
             LevelAmountRequestedForDisplay = null;
             PressingTheSelectedLevel = null;
+            ClickedButtonBackMainMenu = null;
+            ClickedButtonAgainLevel = null;
+        }
+
+        public void UnregisterPlayerProgressionEvents()
+        {
             UnlockedLevels = null;
-            ItemsRequestedForDisplay = null;
-            ItemRequestedForBuy = null;
-            EquipItem = null;
             RatingScoreReceived = null;
-            ChangeQuality = null;
-            ChangeVolume = null;
-            ItemIsBought = null;
-            MonitorMoney = null;
-            MonitorBestScore = null;
+        }
+
+        public void UnregisterPlayerEvents()
+        {
             MonitorInputRotation = null;
             MonitorInputTouchBegin = null;
             MonitorInputTouchEnded = null;
-            ClickedButtonBackMainMenu = null;
-            ClickedButtonAgainLevel = null;
-            FinishedLevel = null;
-            DisplayAmountKnives = null;
-            DisplayRatingScore = null;
+        }
+
+        public void UnregisterShopEvents()
+        {
+            ItemsRequestedForDisplay = null;
+            ItemRequestedForBuy = null;
+            EquipItem = null;
+        }
+
+        public void UnregisterSettingsEvents()
+        {
+            ChangeQuality = null;
+            ChangeVolume = null;
+        }
+
+        public void UnregisterSettingsMenuEvents()
+        {
             CurrentQuality = null;
             CurrentVolume = null;
         }

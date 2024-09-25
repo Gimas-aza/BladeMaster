@@ -40,6 +40,11 @@ namespace Assets.EntryPoint
             LoadMainMenuLevel();
         }
 
+        private void OnDestroy()
+        {
+            UnsubscribeFromLevelManagerEvents();
+        }
+
         private void InitializeFields()
         {
             _container = new DIContainer();
@@ -60,7 +65,7 @@ namespace Assets.EntryPoint
             _container.RegisterSingleton(_ => _presenter as Presenter);
             _container.RegisterSingleton(_ => _levelManager as ILevelInfoProvider);
             _container.RegisterTransient(c => 
-                c.Resolve<ILevelInfoProvider>().GetLevelIndex() == 0 ? StateView.MainMenu : StateView.GameMenu);
+                c.Resolve<ILevelInfoProvider>().GetLevelIndex() == 0 ? StateGame.MainMenu : StateGame.GameMenu);
         }
 
         private async UniTask LoadDataAsync()
@@ -86,6 +91,11 @@ namespace Assets.EntryPoint
             _levelManager.LevelLoaded += OnLevelLoaded;
         }
 
+        private void UnsubscribeFromLevelManagerEvents()
+        {
+            _levelManager.LevelLoaded -= OnLevelLoaded;
+        }
+
         private void LoadMainMenuLevel()
         {
             _levelManager.LoadLevel(0);
@@ -106,14 +116,14 @@ namespace Assets.EntryPoint
 
         private void InitializeComponents(DIContainer containerChildren)
         {
-            var stateView = containerChildren.Resolve<StateView>();
+            var stateView = containerChildren.Resolve<StateGame>();
 
             switch (stateView)
             {
-                case StateView.MainMenu:
+                case StateGame.MainMenu:
                     InitializeMainMenuComponents(containerChildren);
                     break;
-                case StateView.GameMenu:
+                case StateGame.GameMenu:
                     InitializeGameMenuComponents(containerChildren);
                     break;
             }

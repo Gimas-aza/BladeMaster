@@ -1,21 +1,19 @@
 using System;
 using System.Collections.Generic;
+using Assets.MVP.State;
 using UnityEngine.UIElements;
 
 namespace Assets.MVP
 {
     public class UIElements
     {
-        public Dictionary<StateMenu, VisualElement> Menus;
+        public Dictionary<Type, VisualElement> Menus;
         public VisualElement ContainerButtonsStartLevel;
         public VisualElement ViewItem;
         public VisualElement ContainerItemsShop;
         public VisualElement SettingsMenu;
         public VisualElement GameMenu;
-        public VisualElement GameMenuInfo;
         public List<VisualElement> GameStatistic;
-        public VisualElement PauseMenu;
-        public VisualElement FinishedLevelMenu;
         public List<VisualElement> RatingScoreEmpty;
         public List<VisualElement> RatingScoreFull;
 
@@ -29,18 +27,16 @@ namespace Assets.MVP
 
         public Button ButtonPlay;
         public Button ButtonShop;
-        public Button ButtonSettings;
+        public Dictionary<Type, Button> ButtonsSettings;
         public Button ButtonExit;
-        public List<Button> ButtonBack;
+        public Dictionary<Type, Button> ButtonsBackMainMenu;
+        public Dictionary<Type, Button> ButtonsBack;
         public List<Button> ButtonsStartLevel;
         public Button ButtonBuyItem;
         public Button CurrentButtonItem;
         public Button ButtonPause;
         public Button ButtonContinue;
-        public List<Button> ButtonsSettings;
-        public List<Button> ButtonsBackMainMenu;
         public Button ButtonAgain;
-        public Button ButtonBackGameMenu;
 
         public DropdownField DropdownQuality;
         public Slider SliderVolume;
@@ -49,12 +45,31 @@ namespace Assets.MVP
 
         public UIElements(VisualElement root)
         {
-            Menus = new Dictionary<StateMenu, VisualElement>
+            Menus = new Dictionary<Type, VisualElement>
             {
-                { StateMenu.MainMenu, root.Q<VisualElement>("MainMenu") },
-                { StateMenu.LevelsMenu, root.Q<VisualElement>("LevelsMenu") },
-                { StateMenu.ShopMenu, root.Q<VisualElement>("ShopMenu") },
-                { StateMenu.SettingsMenu, root.Q<VisualElement>("SettingsMenu") }
+                { typeof(StateMainMenu), root.Q<VisualElement>("MainMenu") },
+                { typeof(StateLevelsMenu), root.Q<VisualElement>("LevelsMenu") },
+                { typeof(StateShopMenu), root.Q<VisualElement>("ShopMenu") },
+                { typeof(StateSettingsMenu), root.Q<VisualElement>("SettingsMenu") },
+                { typeof(StatePauseMenu), root.Q<VisualElement>("PauseMenu") },
+                { typeof(StateFinishedMenu), root.Q<VisualElement>("FinishedLevelMenu") }
+            };
+            ButtonsBack = new Dictionary<Type, Button>
+            {
+                { typeof(StateLevelsMenu), Menus[typeof(StateLevelsMenu)].Q<Button>("ButtonBack") },
+                { typeof(StateShopMenu), Menus[typeof(StateShopMenu)].Q<Button>("ButtonBack") },
+                { typeof(StateSettingsMenu), Menus[typeof(StateSettingsMenu)].Q<Button>("ButtonBack") }
+            };
+            ButtonsSettings = new Dictionary<Type, Button>
+            {
+                { typeof(StateMainMenu), Menus[typeof(StateMainMenu)].Q<Button>("ButtonSettings") },
+                { typeof(StatePauseMenu), Menus[typeof(StatePauseMenu)].Q<Button>("ButtonSettings") },
+                { typeof(StateFinishedMenu), Menus[typeof(StateFinishedMenu)].Q<Button>("ButtonSettings") }
+            };
+            ButtonsBackMainMenu = new Dictionary<Type, Button>
+            {
+                { typeof(StatePauseMenu), Menus[typeof(StatePauseMenu)].Q<Button>("ButtonBackMainMenu") },
+                { typeof(StateFinishedMenu), Menus[typeof(StateFinishedMenu)].Q<Button>("ButtonBackMainMenu") }
             };
 
             ContainerButtonsStartLevel = root.Q<VisualElement>("ContainerButtonsStartLevel");
@@ -62,12 +77,9 @@ namespace Assets.MVP
             ContainerItemsShop = root.Q<VisualElement>("GroupBoxItemShop");
             SettingsMenu = root.Q<VisualElement>("SettingsMenu");
             GameMenu = root.Q<VisualElement>("GameMenu");
-            GameMenuInfo = root.Q<VisualElement>("GameMenu-Info");
             GameStatistic = root.Query<VisualElement>("Statistic").ToList();
-            PauseMenu = root.Q<VisualElement>("PauseMenu");
-            FinishedLevelMenu = root.Q<VisualElement>("FinishedLevelMenu");
-            RatingScoreEmpty = FinishedLevelMenu.Query<VisualElement>("RatingScoreEmpty").ToList();
-            RatingScoreFull = FinishedLevelMenu.Query<VisualElement>("RatingScoreFull").ToList();
+            RatingScoreEmpty = Menus[typeof(StateFinishedMenu)].Query<VisualElement>("RatingScoreEmpty").ToList();
+            RatingScoreFull = Menus[typeof(StateFinishedMenu)].Query<VisualElement>("RatingScoreFull").ToList();
 
             BestScore = root.Q<Label>("LabelBestScore");
             Counter = root.Query<Label>("Counter").ToList();
@@ -79,17 +91,12 @@ namespace Assets.MVP
 
             ButtonPlay = root.Q<Button>("ButtonPlay");
             ButtonShop = root.Q<Button>("ButtonShop");
-            ButtonSettings = root.Q<Button>("ButtonSettings");
             ButtonExit = root.Q<Button>("ButtonExit");
-            ButtonBack = root.Query<Button>("ButtonBack").ToList();
             ButtonsStartLevel = new List<Button>();
             ButtonBuyItem = root.Q<Button>("ButtonBuy");
             ButtonPause = root.Q<Button>("ButtonPause");
             ButtonContinue = root.Q<Button>("ButtonContinue");
-            ButtonsSettings = root.Query<Button>("ButtonSettings").ToList();
-            ButtonsBackMainMenu = root.Query<Button>("ButtonBackMainMenu").ToList();
             ButtonAgain = root.Q<Button>("ButtonAgain");
-            ButtonBackGameMenu = SettingsMenu.Q<Button>("ButtonBack");
 
             DropdownQuality = root.Q<DropdownField>("DropdownQuality");
             SliderVolume = root.Q<Slider>("SliderVolume");

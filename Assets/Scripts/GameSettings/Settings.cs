@@ -11,6 +11,7 @@ namespace Assets.GameSettings
         private IAudioSettings _audioSource;
         private ISaveSystem _saveSystem;
         private ISettingsData _settingsData;
+        private IUIEvents _uiEvents;
 
         public void Init(IResolver container)
         {
@@ -26,12 +27,18 @@ namespace Assets.GameSettings
 
         public void SubscribeToEvents(IResolver container)
         {
-            var uiEvents = container.Resolve<IUIEvents>();
-            uiEvents.ChangeQuality += ChangeQuality;
-            uiEvents.ChangeVolume += ChangeVolume;
+            _uiEvents = container.Resolve<IUIEvents>();
+            _uiEvents.UnregisterSettingsEvents();
+            _uiEvents.ChangeQuality += ChangeQuality;
+            _uiEvents.ChangeVolume += ChangeVolume;
 
-            uiEvents.CurrentQuality?.Invoke(_qualityIndex);
-            uiEvents.CurrentVolume?.Invoke(_volume);
+            _uiEvents.CurrentQuality?.Invoke(_qualityIndex);
+            _uiEvents.CurrentVolume?.Invoke(_volume);
+        }
+
+        ~Settings()
+        {
+            _uiEvents.UnregisterSettingsEvents();
         }
 
         private void ChangeQuality(int index)

@@ -8,30 +8,30 @@ namespace Assets.LevelManager
 {
     public class GameSceneManager : LevelManager
     {
-        protected override int MaxLevelIndex { get; set; }
+        protected override int _maxLevelIndex { get; set; }
 
         private readonly int _ignoredSceneIndex = 2;
         private readonly int _sceneIndexOffset = 1;
 
         public GameSceneManager()
         {
-            MaxLevelIndex = SceneManager.sceneCountInBuildSettings - _ignoredSceneIndex;
+            _maxLevelIndex = SceneManager.sceneCountInBuildSettings - _ignoredSceneIndex;
         }
 
         public override async void LoadNextLevel()
         {
-            if (CurrentLevelIndex == MaxLevelIndex)
+            if (_currentLevelIndex == _maxLevelIndex)
                 return;
 
-            await LoadSceneAsync(NextLevelIndex);
+            await LoadSceneAsync(_nextLevelIndex);
         }
 
         public override async void LoadPreviousLevel()
         {
-            if (CurrentLevelIndex == PreviousLevelIndex)
+            if (_currentLevelIndex == _previousLevelIndex)
                 return;
 
-            await LoadSceneAsync(PreviousLevelIndex);
+            await LoadSceneAsync(_previousLevelIndex);
         }
 
         public override async void LoadLevel(int sceneIndex)
@@ -44,14 +44,14 @@ namespace Assets.LevelManager
 
         public override async void ReloadingCurrentLevel()
         {
-            await LoadSceneAsync(CurrentLevelIndex);
+            await LoadSceneAsync(_currentLevelIndex);
         }
 
         private async UniTask LoadSceneAsync(int sceneIndex)
         {
             OnLevelStartedToLoad();
 
-            CurrentLevelIndex = sceneIndex;
+            _currentLevelIndex = sceneIndex;
             await SceneManager.LoadSceneAsync(sceneIndex + _sceneIndexOffset);
 
             OnLevelLoaded();
@@ -59,7 +59,7 @@ namespace Assets.LevelManager
 
         private bool IsValidSceneIndex(int sceneIndex)
         {
-            return sceneIndex >= 0 && sceneIndex <= MaxLevelIndex && sceneIndex != EntryPointIndex;
+            return sceneIndex >= 0 && sceneIndex <= _maxLevelIndex && sceneIndex != _entryPointIndex;
         }
     }
 }

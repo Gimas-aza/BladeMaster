@@ -22,26 +22,22 @@ namespace Assets.Audio
 
         public void Init(IResolver container)
         {
-            var currentState = container.Resolve<StateView>();
+            var currentState = container.Resolve<StateGame>();
+            _audioSource = GetComponent<AudioSource>();
 
             SetMusicForState(currentState);
             _audioSource.loop = true;
             _audioSource.Play();
         }
 
-        private void Awake()
-        {
-            _audioSource = GetComponent<AudioSource>();
-        }
-
-        private void SetMusicForState(StateView state)
+        private void SetMusicForState(StateGame state)
         {
             switch (state)
             {
-                case StateView.MainMenu:
+                case StateGame.MainMenu:
                     _audioSource.resource = _mainMenuMusic;
                     break;
-                case StateView.GameMenu:
+                case StateGame.GameMenu:
                     _audioSource.resource = _gameMusic;
                     break;
                 default:

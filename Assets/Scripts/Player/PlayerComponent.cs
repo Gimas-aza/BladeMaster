@@ -1,13 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.EntryPoint;
 using Assets.GameProgression;
-using Assets.MVP;
 using Assets.MVP.Model;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Assets.Player
 {
@@ -25,7 +21,7 @@ namespace Assets.Player
 
         private Rigidbody _rigidbody;
         private float _touchStartTime;
-        private UnityAction<IAmountOfKnives> _displayAmountKnives;
+        private IUIEvents _uiEvents;
 
         public void Init(IResolver container)
         {
@@ -34,25 +30,26 @@ namespace Assets.Player
 
             CheckKnivesPoolInitialization();
             _knivesPool.CreateKnife(knife.GetGameObject(), _amountOfKnivesOnLevels[levelIndex - 1]);
+            _rigidbody = GetComponent<Rigidbody>();
         }
 
         public void SubscribeToEvents(IResolver container)
         {
-            var uiEvents = container.Resolve<IUIEvents>();
+            _uiEvents = container.Resolve<IUIEvents>();
 
-            uiEvents.MonitorInputRotation += InputRotation;
-            uiEvents.MonitorInputTouchBegin += InputTouchBegin;
-            uiEvents.MonitorInputTouchEnded += InputTouchEnded;
+            _uiEvents.UnregisterPlayerEvents();
+            _uiEvents.MonitorInputRotation += InputRotation;
+            _uiEvents.MonitorInputTouchBegin += InputTouchBegin;
+            _uiEvents.MonitorInputTouchEnded += InputTouchEnded;
 
-            _displayAmountKnives = uiEvents.DisplayAmountKnives;
-            _displayAmountKnives?.Invoke(_knivesPool);
+            _uiEvents.DisplayAmountKnives?.Invoke(_knivesPool);
         }
 
         public List<IWeaponEvents> GetKnives() => _knivesPool.GetKnives().Cast<IWeaponEvents>().ToList();
 
-        private void Awake()
+        private void OnDestroy()
         {
-            _rigidbody = GetComponent<Rigidbody>();
+            _uiEvents.UnregisterPlayerEvents();
         }
 
         private void InputRotation(float acceleration)
@@ -83,7 +80,7 @@ namespace Assets.Player
         private void ThrowKnife(float force)
         {
             _knivesPool.ThrowKnife(force);
-            _displayAmountKnives?.Invoke(_knivesPool);
+            _uiEvents.DisplayAmountKnives?.Invoke(_knivesPool);
         }
 
         private void CheckKnivesPoolInitialization()

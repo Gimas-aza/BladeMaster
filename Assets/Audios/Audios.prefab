@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7489800398788010707}
   - component: {fileID: 8016360538931258541}
   m_Layer: 0
-  m_Name: Sounds
+  m_Name: Audios
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,10 +45,10 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: d40afce9843f937619ef0853cb581034, type: 3}
   m_Resource: {fileID: 8300000, guid: d40afce9843f937619ef0853cb581034, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 0.5
+  m_PlayOnAwake: 0
+  m_Volume: 0
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

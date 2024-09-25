@@ -1,6 +1,6 @@
 namespace Assets.MVP
 {
-    public enum StateView
+    public enum StateGame
     {
         MainMenu,
         GameMenu

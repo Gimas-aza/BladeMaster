@@ -18,14 +18,13 @@ namespace Assets.MVP
         private UIEvents _uiEvents;
         private UIElements _uiElements;
         private StateMachine _stateMachine;
-        private StateView _currentState;
+        private StateGame _currentState;
         private Presenter _presenter;
         private VisualElement _root;
-        private IStateView _stateView;
 
         public void Init(IResolver container)
         {
-            _currentState = container.Resolve<StateView>();
+            _currentState = container.Resolve<StateGame>();
             _presenter = container.Resolve<Presenter>();
             _root = GetComponent<UIDocument>().rootVisualElement;
             _container = new DIContainer();
@@ -41,10 +40,10 @@ namespace Assets.MVP
         {
             switch (_currentState)
             {
-                case StateView.MainMenu:
+                case StateGame.MainMenu:
                     _stateMachine.ChangeState<StateMainMenu>();
                     break;
-                case StateView.GameMenu:
+                case StateGame.GameMenu:
                     _stateMachine.ChangeState<StateGameMenu>();
                     break;
             }

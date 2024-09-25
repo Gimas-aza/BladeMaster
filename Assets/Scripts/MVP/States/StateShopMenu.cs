@@ -1,4 +1,3 @@
-using System;
 using Assets.DI;
 using Assets.ShopManagement;
 using Cysharp.Threading.Tasks;
@@ -10,14 +9,17 @@ namespace Assets.MVP.State
     {
         private VisualTreeAsset _templateItemShop;
         private UIElements _uiElements;
+        private StateMachine _stateMachine;
         private UIEvents _uiEvents;
 
         public void Init(StateMachine stateMachine, UIElements elements, UIEvents events, DIContainer container)
         {
+            _stateMachine = stateMachine;
             _uiEvents = events;
             _uiElements = elements;
             _templateItemShop = container.Resolve<VisualTreeAsset>("templateItemShop");
 
+            InitializeUI();
             SubscribeToMonitorUpdate();
 
             stateMachine.RegisterEvents();
@@ -33,6 +35,16 @@ namespace Assets.MVP.State
         public void Exit()
         {
             HideMenu();
+        }
+
+        private void InitializeUI()
+        {
+            _uiElements.ButtonsBack[typeof(StateShopMenu)].clicked += BackToPreviousState;
+        }
+
+        private void BackToPreviousState()
+        {
+            _stateMachine.BackToPreviousState();
         }
 
         private void SubscribeToMonitorUpdate()
@@ -103,12 +115,12 @@ namespace Assets.MVP.State
 
         private void ShowMenu()
         {
-            _uiElements.Menus[StateMenu.ShopMenu].style.display = DisplayStyle.Flex;
+            _uiElements.Menus[typeof(StateShopMenu)].style.display = DisplayStyle.Flex;
         }
 
         private void HideMenu()
         {
-            _uiElements.Menus[StateMenu.ShopMenu].style.display = DisplayStyle.None;
+            _uiElements.Menus[typeof(StateShopMenu)].style.display = DisplayStyle.None;
         }
     }
 }
