@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using Assets.Enemy;
-using Assets.Target;
 
-namespace Assets.GameProgression
+namespace Assets.GameProgression.Interfaces
 {
     public interface IEnemySpawner
     {

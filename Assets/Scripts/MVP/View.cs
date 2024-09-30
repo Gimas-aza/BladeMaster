@@ -1,6 +1,6 @@
 using Assets.DI;
 using Assets.EntryPoint;
-using Assets.MVP.Model;
+using Assets.EntryPoint.Model;
 using Assets.MVP.State;
 using UnityEngine;
 using UnityEngine.UIElements;

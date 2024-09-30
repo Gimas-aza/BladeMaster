@@ -8,9 +8,9 @@ namespace Assets.ObjectCreation
     {
         private IObjectProvider _objectProvider;
 
-        public ObjectFactory()
+        public ObjectFactory(IObjectProvider objectProvider)
         {
-            _objectProvider = new AddressablesProvider();
+            _objectProvider = objectProvider;
         }
         
         public async UniTask<T> CreateObjectAsync<T>() where T : Behaviour

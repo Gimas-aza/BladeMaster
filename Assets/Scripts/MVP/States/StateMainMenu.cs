@@ -1,10 +1,9 @@
 using Assets.DI;
-using Assets.MVP.State;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Assets.MVP
+namespace Assets.MVP.State
 {
     public class StateMainMenu : IStateView
     {

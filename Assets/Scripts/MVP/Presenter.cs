@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Assets.DI;
 using Assets.EntryPoint;
-using Assets.MVP.Model;
+using Assets.EntryPoint.Model;
 
 namespace Assets.MVP
 {

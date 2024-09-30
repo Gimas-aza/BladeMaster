@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Assets.MVP;
 using UnityEngine;
 
@@ -19,7 +18,7 @@ namespace Assets.Player
             _knivesIndex = 0;
         }
 
-        public void CreateKnife(GameObject templateKnife, int amount)
+        public void CreateKnife(IKnife templateKnife, int amount)
         {
             if (templateKnife == null)
             {
@@ -29,7 +28,7 @@ namespace Assets.Player
 
             for (var i = 0; i < amount; i++)
             {
-                var newKnifeObject = Instantiate(templateKnife, transform);
+                var newKnifeObject = Instantiate(templateKnife.GetGameObject(), transform);
                 if (!newKnifeObject.TryGetComponent<IKnife>(out var newKnife))
                 {
                     Debug.LogError("KnifeComponent is missing on the instantiated object");

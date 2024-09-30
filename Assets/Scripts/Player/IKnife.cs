@@ -1,6 +1,5 @@
-using Assets.Target;
+using Assets.GameProgression.Interfaces;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Assets.Player
 {
@@ -11,5 +10,6 @@ namespace Assets.Player
         void SetGlobalParent();
         bool IsActive();
         void Throw(float force);
+        GameObject GetGameObject();
     }
 }

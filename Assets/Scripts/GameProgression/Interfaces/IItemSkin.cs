@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Assets.Knife
+namespace Assets.GameProgression.Interfaces
 {
     public interface IItemSkin
     {

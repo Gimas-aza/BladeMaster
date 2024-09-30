@@ -1,6 +1,4 @@
-using Assets.EntryPoint;
-
-namespace Assets.MVP.Model
+namespace Assets.EntryPoint.Model
 {
     public interface IModel
     {

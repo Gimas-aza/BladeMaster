@@ -4,7 +4,7 @@ using Assets.GameProgression;
 using Assets.Knife;
 using Assets.LevelManager;
 using Assets.MVP;
-using Assets.MVP.Model;
+using Assets.EntryPoint.Model;
 using Assets.Player;
 using Assets.ShopManagement;
 using Assets.GameSettings;
@@ -14,6 +14,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Assets.DI;
 using Assets.ObjectCreation;
+using Assets.GameProgression.Interfaces;
 
 namespace Assets.EntryPoint
 {
@@ -49,7 +50,7 @@ namespace Assets.EntryPoint
         {
             _container = new DIContainer();
             _models = new List<IModel>();
-            _objectFactory = new ObjectFactory();
+            _objectFactory = new ObjectFactory(new AddressablesProvider());
             _loadSystem = new DataStorageSystem(new StorageXML());
             _levelManager = new GameSceneManager();
             _presenter = new Presenter();
@@ -160,7 +161,7 @@ namespace Assets.EntryPoint
             });
             containerChildren.RegisterSingleton((c) => {
                 var knife = _objectFactory.CreateObject<KnifeComponent>();
-                return knife as IKnifeObject;
+                return knife as IKnife;
             });
             containerChildren.RegisterSingleton((c) => {
                 var player = _objectFactory.CreateObject<PlayerComponent>() as IInitializer;

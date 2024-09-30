@@ -1,3 +1,4 @@
+using Assets.GameProgression.Interfaces;
 using Assets.Target;
 using UnityEngine;
 

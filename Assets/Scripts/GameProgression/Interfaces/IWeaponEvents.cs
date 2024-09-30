@@ -2,7 +2,7 @@ using Assets.Target;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Assets.Player
+namespace Assets.GameProgression.Interfaces
 {
     public interface IWeaponEvents
     {

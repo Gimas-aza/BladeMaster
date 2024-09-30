@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Assets.MVP;
 using Assets.ShopManagement;
 using UnityEngine.Events;
 
-namespace Assets.MVP.Model
+namespace Assets.EntryPoint.Model
 {
     public interface IUIEvents
     {

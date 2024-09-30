@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.EntryPoint;
-using Assets.GameProgression;
-using Assets.Knife;
-using Assets.MVP.Model;
+using Assets.EntryPoint.Model;
 using UnityEngine;
 using UnityEngine.Events;
+using Assets.GameProgression.Interfaces;
 
 namespace Assets.ShopManagement
 {
@@ -14,7 +13,6 @@ namespace Assets.ShopManagement
     {
         [SerializeField] private List<ItemComponent> _items;
 
-        private IItemSkin _equippedItem;
         private ISaveSystem _saveSystem;
         private IUIEvents _uiEvents;
 
@@ -51,10 +49,10 @@ namespace Assets.ShopManagement
 
         public IItemSkin GetEquippedItem()
         {
-            _equippedItem = _items.FirstOrDefault(x => x.IsEquipped) ?? GetDefaultItem();
+            var equippedItem = _items.FirstOrDefault(x => x.IsEquipped) ?? GetDefaultItem();
 
             _saveSystem.SaveAsync();
-            return _equippedItem;
+            return equippedItem;
         }
 
         private void OnDestroy()

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Assets.MVP.Model;
+using Assets.EntryPoint.Model;
 using Assets.ShopManagement;
 using UnityEngine.Events;
 

@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.EntryPoint;
-using Assets.Knife;
 using Assets.MVP;
-using Assets.MVP.Model;
-using Assets.Player;
+using Assets.EntryPoint.Model;
 using Assets.Target;
 using UnityEngine;
+using Assets.GameProgression.Interfaces;
 
 namespace Assets.GameProgression
 {
@@ -80,11 +79,13 @@ namespace Assets.GameProgression
             var knivesPool = container.Resolve<IKnivesPool>();
 
             _currentLevel = container.Resolve<ILevelInfoProvider>().GetLevelIndex();
+            _dataStorage = container.Resolve<IPlayerProgressionData>();
             _enemies = spawnerEnemies.GetEnemies();
             _knives = knivesPool.GetKnives();
             ResetGameState();
 
             _maxCounter = CalculateMaxCounter();
+            LoadPlayerData();
             InitializeKnives();
         }
 

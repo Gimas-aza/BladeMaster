@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.EntryPoint;
-using Assets.GameProgression;
-using Assets.MVP.Model;
+using Assets.EntryPoint.Model;
 using UnityEngine;
+using Assets.GameProgression.Interfaces;
 
 namespace Assets.Player
 {
@@ -25,11 +25,11 @@ namespace Assets.Player
 
         public void Init(IResolver container)
         {
-            var knife = container.Resolve<IKnifeObject>();
+            var knife = container.Resolve<IKnife>();
             int levelIndex = container.Resolve<ILevelInfoProvider>().GetLevelIndex();
 
             CheckKnivesPoolInitialization();
-            _knivesPool.CreateKnife(knife.GetGameObject(), _amountOfKnivesOnLevels[levelIndex - 1]);
+            _knivesPool.CreateKnife(knife, _amountOfKnivesOnLevels[levelIndex - 1]);
             _rigidbody = GetComponent<Rigidbody>();
         }
 

@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Assets.Knife;
-using Assets.ShopManagement;
 
 namespace Assets.GameProgression
 {

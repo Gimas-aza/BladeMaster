@@ -1,8 +1,7 @@
 using System;
-using Assets.Knife;
 using UnityEngine.Events;
 
-namespace Assets.GameProgression
+namespace Assets.GameProgression.Interfaces
 {
     public interface IShop
     {

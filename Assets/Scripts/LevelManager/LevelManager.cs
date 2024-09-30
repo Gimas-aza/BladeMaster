@@ -1,5 +1,5 @@
 using Assets.EntryPoint;
-using Assets.MVP.Model;
+using Assets.EntryPoint.Model;
 using UnityEngine.Events;
 
 namespace Assets.LevelManager

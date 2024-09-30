@@ -4,7 +4,7 @@ using UnityEngine.Events;
 namespace Assets.Knife
 {
     [RequireComponent(typeof(Collider))]
-    public class TriggerHandler : MonoBehaviour
+    public class TriggerHandlerComponent : MonoBehaviour
     {
         public event UnityAction<Collider> TriggerEntered;
 

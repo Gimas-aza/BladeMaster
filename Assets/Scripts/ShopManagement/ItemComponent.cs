@@ -1,6 +1,5 @@
 using System;
-using Assets.EntryPoint;
-using Assets.Knife;
+using Assets.GameProgression.Interfaces;
 using UnityEngine;
 
 namespace Assets.ShopManagement

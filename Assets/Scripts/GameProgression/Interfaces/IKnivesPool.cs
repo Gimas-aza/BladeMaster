@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using Assets.Player;
 
-namespace Assets.GameProgression
+namespace Assets.GameProgression.Interfaces
 {
     public interface IKnivesPool
     {

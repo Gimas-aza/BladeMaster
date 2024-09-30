@@ -6,10 +6,10 @@ using UnityEngine.Events;
 
 namespace Assets.Knife
 {
-    public class KnifeComponent : MonoBehaviour, IKnife, IKnifeObject
+    public class KnifeComponent : MonoBehaviour, IKnife
     {
         [SerializeField] private List<Rigidbody> _rigidbodies;
-        [SerializeField] private TriggerHandler _triggerHandler;
+        [SerializeField] private TriggerHandlerComponent _triggerHandler;
 
         private bool _isThrown = false;
         private GameObject _skin;

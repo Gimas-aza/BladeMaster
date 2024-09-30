@@ -1,4 +1,4 @@
-namespace Assets.Target
+namespace Assets.GameProgression.Interfaces
 {
     public interface IPointsPerActionProvider
     {

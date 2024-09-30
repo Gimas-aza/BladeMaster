@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.EntryPoint;
-using Assets.GameProgression;
-using Assets.Target;
+using Assets.GameProgression.Interfaces;
 using UnityEngine;
 
 namespace Assets.Enemy
