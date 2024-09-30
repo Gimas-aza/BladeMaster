@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <DataStorage xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Money>5360</Money>
+  <Money>10</Money>
   <BestScore>160</BestScore>
   <FinishedLevels>1</FinishedLevels>
   <UnlockedLevels>2</UnlockedLevels>
@@ -10,15 +10,15 @@
   <Items>
     <ItemData>
       <IsBought>true</IsBought>
-      <IsEquipped>false</IsEquipped>
-    </ItemData>
-    <ItemData>
-      <IsBought>true</IsBought>
-      <IsEquipped>false</IsEquipped>
-    </ItemData>
-    <ItemData>
-      <IsBought>true</IsBought>
       <IsEquipped>true</IsEquipped>
+    </ItemData>
+    <ItemData>
+      <IsBought>false</IsBought>
+      <IsEquipped>false</IsEquipped>
+    </ItemData>
+    <ItemData>
+      <IsBought>false</IsBought>
+      <IsEquipped>false</IsEquipped>
     </ItemData>
   </Items>
   <QualityIndex>2</QualityIndex>

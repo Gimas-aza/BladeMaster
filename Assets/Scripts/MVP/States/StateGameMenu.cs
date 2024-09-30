@@ -134,16 +134,14 @@ namespace Assets.MVP.State
             _uiEvents.OnMonitorInputTouchEnded();
         }
 
-        private async void SetCount(int amount)
+        private void SetCount(int amount)
         {
-            await UniTask.WaitForEndOfFrame();
             _uiElements.Counter.ForEach(counter => counter.text = $"{amount}");
             AdjustLayout();
         }
 
-        private async void SetMoney(int amount)
+        private void SetMoney(int amount)
         {
-            await UniTask.WaitForEndOfFrame();
             _uiElements.Money.ForEach(money => money.text = $"{amount}");
             AdjustLayout();
         }
@@ -177,9 +175,8 @@ namespace Assets.MVP.State
             }
         }
 
-        private async void SetAmountKnives(IAmountOfKnives amountOfKnives)
+        private void SetAmountKnives(IAmountOfKnives amountOfKnives)
         {
-            await UniTask.WaitForEndOfFrame();
             _uiElements.AmountKnives.text = $"{amountOfKnives.Amount}/{amountOfKnives.MaxAmount}";
         }
 

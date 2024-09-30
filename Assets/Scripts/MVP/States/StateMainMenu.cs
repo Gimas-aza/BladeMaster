@@ -1,5 +1,4 @@
 using Assets.DI;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -46,9 +45,8 @@ namespace Assets.MVP.State
             _uiEvents.MonitorBestScore += SetBestScore;
         }
 
-        private async void SetBestScore(int amount)
+        private void SetBestScore(int amount)
         {
-            await UniTask.WaitForEndOfFrame();
             _uiElements.BestScore.text = $"{amount}";
         }
 

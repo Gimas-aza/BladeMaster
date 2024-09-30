@@ -162,12 +162,13 @@
 }
 
 .ShopMenu__ViewItem {
-    width: 45%;
+    width: 250px;
     margin-top: 2%;
-    height: 250px;
-    background-image: url("project://database/Assets/UI/Sprites/KnifeIcon/8c25e4cd156d4472a3563ff4a4eee117-transformed.png?fileID=2800000&guid=e2cf8e6e6aa5919b58ad4a04c000ff0f&type=3#8c25e4cd156d4472a3563ff4a4eee117-transformed");
+    height: 350px;
+    background-image: url("project://database/Assets/UI/Sprites/KnifeIcon/Item1.png?fileID=21300000&guid=8dd3ca32378566db0b9f1ce3271db31a&type=3#Item1");
     align-items: center;
     justify-content: center;
+    -unity-background-scale-mode: scale-to-fit;
 }
 
 .ShopMenu__Button {
@@ -227,6 +228,7 @@
     align-items: flex-start;
     flex-grow: 1;
     flex-shrink: 0;
+    background-image: url("project://database/Assets/UI/Sprites/KnifeIcon/Item1.png?fileID=21300000&guid=8dd3ca32378566db0b9f1ce3271db31a&type=3#Item1");
 }
 
 .ShopMenu__Item:focus {
@@ -234,11 +236,11 @@
     border-width: 4px;
 }
 
-.ShopMenu__Item-Bought {
+.ShopMenu__Item-Equipped {
     background-color: rgb(23, 59, 69);
 }
 
-.ShopMenu__Item-Bought:focus {
+.ShopMenu__Item-Equipped:focus {
     background-color: rgb(10, 26, 31);
 }
 

@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using Assets.DI;
 using Assets.ShopManagement;
-using Cysharp.Threading.Tasks;
 using UnityEngine.UIElements;
 
 namespace Assets.MVP.State
@@ -11,6 +11,7 @@ namespace Assets.MVP.State
         private UIElements _uiElements;
         private StateMachine _stateMachine;
         private UIEvents _uiEvents;
+        private List<Button> _buttonsItems;
 
         public void Init(StateMachine stateMachine, UIElements elements, UIEvents events, DIContainer container)
         {
@@ -18,6 +19,7 @@ namespace Assets.MVP.State
             _uiEvents = events;
             _uiElements = elements;
             _templateItemShop = container.Resolve<VisualTreeAsset>("templateItemShop");
+            _buttonsItems = new List<Button>();
 
             InitializeUI();
             SubscribeToMonitorUpdate();
@@ -65,9 +67,10 @@ namespace Assets.MVP.State
                 newButtonItem.style.backgroundImage = new StyleBackground(item.Icon);
                 newButtonItem.clicked += () => SetButtonItem(item, newButtonItem);
                 _uiElements.CurrentButtonItem = newButtonItem;
+                _buttonsItems.Add(newButtonItem);
 
-                if (item.IsBought)
-                    _uiElements.CurrentButtonItem.AddToClassList("ShopMenu__Item-Bought");
+                if (item.IsEquipped)
+                    _uiElements.CurrentButtonItem.AddToClassList(_uiElements.ClassItemEquip);
 
                 _uiElements.ContainerItemsShop.Add(newButtonItem);
             }
@@ -75,42 +78,49 @@ namespace Assets.MVP.State
 
         private void SetButtonItem(IItem item, Button buttonItem = null)
         {
-            if (_uiElements.PreventButtonBuyItem != null)
+            if (_uiElements.TemporaryBuyItemButton != null)
                 UnsetButtonBuyItem();
 
             buttonItem ??= _uiElements.CurrentButtonItem;
             _uiElements.ViewItem.style.backgroundImage = new StyleBackground(item.Icon);
+            _uiElements.ButtonBuyItem.enabledSelf = true;
             if (!item.IsBought)
                 SetItemForBuy(item);
             else
                 SetItemForEquip(item, buttonItem);
-
-            _uiElements.ButtonBuyItem.enabledSelf = true;
         }
 
         private void UnsetButtonBuyItem() =>
-            _uiElements.ButtonBuyItem.clicked -= _uiElements.PreventButtonBuyItem;
+            _uiElements.ButtonBuyItem.clicked -= _uiElements.TemporaryBuyItemButton;
 
         private void SetItemForBuy(IItem item)
         {
             _uiElements.ButtonBuyItem.text = $"Купить за {item.Price}";
-            _uiElements.PreventButtonBuyItem = () => _uiEvents.OnItemRequestedForBuy(item);
-            _uiElements.ButtonBuyItem.clicked += _uiElements.PreventButtonBuyItem;
+            _uiElements.TemporaryBuyItemButton = () => _uiEvents.OnItemRequestedForBuy(item);
+            _uiElements.ButtonBuyItem.clicked += _uiElements.TemporaryBuyItemButton;
         }
 
         private void SetItemForEquip(IItem item, Button buttonItem)
         {
             _uiElements.ButtonBuyItem.text = "Экипировать";
-            buttonItem.AddToClassList("ShopMenu__Item-Bought");
-            _uiElements.PreventButtonBuyItem = () => _uiEvents.OnEquipItem(item);
-            _uiElements.ButtonBuyItem.clicked += _uiElements.PreventButtonBuyItem;
+            _uiElements.TemporaryBuyItemButton = () => OnEquipItem(item, buttonItem);
+            _uiElements.ButtonBuyItem.clicked += _uiElements.TemporaryBuyItemButton;
+            if (item.IsEquipped)
+                OnEquipItem(item, buttonItem);
         }
 
-        private async void SetMoney(int amount)
+        private void SetMoney(int amount)
         {
-            await UniTask.WaitForEndOfFrame();
-            foreach (var money in _uiElements.Money)
-                money.text = $"{amount}";
+            _uiElements.Money.ForEach(money => money.text = $"{amount}");
+        }
+
+        private void OnEquipItem(IItem item, Button buttonItem)
+        {
+            _uiEvents.OnEquipItem(item);
+            _buttonsItems.ForEach(i => i.RemoveFromClassList(_uiElements.ClassItemEquip));
+            buttonItem.AddToClassList(_uiElements.ClassItemEquip);
+            _uiElements.ButtonBuyItem.text = "Предмет экипирован";
+            _uiElements.ButtonBuyItem.enabledSelf = false;
         }
 
         private void ShowMenu()

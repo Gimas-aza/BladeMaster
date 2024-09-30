@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _skin: {fileID: 791625691823001284, guid: 3d8b6ea9d76eb40d4b0972c6cfed4f88, type: 3}
   _price: 100
-  _icon: {fileID: 21300000, guid: eb74d3b3b4ba807288d8986f63ab8747, type: 3}
-  _isBought: 0
-  _isEquipped: 0
+  _icon: {fileID: 21300000, guid: 9477bc65feba3d17fae4013fb60dce2b, type: 3}
+  _isBought: 1
+  _isEquipped: 1

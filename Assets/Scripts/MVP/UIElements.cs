@@ -7,6 +7,8 @@ namespace Assets.MVP
 {
     public class UIElements
     {
+        public readonly string ClassItemEquip = "ShopMenu__Item-Equipped";
+
         public Dictionary<Type, VisualElement> Menus;
         public VisualElement ContainerButtonsStartLevel;
         public VisualElement ViewItem;
@@ -41,7 +43,7 @@ namespace Assets.MVP
         public DropdownField DropdownQuality;
         public Slider SliderVolume;
 
-        public Action PreventButtonBuyItem;
+        public Action TemporaryBuyItemButton;
 
         public UIElements(VisualElement root)
         {
