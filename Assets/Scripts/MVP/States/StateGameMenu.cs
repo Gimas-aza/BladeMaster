@@ -7,6 +7,7 @@ namespace Assets.MVP.State
 {
     public class StateGameMenu : IStateView
     {
+        private float _tiltRadius = 0.25f;
         private bool _isClampingTouch = false;
         private bool _isGameActive = true;
         private IForceOfThrowingKnife _forceOfThrowing;
@@ -73,7 +74,7 @@ namespace Assets.MVP.State
         private void OnMonitorInputAcceleration()
         {
             Vector3 acceleration = Input.acceleration;
-            if (Mathf.Abs(acceleration.x) > 0.3f && _isGameActive)
+            if (Mathf.Abs(acceleration.x) > _tiltRadius && _isGameActive)
             {
                 _uiEvents.OnMonitorInputRotation(acceleration.x);
             }

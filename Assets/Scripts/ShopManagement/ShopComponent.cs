@@ -27,8 +27,10 @@ namespace Assets.ShopManagement
             int missingItemsCount = _items.Count - shopData.Items.Count;
             if (missingItemsCount > 0)
             {
-                var newItems = Enumerable.Repeat(new ItemData { IsBought = false, IsEquipped = false }, missingItemsCount);
-                shopData.Items.AddRange(newItems);
+                for (int i = 0; i < missingItemsCount; i++)
+                    shopData.Items.Add(new ItemData { IsBought = false, IsEquipped = false });
+
+                TrySetDefaultItem(shopData.Items);
             }
 
             for (int i = 0; i < _items.Count; i++)
@@ -92,6 +94,13 @@ namespace Assets.ShopManagement
             defaultItem.SetEquipped(true);
             defaultItem.SetBought(true);
             return defaultItem;
+        }
+
+        private void TrySetDefaultItem(List<ItemData> items)
+        {
+            if (!items[0].IsEquipped && !items[0].IsBought)
+                items[0].IsEquipped = true;
+                items[0].IsBought = true;
         }
     }
 }

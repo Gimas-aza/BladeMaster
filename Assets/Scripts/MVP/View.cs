@@ -31,6 +31,7 @@ namespace Assets.MVP
             _uiEvents = new UIEvents();
             _uiElements = new UIElements(_root);
             _stateMachine = new StateMachine(_uiElements, _uiEvents, _presenter, _container);
+            CheckFieldsForNull();
 
             RegisterFields();
             StartState();
@@ -56,6 +57,14 @@ namespace Assets.MVP
             VisualTreeAsset templateItemShop;
             _container.RegisterInstance(nameof(templateItemShop), _templateItemShop);
             _container.RegisterInstance(_uiEvents as IUIEvents);
+        }
+
+        private void CheckFieldsForNull()
+        {
+            if (_templateButtonStartLevel == null)
+                Debug.LogError("templateButtonStartLevel is null");
+            if (_templateItemShop == null)
+                Debug.LogError("templateItemShop is null");
         }
     }
 }

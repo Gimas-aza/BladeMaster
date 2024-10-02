@@ -1,0 +1,2 @@
+/mnt/6C9279109278DFCE/Gimas/Documents/Unity/MyProject/BladeMaster/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/CMakeLists.txt
+/mnt/6C9279109278DFCE/Gimas/Documents/Unity/MyProject/BladeMaster/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/CMakeLists.txt

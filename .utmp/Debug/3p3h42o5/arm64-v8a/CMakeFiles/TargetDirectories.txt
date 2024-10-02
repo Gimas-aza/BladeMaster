@@ -1,0 +1,5 @@
+/mnt/6C9279109278DFCE/Gimas/Documents/Unity/MyProject/BladeMaster/.utmp/Debug/3p3h42o5/arm64-v8a/CMakeFiles/edit_cache.dir
+/mnt/6C9279109278DFCE/Gimas/Documents/Unity/MyProject/BladeMaster/.utmp/Debug/3p3h42o5/arm64-v8a/CMakeFiles/rebuild_cache.dir
+/mnt/6C9279109278DFCE/Gimas/Documents/Unity/MyProject/BladeMaster/.utmp/Debug/3p3h42o5/arm64-v8a/GameActivity/CMakeFiles/game.dir
+/mnt/6C9279109278DFCE/Gimas/Documents/Unity/MyProject/BladeMaster/.utmp/Debug/3p3h42o5/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+/mnt/6C9279109278DFCE/Gimas/Documents/Unity/MyProject/BladeMaster/.utmp/Debug/3p3h42o5/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir

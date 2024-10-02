@@ -204,7 +204,6 @@
 .ShopMenu__Item {
     width: auto;
     height: auto;
-    -unity-background-scale-mode: scale-and-crop;
     border-left-color: rgb(23, 59, 69);
     border-right-color: rgb(23, 59, 69);
     border-top-color: rgb(23, 59, 69);
@@ -228,7 +227,11 @@
     align-items: flex-start;
     flex-grow: 1;
     flex-shrink: 0;
-    background-image: url("project://database/Assets/UI/Sprites/KnifeIcon/Item1.png?fileID=21300000&guid=8dd3ca32378566db0b9f1ce3271db31a&type=3#Item1");
+    background-image: none;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
 }
 
 .ShopMenu__Item:focus {
@@ -597,4 +600,40 @@
     border-top-color: rgb(23, 59, 69);
     border-bottom-color: rgb(23, 59, 69);
     margin-left: 71px;
+}
+
+.ShopMenu__Item .unity-button__image {
+    background-image: url("project://database/Assets/UI/Sprites/KnifeIcon/Item1.png?fileID=21300000&guid=8dd3ca32378566db0b9f1ce3271db31a&type=3#Item1");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.Tittle {
+    flex-grow: 1;
+    background-color: rgba(248, 237, 237, 0);
+    width: 100%;
+    height: 80px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    flex-shrink: 1;
+    min-height: 67px;
+    align-self: center;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    margin-top: 0;
+    border-bottom-right-radius: 32px;
+    border-right-width: 0;
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    background-image: url("project://database/Assets/UI/Sprites/BackgroundNameGame%201.png?fileID=21300000&guid=3431f9ce5e4020224a9cf0b81cd2320c&type=3#BackgroundNameGame 1");
+    background-size: cover;
+    padding-top: 0;
+    padding-bottom: 9px;
+    align-content: flex-start;
+    padding-left: 10px;
+    left: auto;
+    max-height: 80px;
+    -unity-background-scale-mode: stretch-to-fill;
 }

@@ -17,7 +17,7 @@ namespace Assets.DataManagement
 #if UNITY_EDITOR
             _filePath = Path.Combine(Application.dataPath, "Saves", "DataStorage.xml");
 #else
-            _filePath = Path.Combine(Application.dataPath, "DataStorage.xml");
+            _filePath = Path.Combine(Application.persistentDataPath, "DataStorage.xml");
 #endif
             Directory.CreateDirectory(Path.GetDirectoryName(_filePath));
         }
@@ -74,11 +74,11 @@ namespace Assets.DataManagement
             {
                 var data = serializer.Deserialize(reader) as DataStorage;
                 _dataStorage = data ?? new DataStorage();
-                return data;
+                return _dataStorage;
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"Deserialization error: {ex.Message}");
+                Debug.LogWarning($"Deserialization error: {ex.Message}");
                 return _dataStorage;
             }
         }

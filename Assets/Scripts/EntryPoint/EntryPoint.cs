@@ -15,6 +15,7 @@ using UnityEngine;
 using Assets.DI;
 using Assets.ObjectCreation;
 using Assets.GameProgression.Interfaces;
+using System;
 
 namespace Assets.EntryPoint
 {
@@ -50,8 +51,8 @@ namespace Assets.EntryPoint
         {
             _container = new DIContainer();
             _models = new List<IModel>();
-            _objectFactory = new ObjectFactory(new AddressablesProvider());
             _loadSystem = new DataStorageSystem(new StorageXML());
+            _objectFactory = new ObjectFactory(new AddressablesProvider());
             _levelManager = new GameSceneManager();
             _presenter = new Presenter();
             _playerProgression = new PlayerProgression();
@@ -107,6 +108,8 @@ namespace Assets.EntryPoint
             var containerChildren = new DIContainer(_container as DIContainer);
             var view = _objectFactory.CreateObject<View>() as IInitializer;
 
+            GC.Collect();
+
             RegisterFields(containerChildren);
             InitializeComponents(containerChildren);
 
@@ -141,7 +144,7 @@ namespace Assets.EntryPoint
         private void InitializeGameMenuComponents(DIContainer containerChildren)
         {
             var models = containerChildren.Resolve<List<IModel>>();
-            _playerProgression.Init(containerChildren);
+            // _playerProgression.Init(containerChildren);
 
             models.Add(containerChildren.Resolve<IKnivesPool>() as IModel);
         }

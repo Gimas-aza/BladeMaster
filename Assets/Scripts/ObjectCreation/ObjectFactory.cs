@@ -15,18 +15,16 @@ namespace Assets.ObjectCreation
         
         public async UniTask<T> CreateObjectAsync<T>() where T : Behaviour
         {
-            var newObject = GameObject.Instantiate(await _objectProvider.LoadResourceAsync<T>());
+            var newObject = Object.Instantiate(await _objectProvider.LoadResourceAsync<T>());
             TestingIsComponent<T>(newObject.TryGetComponent(out T result));
-            _objectProvider.UnloadResource();
 
             return result;
         }
 
         public T CreateObject<T>() where T : Behaviour
         {
-            var newObject = GameObject.Instantiate(_objectProvider.LoadResource<T>());
+            var newObject = Object.Instantiate(_objectProvider.LoadResource<T>());
             TestingIsComponent<T>(newObject.TryGetComponent(out T result));
-            _objectProvider.UnloadResource();
 
             return result;
         }

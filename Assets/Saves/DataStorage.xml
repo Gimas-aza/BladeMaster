@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <DataStorage xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Money>10</Money>
-  <BestScore>160</BestScore>
-  <FinishedLevels>1</FinishedLevels>
-  <UnlockedLevels>2</UnlockedLevels>
+  <Money>0</Money>
+  <BestScore>0</BestScore>
+  <FinishedLevels>0</FinishedLevels>
+  <UnlockedLevels>1</UnlockedLevels>
   <RatingScoreOfLevels>
-    <int>3</int>
+    <int>0</int>
   </RatingScoreOfLevels>
   <Items>
     <ItemData>
@@ -22,5 +22,5 @@
     </ItemData>
   </Items>
   <QualityIndex>2</QualityIndex>
-  <Volume>0.122</Volume>
+  <Volume>0</Volume>
 </DataStorage>

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Assets.DI;
 using Assets.ShopManagement;
 using UnityEngine.UIElements;
@@ -11,7 +12,7 @@ namespace Assets.MVP.State
         private UIElements _uiElements;
         private StateMachine _stateMachine;
         private UIEvents _uiEvents;
-        private List<Button> _buttonsItems;
+        private Dictionary<IItem, Button> _buttonsItems;
 
         public void Init(StateMachine stateMachine, UIElements elements, UIEvents events, DIContainer container)
         {
@@ -19,7 +20,7 @@ namespace Assets.MVP.State
             _uiEvents = events;
             _uiElements = elements;
             _templateItemShop = container.Resolve<VisualTreeAsset>("templateItemShop");
-            _buttonsItems = new List<Button>();
+            _buttonsItems = new Dictionary<IItem, Button>();
 
             InitializeUI();
             SubscribeToMonitorUpdate();
@@ -64,10 +65,10 @@ namespace Assets.MVP.State
                 var newTemplateButtonItemShop = _templateItemShop.CloneTree();
                 var newButtonItem = newTemplateButtonItemShop.Q<Button>("ButtonItem");
 
-                newButtonItem.style.backgroundImage = new StyleBackground(item.Icon);
+                newButtonItem.Q<VisualElement>("Icon").style.backgroundImage = new StyleBackground(item.Icon);
                 newButtonItem.clicked += () => SetButtonItem(item, newButtonItem);
                 _uiElements.CurrentButtonItem = newButtonItem;
-                _buttonsItems.Add(newButtonItem);
+                _buttonsItems.Add(item, newButtonItem);
 
                 if (item.IsEquipped)
                     _uiElements.CurrentButtonItem.AddToClassList(_uiElements.ClassItemEquip);
@@ -103,10 +104,10 @@ namespace Assets.MVP.State
         private void SetItemForEquip(IItem item, Button buttonItem)
         {
             _uiElements.ButtonBuyItem.text = "Экипировать";
-            _uiElements.TemporaryBuyItemButton = () => OnEquipItem(item, buttonItem);
+            _uiElements.TemporaryBuyItemButton = () => OnEquipItem(item);
             _uiElements.ButtonBuyItem.clicked += _uiElements.TemporaryBuyItemButton;
             if (item.IsEquipped)
-                OnEquipItem(item, buttonItem);
+                OnEquipItem(item);
         }
 
         private void SetMoney(int amount)
@@ -114,11 +115,11 @@ namespace Assets.MVP.State
             _uiElements.Money.ForEach(money => money.text = $"{amount}");
         }
 
-        private void OnEquipItem(IItem item, Button buttonItem)
+        private void OnEquipItem(IItem item)
         {
             _uiEvents.OnEquipItem(item);
-            _buttonsItems.ForEach(i => i.RemoveFromClassList(_uiElements.ClassItemEquip));
-            buttonItem.AddToClassList(_uiElements.ClassItemEquip);
+            _buttonsItems.Values.ToList().ForEach(i => i.RemoveFromClassList(_uiElements.ClassItemEquip));
+            _buttonsItems[item].AddToClassList(_uiElements.ClassItemEquip);
             _uiElements.ButtonBuyItem.text = "Предмет экипирован";
             _uiElements.ButtonBuyItem.enabledSelf = false;
         }

@@ -12,8 +12,8 @@ namespace Assets.DataManagement
         public int BestScore { get; set; } = 0;
         public int FinishedLevels { get; set; } = 0;
         public int UnlockedLevels { get; set; } = 1;
-        public List<int> RatingScoreOfLevels { get; set; }
-        public List<ItemData> Items { get; set; }
+        public List<int> RatingScoreOfLevels { get; set; } = new();
+        public List<ItemData> Items { get; set; } = new();
         public int QualityIndex { get; set; } = 0;
         public float Volume { get; set; } = 0.5f;
     }
