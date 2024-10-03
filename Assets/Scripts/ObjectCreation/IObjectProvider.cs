@@ -7,6 +7,5 @@ namespace Assets.ObjectCreation
     {
         GameObject LoadResource<T>() where T : Behaviour;
         UniTask<GameObject> LoadResourceAsync<T>() where T : Behaviour;
-        void UnloadResource();
     }
 }

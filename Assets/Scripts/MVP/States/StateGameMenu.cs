@@ -9,7 +9,7 @@ namespace Assets.MVP.State
     {
         private float _tiltRadius = 0.25f;
         private bool _isClampingTouch = false;
-        private bool _isGameActive = true;
+        private bool _isActiveInput = true;
         private IForceOfThrowingKnife _forceOfThrowing;
         private StateMachine _stateMachine;
         private UIElements _uiElements;
@@ -34,12 +34,13 @@ namespace Assets.MVP.State
         public void Enter()
         {
             ShowMenu();
-            _isGameActive = true;
+            ActiveInput();
         }
 
         public void Exit()
         {
             HideMenu();
+            ClearPressureForce();
         }
 
         private void InitializeUI()
@@ -58,7 +59,7 @@ namespace Assets.MVP.State
 
         private void SetPause()
         {
-            _isGameActive = false;
+            DeactivateInput();
             _stateMachine.ChangeState<StatePauseMenu>();
         }
 
@@ -74,7 +75,7 @@ namespace Assets.MVP.State
         private void OnMonitorInputAcceleration()
         {
             Vector3 acceleration = Input.acceleration;
-            if (Mathf.Abs(acceleration.x) > _tiltRadius && _isGameActive)
+            if (Mathf.Abs(acceleration.x) > _tiltRadius && _isActiveInput)
             {
                 _uiEvents.OnMonitorInputRotation(acceleration.x);
             }
@@ -85,7 +86,7 @@ namespace Assets.MVP.State
             float time = 0;
             while (true)
             {
-                if (Input.touchCount > 0 && _isGameActive)
+                if (Input.touchCount > 0 && _isActiveInput)
                 {
                     var touch = Input.GetTouch(0);
                     HandleTouchPhase(touch, ref time);
@@ -106,7 +107,7 @@ namespace Assets.MVP.State
                     MovedOrStationaryPhase(touch, ref time);
                     break;
                 case TouchPhase.Ended:
-                    EndedPhase(touch);
+                    EndedPhase();
                     break;
             }
         }
@@ -126,12 +127,11 @@ namespace Assets.MVP.State
             _uiElements.PressureForce.value = force;
         }
 
-        private void EndedPhase(Touch touch)
+        private void EndedPhase()
         {
             if (!_isClampingTouch) return;
 
-            _isClampingTouch = false;
-            _uiElements.PressureForce.value = 0;
+            ClearPressureForce();
             _uiEvents.OnMonitorInputTouchEnded();
         }
 
@@ -159,8 +159,7 @@ namespace Assets.MVP.State
 
         private void SetFinishedLevel(bool isWin)
         {
-            _isGameActive = false;
-
+            DeactivateInput();
             _uiElements.Win.style.display = isWin ? DisplayStyle.Flex : DisplayStyle.None;
             _uiElements.Lose.style.display = isWin ? DisplayStyle.None : DisplayStyle.Flex;
             _stateMachine.ChangeState<StateFinishedMenu>();
@@ -179,6 +178,23 @@ namespace Assets.MVP.State
         private void SetAmountKnives(IAmountOfKnives amountOfKnives)
         {
             _uiElements.AmountKnives.text = $"{amountOfKnives.Amount}/{amountOfKnives.MaxAmount}";
+        }
+
+        private void ClearPressureForce() 
+        {
+            _isClampingTouch = false;
+            _uiElements.PressureForce.value = 0;
+        }
+
+        private async void ActiveInput()
+        {
+            await UniTask.Delay(200);
+            _isActiveInput = true;
+        }
+
+        private void DeactivateInput()
+        {
+            _isActiveInput = false;
         }
 
         private void ShowMenu()

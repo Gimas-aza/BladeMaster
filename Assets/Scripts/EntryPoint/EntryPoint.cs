@@ -144,7 +144,7 @@ namespace Assets.EntryPoint
         private void InitializeGameMenuComponents(DIContainer containerChildren)
         {
             var models = containerChildren.Resolve<List<IModel>>();
-            // _playerProgression.Init(containerChildren);
+            _playerProgression.Init(containerChildren);
 
             models.Add(containerChildren.Resolve<IKnivesPool>() as IModel);
         }
