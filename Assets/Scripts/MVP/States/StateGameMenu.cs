@@ -1,3 +1,4 @@
+using System.Threading;
 using Assets.DI;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -9,11 +10,11 @@ namespace Assets.MVP.State
     {
         private float _tiltRadius = 0.25f;
         private bool _isClampingTouch = false;
-        private bool _isActiveInput = true;
         private IForceOfThrowingKnife _forceOfThrowing;
         private StateMachine _stateMachine;
         private UIElements _uiElements;
         private UIEvents _uiEvents;
+        private CancellationTokenSource _cancellationTokenSource;
 
         public void Init(StateMachine stateMachine, UIElements elements, UIEvents events, DIContainer container)
         {
@@ -26,8 +27,6 @@ namespace Assets.MVP.State
 
             stateMachine.RegisterEvents();
 
-            OnMonitorInputInFixedUpdate();
-            OnMonitorInputInUpdate();
             AdjustLayout();
         }
 
@@ -35,6 +34,7 @@ namespace Assets.MVP.State
         {
             ShowMenu();
             ActiveInput();
+            MonitorInput().Forget();
         }
 
         public void Exit()
@@ -63,34 +63,39 @@ namespace Assets.MVP.State
             _stateMachine.ChangeState<StatePauseMenu>();
         }
 
-        private async void OnMonitorInputInFixedUpdate()
+        private async UniTask MonitorInput()
         {
-            while (true)
+            var accelerationTask = MonitorInputAcceleration(_cancellationTokenSource.Token);
+            var touchTask = MonitorInputTouch(_cancellationTokenSource.Token);
+
+            await UniTask.WhenAll(accelerationTask, touchTask);
+        }
+
+        private async UniTask MonitorInputAcceleration(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
             {
-                OnMonitorInputAcceleration();
+                Vector3 acceleration = Input.acceleration;
+                if (Mathf.Abs(acceleration.x) > _tiltRadius)
+                {
+                    _uiEvents.OnMonitorInputRotation(acceleration.x);
+                }
+                Debug.Log(nameof(MonitorInputAcceleration));
                 await UniTask.WaitForFixedUpdate();
             }
         }
 
-        private void OnMonitorInputAcceleration()
-        {
-            Vector3 acceleration = Input.acceleration;
-            if (Mathf.Abs(acceleration.x) > _tiltRadius && _isActiveInput)
-            {
-                _uiEvents.OnMonitorInputRotation(acceleration.x);
-            }
-        }
-
-        private async void OnMonitorInputInUpdate()
+        private async UniTask MonitorInputTouch(CancellationToken token)
         {
             float time = 0;
-            while (true)
+            while (!token.IsCancellationRequested)
             {
-                if (Input.touchCount > 0 && _isActiveInput)
+                if (Input.touchCount > 0)
                 {
                     var touch = Input.GetTouch(0);
                     HandleTouchPhase(touch, ref time);
                 }
+                Debug.Log(nameof(MonitorInputTouch));
                 await UniTask.WaitForEndOfFrame();
             }
         }
@@ -186,15 +191,19 @@ namespace Assets.MVP.State
             _uiElements.PressureForce.value = 0;
         }
 
-        private async void ActiveInput()
+        private void ActiveInput()
         {
-            await UniTask.Delay(200);
-            _isActiveInput = true;
+            _cancellationTokenSource = new CancellationTokenSource();
         }
 
         private void DeactivateInput()
         {
-            _isActiveInput = false;
+            if (_cancellationTokenSource != null)
+            {
+                _cancellationTokenSource.Cancel();
+                _cancellationTokenSource.Dispose();
+                _cancellationTokenSource = null;
+            }
         }
 
         private void ShowMenu()
