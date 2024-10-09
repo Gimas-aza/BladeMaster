@@ -80,7 +80,6 @@ namespace Assets.MVP.State
                 {
                     _uiEvents.OnMonitorInputRotation(acceleration.x);
                 }
-                Debug.Log(nameof(MonitorInputAcceleration));
                 await UniTask.WaitForFixedUpdate();
             }
         }
@@ -95,7 +94,6 @@ namespace Assets.MVP.State
                     var touch = Input.GetTouch(0);
                     HandleTouchPhase(touch, ref time);
                 }
-                Debug.Log(nameof(MonitorInputTouch));
                 await UniTask.WaitForEndOfFrame();
             }
         }

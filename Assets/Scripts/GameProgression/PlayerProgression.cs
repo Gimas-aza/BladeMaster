@@ -31,6 +31,7 @@ namespace Assets.GameProgression
         private IItemSkin _currentSkin;
         private ISaveSystem _saveSystem;
         private IPlayerProgressionData _dataStorage;
+        private IAdService _adService;
         private IUIEvents _uiEvents;
 
         public void Init(IResolver container)
@@ -64,6 +65,7 @@ namespace Assets.GameProgression
             _amountOfLevels = container.Resolve<ILevelInfoProvider>().GetAmountLevels();
             _saveSystem = container.Resolve<ISaveSystem>();
             _dataStorage = container.Resolve<IPlayerProgressionData>();
+            _adService = container.Resolve<IAdService>();
 
             shop.RequestToBuy += TrySpendMoney;
             shop.BoughtSkin += (item) => _currentSkin = item;
@@ -78,6 +80,7 @@ namespace Assets.GameProgression
             var spawnerEnemies = container.Resolve<IEnemySpawner>();
             var knivesPool = container.Resolve<IKnivesPool>();
 
+            _adService = container.Resolve<IAdService>();
             _currentLevel = container.Resolve<ILevelInfoProvider>().GetLevelIndex();
             _dataStorage = container.Resolve<IPlayerProgressionData>();
             _enemies = spawnerEnemies.GetEnemies();
@@ -169,7 +172,7 @@ namespace Assets.GameProgression
             if (_amountHits == _enemies.Count)
                 CompleteLevel(_currentLevel > _finishedLevels);
             else if (AreAllKnivesThrown() && _amountHits != _enemies.Count)
-                FailLevel();
+                FailedLevel();
         }
 
         private bool AreAllKnivesThrown() => _knives.All(knife => knife.IsThrow());
@@ -222,9 +225,10 @@ namespace Assets.GameProgression
             _uiEvents.FinishedLevel?.Invoke(true);
         }
 
-        private void FailLevel()
+        private void FailedLevel()
         {
             _uiEvents.FinishedLevel?.Invoke(false);
+            _adService.ShowAd(Ads.TypeAd.Interstitial);
         }
 
         private void UpdateRatingScore()

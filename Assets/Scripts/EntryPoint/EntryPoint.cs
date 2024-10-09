@@ -15,6 +15,7 @@ using UnityEngine;
 using Assets.DI;
 using Assets.ObjectCreation;
 using Assets.GameProgression.Interfaces;
+using Assets.Ads;
 using System;
 
 namespace Assets.EntryPoint
@@ -25,6 +26,7 @@ namespace Assets.EntryPoint
         private IObject _objectFactory;
         private ILoadSystem _loadSystem;
         private ILevelManager _levelManager;
+        private IAdService _adService;
         private IInitializer _presenter;
         private IInitializer _playerProgression;
         private IInitializer _settings;
@@ -54,6 +56,7 @@ namespace Assets.EntryPoint
             _loadSystem = new DataStorageSystem(new StorageXML());
             _objectFactory = new ObjectFactory(new AddressablesProvider());
             _levelManager = new GameSceneManager();
+            _adService = new AdServiceFactory();
             _presenter = new Presenter();
             _playerProgression = new PlayerProgression();
             _settings = new Settings();
@@ -66,6 +69,7 @@ namespace Assets.EntryPoint
             _container.RegisterSingleton(_ => _loadSystem as ISaveSystem);
             _container.RegisterSingleton(_ => _presenter as Presenter);
             _container.RegisterSingleton(_ => _levelManager as ILevelInfoProvider);
+            _container.RegisterInstance(_adService);
             _container.RegisterTransient(c => 
                 c.Resolve<ILevelInfoProvider>().GetLevelIndex() == 0 ? StateGame.MainMenu : StateGame.GameMenu);
         }
